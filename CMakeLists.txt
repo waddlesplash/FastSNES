@@ -19,7 +19,7 @@ else()
 	endif()
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -Wall -Wno-unused-but-set-variable")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -Wall -Wno-comment")
 set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} --target=pe-i386")
 
 aux_source_directory(src SRCS)

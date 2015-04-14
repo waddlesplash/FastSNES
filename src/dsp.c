@@ -1,7 +1,9 @@
 #include <allegro.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "snem.h"
+#include "util.h"
 
 int spctotal;
 FILE* sndfile;
@@ -255,7 +257,6 @@ int range[8], filter[8];
 inline signed short decodebrr(int v, int c)
 {
 	signed short temp = v & 0xF;
-	float tempf;
 	if (temp & 8)
 		temp |= 0xFFF0;
 	if (range[c] <= 12)
@@ -280,6 +281,7 @@ inline signed short decodebrr(int v, int c)
 				6) -
 			   lastsamp[c][1] + (((lastsamp[c][1] << 1) + lastsamp[c][1]) >> 4);
 		break;
+	//float tempf;
 	//                case 1: tempf=(float)lastsamp[c][0]*((float)15/(float)16);
 	//                temp+=tempf; break;
 	//                case 2:

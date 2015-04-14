@@ -15,21 +15,6 @@ HWND ghwnd;
 int infocus = 1;
 int romloaded = 0;
 
-FILE* snemlogf;
-void snemlog(const char* format, ...)
-{
-	char buf[256];
-	return;
-	if (!snemlogf)
-		snemlogf = fopen("snemlog.txt", "wt");
-	// return;
-	va_list ap;
-	va_start(ap, format);
-	vsprintf(buf, format, ap);
-	va_end(ap);
-	fputs(buf, snemlogf);
-	fflush(snemlogf);
-}
 void resizewindow(int xsize, int ysize)
 {
 	RECT r;
@@ -191,7 +176,6 @@ char openfilestring[260];
 int getfile(HWND hwnd, char* f)
 {
 	OPENFILENAME ofn; // common dialog box structure
-	char szFile[260]; // buffer for file name
 
 	// Initialize OPENFILENAME
 	ZeroMemory(&ofn, sizeof(ofn));
@@ -221,7 +205,6 @@ int getfile(HWND hwnd, char* f)
 LRESULT CALLBACK
 WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HMENU hmenu;
 	switch (message) /* handle the messages */
 	{
 	case WM_DESTROY:
@@ -234,7 +217,6 @@ WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		infocus = 0;
 		break;
 	case WM_COMMAND:
-		hmenu = GetMenu(hwnd);
 		switch (LOWORD(wParam)) {
 		case IDM_FILE_RESET:
 			resetsnem();

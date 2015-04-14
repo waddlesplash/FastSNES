@@ -1,3 +1,5 @@
+#pragma once
+
 /* SPC700 */
 double spccycles;
 double spctotal2;

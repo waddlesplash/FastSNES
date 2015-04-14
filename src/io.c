@@ -1,8 +1,11 @@
 /* Snem 0.1 by Tom Walker
   I/O, or $42xx */
 #include <allegro.h>
+#include <stdio.h>
 #include <stdlib.h>
+
 #include "snem.h"
+#include "util.h"
 
 int intthisline;
 int dmaops = 0;
@@ -64,7 +67,7 @@ void writeio(unsigned short addr, unsigned char val)
 {
 	int c, d = 0, offset = 0, speed;
 	unsigned char temp;
-	int delay = 0;
+	//int delay = 0;
 	//        if ((addr&0x100) && ((addr&0x70)==0x50))
 	//           printf("DMA 5 write %04X %02X\n",addr,val);
 	//        snemlog("Write IO %04X %02X %02X:%04X\n",addr,val,pbr>>16,pc);

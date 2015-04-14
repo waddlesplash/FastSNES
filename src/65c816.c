@@ -3,7 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "snem.h"
+#include "util.h"
 
 void updatecpumode();
 int inwai = 0;
@@ -3548,7 +3550,6 @@ void asla16()
 void aslZp8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = zeropage();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3561,7 +3562,6 @@ void aslZp8()
 void aslZp16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = zeropage();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3575,7 +3575,6 @@ void aslZp16()
 void aslZpx8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = zeropagex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3588,7 +3587,6 @@ void aslZpx8()
 void aslZpx16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3602,7 +3600,6 @@ void aslZpx16()
 void aslAbs8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = absolute();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3615,7 +3612,6 @@ void aslAbs8()
 void aslAbs16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = absolute();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3629,7 +3625,6 @@ void aslAbs16()
 void aslAbsx8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = absolutex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3642,7 +3637,6 @@ void aslAbsx8()
 void aslAbsx16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = absolutex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3671,7 +3665,6 @@ void lsra16()
 void lsrZp8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = zeropage();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3684,7 +3677,6 @@ void lsrZp8()
 void lsrZp16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = zeropage();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3698,7 +3690,6 @@ void lsrZp16()
 void lsrZpx8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = zeropagex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3711,7 +3702,6 @@ void lsrZpx8()
 void lsrZpx16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3725,7 +3715,6 @@ void lsrZpx16()
 void lsrAbs8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = absolute();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3738,7 +3727,6 @@ void lsrAbs8()
 void lsrAbs16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = absolute();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3752,7 +3740,6 @@ void lsrAbs16()
 void lsrAbsx8()
 {
 	unsigned char temp;
-	int tempc;
 	addr = absolutex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3765,7 +3752,6 @@ void lsrAbsx8()
 void lsrAbsx16()
 {
 	unsigned short temp;
-	int tempc;
 	addr = absolutex();
 	temp = readmemw(addr);
 	cycles -= 6;

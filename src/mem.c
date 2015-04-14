@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "snem.h"
+#include "util.h"
 
 int pal;
 unsigned short srammask;
@@ -100,7 +102,6 @@ void loadrom(char* fn)
 
 void initmem()
 {
-	FILE* f;
 	int c, d;
 	for (c = 0; c < 256; c++) {
 		for (d = 0; d < 8; d++) {
@@ -147,7 +148,7 @@ void initmem()
 								memwrite[c+0x400]=memwrite[c];
 								memlookup[c+0x400]=memlookup[c];
 						}
-		/*                for (c=0;c<16;c++)
+						/*for (c=0;c<16;c++)
 						{
 								memread[(0x70<<3)+c]=memwrite[(0x70<<3)+c]=0;
 								memlookup[(0x70<<3)+c]=sram;

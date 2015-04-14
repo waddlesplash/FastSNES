@@ -12,7 +12,9 @@ void writeppu(unsigned short addr, unsigned char val);
 #include <allegro.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "snem.h"
+#include "util.h"
 
 #define uint unsigned int
 #define uint16 unsigned short
@@ -324,7 +326,6 @@ int windowdisable = 0;
 void recalcwindows()
 {
 	int x;
-	unsigned char temp;
 	unsigned short* w;
 	unsigned short w2[256], w3[256];
 	//        if (!wfile) wfile=fopen("window.dmp","wb");
@@ -641,9 +642,8 @@ void dohdma(int line)
 
 void doblit()
 {
-	int c;
 	//        drawvol(otherscr);
-	/*        for (c=0;c<8;c++)
+	/*        for (int c=0;c<8;c++)
 			{
 					if (voiceon&1)
 					   rectfill(otherscr,(c*20)+8,2,(c*20)+24,10,makecol(255,255,255));
@@ -660,10 +660,9 @@ void docolour(unsigned short* pw, unsigned short* pw2, unsigned short* pw3,
 			  unsigned short* pw4)
 {
 	int x;
-	int asr, asg, asb;
+	//int asr, asg, asb;
 	unsigned short dat;
 	unsigned short* pal = pallookup[ppu.screna & 15];
-	unsigned short mcol;
 	switch ((ppu.cgadsub >> 6) | ((ppu.cgwsel & 2) << 1)) {
 	case 0:
 		if (!ppu.fixedcol) {
@@ -768,12 +767,12 @@ void drawline(int line)
 {
 	unsigned long aa, bb, cc, dd, arith;
 	int ma, mb, mc, md, hoff, voff, cx, cy;
-	int c, d, x, xx, xxx, pri, y, yy, ss, asr, asg, asb, sprc;
+	int c, d, x, xx, xxx, pri, y, yy, ss, sprc;
+	//int asr, asg, asb;
 	unsigned short addr, tile, dat, baseaddr;
 	reg b1, b2, b3, b4, b5;
 	unsigned long* p;
 	unsigned short* pw, *pw2, *pw3, *pw4;
-	unsigned char* pb;
 	unsigned long* wp;
 	int col;
 	int l;
@@ -2156,7 +2155,7 @@ void dumphdma()
 void writeppu(unsigned short addr, unsigned char val)
 {
 	int r, g, b, c;
-	unsigned short tempaddr, temp;
+	unsigned short tempaddr;
 	//        printf("Write PPU %04X %02X %04X\n",addr,val,x.w);
 	switch (addr & 0xFF) {
 	case 0x00: /* Screen enable */
@@ -2839,8 +2838,6 @@ void drawchar(int tile, int x, int y, int col)
 void dumpchar()
 {
 	int page = 0, col = 0;
-	int c;
-	PALETTE temppal;
 	int tile, x, y;
 	while (key[KEY_F1])
 		yield_timeslice();
@@ -2907,10 +2904,9 @@ void dumpchar()
 
 void dumpbg2()
 {
-	int page = 0, col = 0;
+	int col = 0;
 	int c, d;
 	unsigned short addr = 0xB000 >> 1;
-	PALETTE temppal;
 	int tile, x, y;
 	unsigned char dat1, dat2;
 	while (key[KEY_F2])
