@@ -36,7 +36,7 @@ void loadrom(char* fn)
 	fseek(f, -1, SEEK_END);
 	len = ftell(f) + 1;
 	fseek(f, len & 512, SEEK_SET);
-	printf("%i %i\n", len, ftell(f));
+	printf("%i %lu\n", len, ftell(f));
 	rom = (unsigned char*)malloc(4096 * 1024);
 	//        fread(rom,512,1,f);
 	/*        for (c=0;c<0x40000;c+=0x8000)

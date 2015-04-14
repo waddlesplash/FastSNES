@@ -141,7 +141,7 @@ void execframe()
 				irq65c816();
 			oldnmi = nmi;
 			if (output)
-				printf("%06X %02X A=%04X X=%04X Y=%04X S=%04X %02X %i %i %04X "
+				printf("%06lu %02lu A=%04X X=%04X Y=%04X S=%04X %02X %i %i %04X "
 					   "%i %02X %i %i\n",
 					   pc | pbr, dbr >> 16, a.w, x.w, y.w, s.w, opcode, p.m,
 					   cpumode, dp, lines, lines, xirq, yirq);
