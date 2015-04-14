@@ -1,0 +1,3 @@
+#define IDM_FILE_RESET 40000
+#define IDM_FILE_LOAD  40001
+#define IDM_FILE_EXIT  40002

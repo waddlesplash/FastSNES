@@ -1,0 +1,12 @@
+#include <windows.h>
+#include "resources.h"
+
+MainMenu MENU DISCARDABLE
+BEGIN
+        POPUP "&File"
+        BEGIN
+                MENUITEM "&Load",                 IDM_FILE_LOAD
+                MENUITEM "&Reset",                IDM_FILE_RESET
+                MENUITEM "E&xit",                 IDM_FILE_EXIT
+        END
+END
