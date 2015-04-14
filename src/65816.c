@@ -2,6 +2,7 @@
   65816 emulation*/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "snem.h"
 
 void updatecpumode();

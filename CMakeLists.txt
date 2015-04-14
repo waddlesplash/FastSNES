@@ -3,6 +3,9 @@
 ############
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(NeuSneM)
+# On some platforms, CMake automatically adds some libraries to this by
+# default (e.g. Windows) which we don't need, so unset it.
+unset(CMAKE_C_STANDARD_LIBRARIES)
 
 if(ALLEGRO_INSTALL_PREFIX)
 	link_directories(${ALLEGRO_INSTALL_PREFIX}/lib)
@@ -16,8 +19,12 @@ else()
 	endif()
 endif()
 
-aux_source_directory(src SRCS)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -Wall -Wno-unused-but-set-variable")
+set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} --target=pe-i386")
 
-add_executable(NeuSneM ${HEADERS} ${SRCS} ${ASM_SRCS})
-target_link_libraries(NeuSneM ${ALLEGRO_LIBS})
-#target_compile_features(NeuSneM PRIVATE cxx_range_for)
+aux_source_directory(src SRCS)
+set(RC_FILE src/snem.rc)
+
+add_executable(NeuSneM ${SRCS} ${RC_FILE})
+target_link_libraries(NeuSneM ${ALLEGRO_LIBS} winmm)
+set_target_properties(NeuSneM PROPERTIES LINK_FLAGS "-m32")

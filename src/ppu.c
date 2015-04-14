@@ -11,6 +11,7 @@ unsigned char voiceon;
 void writeppu(unsigned short addr, unsigned char val);
 #include <allegro.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "snem.h"
 
 #define uint unsigned int

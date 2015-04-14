@@ -1,5 +1,6 @@
 #include <allegro.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "snem.h"
 
 int spctotal;
