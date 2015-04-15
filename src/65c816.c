@@ -1,7 +1,6 @@
 /* Snem 0.1 by Tom Walker
   65c816 emulation */
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "snem.h"
@@ -24,10 +23,10 @@ unsigned long absolutex()
 {
 	unsigned long temp = (readmemw(pbr | pc)) + x.w + dbr;
 	pc += 2;
-	// if ((temp&0xFFFF)>0x2200 && (temp&0xFFFF)<0x8000) printf("ABSX
-	// %04X %06X\n",x.w,temp);
-	// if (output) printf("ABSX 0000,%04X - %06X\n",x.w,temp);
-	// if (output) printf("Addr %06X\n",temp);
+	// if ((temp&0xFFFF)>0x2200 && (temp&0xFFFF)<0x8000) { snemdebug("ABSX
+	// %04X %06X\n",x.w,temp); }
+	// if (output) { snemdebug("ABSX 0000,%04X - %06X\n",x.w,temp); }
+	// if (output) { snemdebug("Addr %06X\n",temp); }
 	return temp;
 }
 
@@ -53,7 +52,7 @@ unsigned long absolutelongx()
 	pc += 2;
 	temp += (readmem(pbr | pc) << 16);
 	pc++;
-	// printf("abslx %06X %04X\n",temp,x.w);
+	// snemdebug("abslx %06X %04X\n",temp,x.w);
 	return temp;
 }
 
@@ -125,7 +124,7 @@ unsigned long jindirectx() /* JSR (,x) uses PBR instead of DBR, and 2 byte
 	unsigned long temp =
 		(readmem(pbr | pc) + (readmem((pbr | pc) + 1) << 8) + x.w) + pbr;
 	pc += 2;
-	// printf("Temp %06X\n",temp);
+	// snemdebug("Temp %06X\n",temp);
 	return temp;
 }
 
@@ -147,7 +146,7 @@ unsigned long indirectl()
 	unsigned long temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
 	unsigned long addr = readmemw(temp) | (readmem(temp + 2) << 16);
-	// printf("IND %06X\n",addr);
+	// snemdebug("IND %06X\n",addr);
 	return addr;
 }
 
@@ -156,9 +155,10 @@ unsigned long indirectly()
 	unsigned long temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
 	unsigned long addr = (readmemw(temp) | (readmem(temp + 2) << 16)) + y.w;
-	if (pc == 0xFDC9)
-		printf("INDy %04lu %06lu\n", temp, addr);
-	// if (output) printf("INDy %06X %02X %06X\n",addr,opcode,pbr|pc);
+	if (pc == 0xFDC9) {
+		snemdebug("INDy %04lu %06lu\n", temp, addr);
+	}
+	// if (output) { snemdebug("INDy %06X %02X %06X\n",addr,opcode,pbr|pc); }
 	return addr;
 }
 
@@ -458,7 +458,7 @@ void decZp8()
 	temp--;
 	setzn8(temp);
 	writemem(addr, temp);
-	// if (output && addr==4) printf("DEC 4 %02X %i %i\n",temp,p.z,p.n);
+	// if (output && addr==4) { snemdebug("DEC 4 %02X %i %i\n",temp,p.z,p.n); }
 }
 void decZp16()
 {
@@ -1043,8 +1043,9 @@ void ldaIndirectLongy16()
 {
 	addr = indirectly();
 	a.w = readmemw(addr);
-	if (pc == 0xFDC9)
-		printf("LDA %06lu %04X\n", addr, a.w);
+	if (pc == 0xFDC9) {
+		snemdebug("LDA %06lu %04X\n", addr, a.w);
+	}
 	setzn16(a.w);
 }
 
@@ -1154,7 +1155,7 @@ void staLongx16()
 {
 	addr = absolutelongx();
 	writememw(addr, a.w);
-	// printf("Written %06X %04X %04X\n",addr,a.w,readmemw(addr));
+	// snemdebug("Written %06X %04X %04X\n",addr,a.w,readmemw(addr));
 }
 void staIndirect16()
 {
@@ -2529,7 +2530,7 @@ void bitImm16()
 	unsigned short temp = readmemw(pbr | pc);
 	pc += 2;
 	p.z = !(temp & a.w);
-	// printf("BIT %04X %04X %i\n",a.w,temp,p.z);
+	// snemdebug("BIT %04X %04X %i\n",a.w,temp,p.z);
 	setzf = 0;
 	// p.v=temp&0x4000;
 	// p.n=temp&0x8000;
@@ -2844,7 +2845,7 @@ void phb()
 	readmem(pbr | pc);
 	writemem(s.w, dbr >> 16);
 	s.w--;
-	// printf("PHB %04X\n",s.w);
+	// snemdebug("PHB %04X\n",s.w);
 }
 void phbe()
 {
@@ -2858,7 +2859,7 @@ void phk()
 	readmem(pbr | pc);
 	writemem(s.w, pbr >> 16);
 	s.w--;
-	// printf("PHK %04X\n",s.w);
+	// snemdebug("PHK %04X\n",s.w);
 }
 void phke()
 {
@@ -2875,7 +2876,7 @@ void pea()
 	s.w--;
 	writemem(s.w, addr & 0xFF);
 	s.w--;
-	// printf("PEA %04X\n",s.w);
+	// snemdebug("PEA %04X\n",s.w);
 }
 
 void pei()
@@ -2885,7 +2886,7 @@ void pei()
 	s.w--;
 	writemem(s.w, addr & 0xFF);
 	s.w--;
-	// printf("PEI %04X\n",s.w);
+	// snemdebug("PEI %04X\n",s.w);
 }
 
 void per()
@@ -2897,7 +2898,7 @@ void per()
 	s.w--;
 	writemem(s.w, addr & 0xFF);
 	s.w--;
-	// printf("PER %04X\n",s.w);
+	// snemdebug("PER %04X\n",s.w);
 }
 
 void phd()
@@ -2906,7 +2907,7 @@ void phd()
 	s.w--;
 	writemem(s.w, dp & 0xFF);
 	s.w--;
-	// printf("PHD %04X\n",s.w);
+	// snemdebug("PHD %04X\n",s.w);
 }
 void pld()
 {
@@ -2917,7 +2918,7 @@ void pld()
 	dp = readmem(s.w);
 	s.w++;
 	dp |= (readmem(s.w) << 8);
-	// printf("PLD %04X\n",s.w);
+	// snemdebug("PLD %04X\n",s.w);
 }
 
 void pha8()
@@ -2925,7 +2926,7 @@ void pha8()
 	readmem(pbr | pc);
 	writemem(s.w, a.b.l);
 	s.w--;
-	// printf("PHA %04X\n",s.w);
+	// snemdebug("PHA %04X\n",s.w);
 }
 void pha16()
 {
@@ -2934,7 +2935,7 @@ void pha16()
 	s.w--;
 	writemem(s.w, a.b.l);
 	s.w--;
-	// printf("PHA %04X\n",s.w);
+	// snemdebug("PHA %04X\n",s.w);
 }
 
 void phx8()
@@ -2942,7 +2943,7 @@ void phx8()
 	readmem(pbr | pc);
 	writemem(s.w, x.b.l);
 	s.w--;
-	// printf("PHX %04X\n",s.w);
+	// snemdebug("PHX %04X\n",s.w);
 }
 void phx16()
 {
@@ -2951,7 +2952,7 @@ void phx16()
 	s.w--;
 	writemem(s.w, x.b.l);
 	s.w--;
-	// printf("PHX %04X\n",s.w);
+	// snemdebug("PHX %04X\n",s.w);
 }
 
 void phy8()
@@ -2959,7 +2960,7 @@ void phy8()
 	readmem(pbr | pc);
 	writemem(s.w, y.b.l);
 	s.w--;
-	// printf("PHY %04X\n",s.w);
+	// snemdebug("PHY %04X\n",s.w);
 }
 void phy16()
 {
@@ -2968,7 +2969,7 @@ void phy16()
 	s.w--;
 	writemem(s.w, y.b.l);
 	s.w--;
-	// printf("PHY %04X\n",s.w);
+	// snemdebug("PHY %04X\n",s.w);
 }
 
 void pla8()
@@ -2979,7 +2980,7 @@ void pla8()
 	clockspc(6);
 	a.b.l = readmem(s.w);
 	setzn8(a.b.l);
-	// printf("PLA %04X\n",s.w);
+	// snemdebug("PLA %04X\n",s.w);
 }
 void pla16()
 {
@@ -2991,7 +2992,7 @@ void pla16()
 	s.w++;
 	a.b.h = readmem(s.w);
 	setzn16(a.w);
-	// printf("PLA %04X\n",s.w);
+	// snemdebug("PLA %04X\n",s.w);
 }
 
 void plx8()
@@ -3002,7 +3003,7 @@ void plx8()
 	clockspc(6);
 	x.b.l = readmem(s.w);
 	setzn8(x.b.l);
-	// printf("PLX %04X\n",s.w);
+	// snemdebug("PLX %04X\n",s.w);
 }
 void plx16()
 {
@@ -3014,7 +3015,7 @@ void plx16()
 	s.w++;
 	x.b.h = readmem(s.w);
 	setzn16(x.w);
-	// printf("PLX %04X\n",s.w);
+	// snemdebug("PLX %04X\n",s.w);
 }
 
 void ply8()
@@ -3025,7 +3026,7 @@ void ply8()
 	clockspc(6);
 	y.b.l = readmem(s.w);
 	setzn8(y.b.l);
-	// printf("PLY %04X\n",s.w);
+	// snemdebug("PLY %04X\n",s.w);
 }
 void ply16()
 {
@@ -3037,7 +3038,7 @@ void ply16()
 	s.w++;
 	y.b.h = readmem(s.w);
 	setzn16(y.w);
-	// printf("PLY %04X\n",s.w);
+	// snemdebug("PLY %04X\n",s.w);
 }
 
 void plb()
@@ -3047,7 +3048,7 @@ void plb()
 	cycles -= 6;
 	clockspc(6);
 	dbr = readmem(s.w) << 16;
-	// printf("PLB %04X\n",s.w);
+	// snemdebug("PLB %04X\n",s.w);
 }
 void plbe()
 {
@@ -3073,7 +3074,7 @@ void plp()
 	cycles -= 12;
 	clockspc(12);
 	updatecpumode();
-	// printf("PLP %04X\n",s.w);
+	// snemdebug("PLP %04X\n",s.w);
 }
 void plpe()
 {
@@ -3110,7 +3111,7 @@ void php()
 	readmem(pbr | pc);
 	writemem(s.w, temp);
 	s.w--;
-	// printf("PHP %04X\n",s.w);
+	// snemdebug("PHP %04X\n",s.w);
 }
 void phpe()
 {
@@ -3271,21 +3272,21 @@ void bne()
 {
 	signed char temp = (signed char)readmem(pbr | pc);
 	pc++;
-	// if (pc==0x8D44) printf("BNE %i %i ",setzf,p.z);
+	// if (pc==0x8D44) { snemdebug("BNE %i %i ",setzf,p.z); }
 	if (setzf > 0)
 		p.z = 1;
 	if (setzf < 0)
 		p.z = 0;
 	setzf = 0;
-	// if (pc==0x8D44) printf("%i\n",p.z);
-	// if (skipz) //printf("skipz ");
+	// if (pc==0x8D44) { snemdebug("%i\n",p.z); }
+	// if (skipz) { snemdebug("skipz "); }
 	if (!p.z) // && !skipz)
 	{
 		pc += temp;
 		cycles -= 6;
 		clockspc(6);
 	}
-	// if (skipz) //printf("%04X\n",pc);
+	// if (skipz) { snemdebug("%04X\n",pc); }
 	skipz = 0;
 }
 void bpl()
@@ -3369,7 +3370,7 @@ void jmpind()
 void jmpindx()
 {
 	addr = (readmemw(pbr | pc)) + x.w + pbr;
-	// //printf("Read %06X\n",addr);
+	// //snemdebug("Read %06X\n",addr);
 	pc = readmemw(addr);
 }
 
@@ -3390,7 +3391,7 @@ void jsr()
 	writemem(s.w, pc & 0xFF);
 	s.w--;
 	pc = addr;
-	// printf("JSR %04X\n",s.w);
+	// snemdebug("JSR %04X\n",s.w);
 }
 void jsre()
 {
@@ -3408,14 +3409,14 @@ void jsrIndx()
 {
 	addr = jindirectx();
 	pc--;
-	// //printf("Addr %06X\n",addr);
+	// //snemdebug("Addr %06X\n",addr);
 	writemem(s.w, pc >> 8);
 	s.w--;
 	writemem(s.w, pc & 0xFF);
 	s.w--;
 	pc = readmemw(addr);
-	// printf("JSR %04X\n",s.w);
-	// //printf("PC %04X\n",pc);
+	// snemdebug("JSR %04X\n",s.w);
+	// //snemdebug("PC %04X\n",pc);
 }
 void jsrIndxe()
 {
@@ -3442,7 +3443,7 @@ void jsl()
 	s.w--;
 	pc = addr;
 	pbr = temp << 16;
-	// printf("JSL %04X\n",s.w);
+	// snemdebug("JSL %04X\n",s.w);
 }
 
 void jsle()
@@ -3470,7 +3471,7 @@ void rtl()
 	pbr = readmem(s.w + 1) << 16;
 	s.w++;
 	pc++;
-	// printf("RTL %04X\n",s.w);
+	// snemdebug("RTL %04X\n",s.w);
 }
 void rtle()
 {
@@ -3491,7 +3492,7 @@ void rts()
 	pc = readmemw(s.w + 1);
 	s.w += 2;
 	pc++;
-	// printf("RTS %04X\n",s.w);
+	// snemdebug("RTS %04X\n",s.w);
 }
 void rtse()
 {
@@ -3510,7 +3511,7 @@ void rti()
 	s.w++;
 	clockspc(6);
 	temp = readmem(s.w);
-	// //printf("%04X -> %02X\n",s.w,temp);
+	// //snemdebug("%04X -> %02X\n",s.w,temp);
 	p.c = temp & 1;
 	p.z = temp & 2;
 	p.i = temp & 4;
@@ -3520,15 +3521,15 @@ void rti()
 	p.v = temp & 0x40;
 	p.n = temp & 0x80;
 	s.w++;
-	pc = readmem(s.w); // //printf("%04X -> %02X\n",s.w,pc);
+	pc = readmem(s.w); // //snemdebug("%04X -> %02X\n",s.w,pc);
 	s.w++;
-	pc |= (readmem(s.w) << 8); // //printf("%04X -> %02X\n",s.w,pc>>8);
+	pc |= (readmem(s.w) << 8); // //snemdebug("%04X -> %02X\n",s.w,pc>>8);
 	s.w++;
-	pbr = readmem(s.w) << 16; ////printf("%04X -> %02X\n",s.w,pbr>>16);
+	pbr = readmem(s.w) << 16; ////snemdebug("%04X -> %02X\n",s.w,pbr>>16);
 	updatecpumode();
-	// printf("RTI %04X\n",s.w);
+	// snemdebug("RTI %04X\n",s.w);
 	// output=0;
-	// //printf("RTI to %06X\n",pbr|pc);
+	// //snemdebug("RTI to %06X\n",pbr|pc);
 }
 
 /* Shift group */
@@ -4205,7 +4206,7 @@ void wai()
 	readmem(pbr | pc);
 	inwai = 1;
 	pc--;
-	// printf("WAI %06X\n",pbr|pc);
+	// snemdebug("WAI %06X\n",pbr|pc);
 }
 
 void mvp()
@@ -4289,7 +4290,7 @@ void reset65c816()
 	a.w = x.w = y.w = 0;
 	p.x = p.m = 1;
 	skipz = 0;
-	printf("Reset to %04X\n", pc);
+	snemdebug("Reset to %04X\n", pc);
 	// exit(-1);
 }
 
@@ -4303,7 +4304,7 @@ void dumpregs()
 	snemlog("%c %c %c %i\n", (p.e) ? 'E' : ' ', (p.x) ? 'X' : ' ',
 			(p.m) ? 'M' : ' ', cpumode);
 	dumpvram();
-	// printf("89272=%02X\n",readmem(0x89272));
+	// snemdebug("89272=%02X\n",readmem(0x89272));
 }
 
 void badopcode()
@@ -4312,7 +4313,7 @@ void badopcode()
 	snemlog("Bad opcode %02X\n", opcode);
 	pc--;
 	dumpregs();
-	// printf("%02X
+	// snemdebug("%02X
 	// %06X\n",readmem(0x3F8A82),rom[((0x3F8A82>>16)*0x8000)+(((0x3F8A82>>12)&3)*0x2000)+(0x3F8A82&0x1FFF)]);
 	// fwrite(rom,2048*1024,1,f);
 	// fclose(f);
@@ -4902,7 +4903,7 @@ void updatecpumode()
 void nmi65c816()
 {
 	unsigned char temp = 0;
-	// printf("NMI %i %i %i\n",p.i,inwai,irqenable);
+	// snemdebug("NMI %i %i %i\n",p.i,inwai,irqenable);
 	readmem(pbr | pc);
 	cycles -= 6;
 	clockspc(6);
@@ -4910,13 +4911,13 @@ void nmi65c816()
 		pc++;
 	inwai = 0;
 	if (!p.e) {
-		// //printf("%02X -> %04X\n",pbr>>16,s.w);
+		// //snemdebug("%02X -> %04X\n",pbr>>16,s.w);
 		writemem(s.w, pbr >> 16);
 		s.w--;
-		// //printf("%02X -> %04X\n",pc>>8,s.w);
+		// //snemdebug("%02X -> %04X\n",pc>>8,s.w);
 		writemem(s.w, pc >> 8);
 		s.w--;
-		// //printf("%02X -> %04X\n",pc&0xFF,s.w);
+		// //snemdebug("%02X -> %04X\n",pc&0xFF,s.w);
 		writemem(s.w, pc & 0xFF);
 		s.w--;
 		if (p.c)
@@ -4935,14 +4936,14 @@ void nmi65c816()
 			temp |= 0x40;
 		if (p.n)
 			temp |= 0x80;
-		// //printf("%02X -> %04X\n",temp,s.w);
+		// //snemdebug("%02X -> %04X\n",temp,s.w);
 		writemem(s.w, temp);
 		s.w--;
 		pc = readmemw(0xFFEA);
 		pbr = 0;
 		p.i = 1;
 		p.d = 0;
-		// printf("NMI\n");
+		// snemdebug("NMI\n");
 	} else {
 		snemlog("Emulation mode NMI\n");
 		dumpregs();
@@ -4953,7 +4954,7 @@ void nmi65c816()
 void irq65c816()
 {
 	unsigned char temp = 0;
-	// printf("IRQ %i %i %i\n",p.i,inwai,irqenable);
+	// snemdebug("IRQ %i %i %i\n",p.i,inwai,irqenable);
 	readmem(pbr | pc);
 	cycles -= 6;
 	clockspc(6);
@@ -4994,7 +4995,7 @@ void irq65c816()
 		pbr = 0;
 		p.i = 1;
 		p.d = 0;
-		// printf("IRQ\n");
+		// snemdebug("IRQ\n");
 	} else {
 		snemlog("Emulation mode IRQ\n");
 		dumpregs();

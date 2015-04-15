@@ -1,6 +1,5 @@
 #include "util.h"
 
-#include <stdio.h>
 
 #ifdef SNEM_LOG
 FILE* snemlogf;

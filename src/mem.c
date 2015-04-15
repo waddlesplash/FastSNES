@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -36,7 +35,7 @@ void loadrom(char* fn)
 	fseek(f, -1, SEEK_END);
 	len = ftell(f) + 1;
 	fseek(f, len & 512, SEEK_SET);
-	printf("%i %lu\n", len, ftell(f));
+	snemdebug("%i %lu\n", len, ftell(f));
 	rom = (unsigned char*)malloc(4096 * 1024);
 	// fread(rom,512,1,f);
 	/*        for (c=0;c<0x40000;c+=0x8000)
@@ -45,7 +44,7 @@ void loadrom(char* fn)
 					fread(&rom[c],32768,1,f);
 			} */
 	while (!feof(f) && c < 0x400000) {
-		// printf("Read %06X\n",c);
+		// snemdebug("Read %06X\n",c);
 		fread(&rom[c], 65536, 1, f);
 		c += 0x10000;
 	}
@@ -67,29 +66,29 @@ void loadrom(char* fn)
 	for (c = 0; c < 21; c++)
 		name[c] = readmem(0xFFC0 + c);
 	name[21] = 0;
-	printf("ROM name : %s\n", name);
-	printf("ROM size : %i megabits (%i kbytes)\n", 1 << (readmem(0xFFD7) - 7),
+	snemdebug("ROM name : %s\n", name);
+	snemdebug("ROM size : %i megabits (%i kbytes)\n", 1 << (readmem(0xFFD7) - 7),
 		   len >> 10);
 	srammask = (1 << (readmem(0xFFD8) + 10)) - 1;
 	if (!readmem(0xFFD8))
 		srammask = 0;
-	printf("SRAM size : %i kilobits (%i kbytes) %04X\n",
+	snemdebug("SRAM size : %i kilobits (%i kbytes) %04X\n",
 		   1 << (readmem(0xFFD8) + 3), (1 << (readmem(0xFFD8) + 3)) >> 3,
 		   srammask);
 	if (readmem(0xFFD9) > 1)
 		pal = 1;
 	else
 		pal = 0;
-	printf("Country code : %i (%s)\n", readmem(0xFFD9),
+	snemdebug("Country code : %i (%s)\n", readmem(0xFFD9),
 		   (readmem(0xFFD9) > 1) ? "PAL" : "NTSC");
-	printf("NMI vector : %02X%02X\n", readmem(0xFFEB), readmem(0xFFEA));
-	printf("IRQ vector : %02X%02X\n", readmem(0xFFEF), readmem(0xFFEE));
-	printf("Reset vector : %02X%02X\n", readmem(0xFFFD), readmem(0xFFFC));
-	printf("Memory map : %s\n", (lorom) ? "LoROM" : "HiROM");
+	snemdebug("NMI vector : %02X%02X\n", readmem(0xFFEB), readmem(0xFFEA));
+	snemdebug("IRQ vector : %02X%02X\n", readmem(0xFFEF), readmem(0xFFEE));
+	snemdebug("Reset vector : %02X%02X\n", readmem(0xFFFD), readmem(0xFFFC));
+	snemdebug("Memory map : %s\n", (lorom) ? "LoROM" : "HiROM");
 	if (srammask) {
 		sramname[0] = 0;
 		replace_extension(sramname, fn, "srm", 511);
-		printf("Load SRAM from %s %s\n", sramname, fn);
+		snemdebug("Load SRAM from %s %s\n", sramname, fn);
 		f = fopen(sramname, "rb");
 		if (f) {
 			fread(sram, srammask + 1, 1, f);
@@ -133,7 +132,7 @@ void initmem()
 			memread[(0x7F << 3) | c] = memwrite[(0x7F << 3) | c] = 1;
 			memlookup[(0x7F << 3) | c] = &ram[(c * 0x2000) + 0x10000];
 		}
-		// printf("%08X\n",memlookup[(0x7F<<3)|4]);
+		// snemdebug("%08X\n",memlookup[(0x7F<<3)|4]);
 		/*                for (c=0;c<96;c++)
 						{
 								for (d=0;d<4;d++)
@@ -153,7 +152,7 @@ void initmem()
 								memread[(0x70<<3)+c]=memwrite[(0x70<<3)+c]=0;
 								memlookup[(0x70<<3)+c]=sram;
 						} */
-		// printf("%08X\n",memlookup[(0x7F<<3)|4]);
+		// snemdebug("%08X\n",memlookup[(0x7F<<3)|4]);
 	} else {
 		for (c = 0; c < 2048; c++) {
 			memread[c] = 1;
@@ -237,7 +236,7 @@ unsigned char readmeml(unsigned long addr)
 			exit(-1);
 		case 0x6000:
 		case 0x7000:
-			// printf("Read SRAM %04X %02X
+			// snemdebug("Read SRAM %04X %02X
 			// %06X\n",addr,sram[addr&0x1FFF],pbr|pc);
 			if (!lorom)
 				return sram[addr & srammask];
@@ -252,14 +251,14 @@ unsigned char readmeml(unsigned long addr)
 		return 0;
 	if ((addr >> 16) == 0x70) {
 		// return 0;
-		// printf("Read SRAM %04X
+		// snemdebug("Read SRAM %04X
 		// %02X\n",addr,sram[addr&0x1FFF]);
 		if (srammask) {
-			// printf("Read SRAM %04X %04X %02X
+			// snemdebug("Read SRAM %04X %04X %02X
 			// %04X\n",addr,addr&srammask,sram[addr&srammask],srammask);
 			return sram[addr & srammask];
 		}
-		// printf("Read SRAM zero\n");
+		// snemdebug("Read SRAM zero\n");
 		return 0;
 	}
 	if ((addr >> 16) == 0x60)
@@ -291,7 +290,7 @@ void writememl(unsigned long addr, unsigned char val)
 			return;
 		case 0x6000:
 		case 0x7000:
-			// printf("Write SRAM %04X %02X
+			// snemdebug("Write SRAM %04X %02X
 			// %06X\n",addr,val,pbr|pc);
 			if (!lorom)
 				sram[addr & srammask] = val;
@@ -315,7 +314,7 @@ void writememl(unsigned long addr, unsigned char val)
 		return;
 	// if ((addr>>16)==0xD0) return;
 	if ((addr >> 16) == 0x70) {
-		// printf("Write SRAM %04X %04X
+		// snemdebug("Write SRAM %04X %04X
 		// %02X\n",addr,addr&srammask,val);
 		sram[addr & srammask] = val;
 		return;

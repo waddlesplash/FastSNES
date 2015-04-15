@@ -1,7 +1,6 @@
 /* Snem 0.1 by Tom Walker
   I/O, or $42xx */
 #include <allegro.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "snem.h"
@@ -31,7 +30,7 @@ void readjoy()
 	if (key[KEY_Q])      pad[0] |= 0x0020;
 	if (key[KEY_W])      pad[0] |= 0x0010;
 	padpos = 16;
-	// printf("Read joy\n");
+	// snemdebug("Read joy\n");
 }
 
 unsigned char readjoyold(unsigned short addr)
@@ -39,11 +38,9 @@ unsigned char readjoyold(unsigned short addr)
 	int temp;
 	if (addr == 0x4016) {
 		temp = pad[0] >> (padpos ^ 15);
-		if (!(padstat & 1))
-			padpos++;
-		if (padpos > 15)
-			temp = 1;
-		// printf("Read 4016 %i %i %02X
+		if (!(padstat & 1)) padpos++;
+		if (padpos > 15) temp = 1;
+		// snemdebug("Read 4016 %i %i %02X
 		// %06X\n",temp&1,padpos,padstat,pbr|pc);
 		return temp & 1;
 	}
@@ -53,9 +50,10 @@ unsigned char readjoyold(unsigned short addr)
 void writejoyold(unsigned short addr, unsigned char val)
 {
 	if (addr == 0x4016) {
-		// printf("Write 4016 %02X\n",val);
-		if ((val & 1) && !(padstat & 1))
+		// snemdebug("Write 4016 %02X\n",val);
+		if ((val & 1) && !(padstat & 1)) {
 			padpos = 0;
+		}
 		padstat = val;
 	}
 }
@@ -68,26 +66,25 @@ void writeio(unsigned short addr, unsigned char val)
 	int c, d = 0, offset = 0, speed;
 	unsigned char temp;
 	//int delay = 0;
-	// if ((addr&0x100) && ((addr&0x70)==0x50))
-	// printf("DMA 5 write %04X %02X\n",addr,val);
+	// if ((addr&0x100) && ((addr&0x70)==0x50)) {
+	// snemdebug("DMA 5 write %04X %02X\n",addr,val); }
 	// snemlog("Write IO %04X %02X %02X:%04X\n",addr,val,pbr>>16,pc);
 	switch (addr & 0x1FF) {
 	case 0x00:
 		nmienable = val & 0x80;
 		irqenable = (val >> 4) & 3;
-		// printf("COUNTENA %02X %i\n",val,irqenable);
-		if (!irqenable)
-			irq = 0;
+		// snemdebug("COUNTENA %02X %i\n",val,irqenable);
+		if (!irqenable)	irq = 0;
 		break;
 	case 0x02: /* Multiplicand A */
 		mula = val;
-		// printf("Mul A write %02X %06X\n",val,pbr|pc);
+		// snemdebug("Mul A write %02X %06X\n",val,pbr|pc);
 		// mulr=mula*mulb;
 		return;
 	case 0x03: /* Multiplier B */
 		mulb = val;
 		mulr = mula * mulb;
-		// printf("Mul B write %02X %06X\n",val,pbr|pc);
+		// snemdebug("Mul B write %02X %06X\n",val,pbr|pc);
 		return;
 	case 0x04: /* Dividend C Low */
 		divc &= 0xFF00;
@@ -102,7 +99,7 @@ void writeio(unsigned short addr, unsigned char val)
 								divr=0xFFFF;
 								mulr=divc;
 						} */
-		// printf("Div C low write %02X %06X\n",val,pbr|pc);
+		// snemdebug("Div C low write %02X %06X\n",val,pbr|pc);
 		return;
 	case 0x05: /* Dividend C High */
 		divc &= 0xFF;
@@ -117,7 +114,7 @@ void writeio(unsigned short addr, unsigned char val)
 								divr=0xFFFF;
 								mulr=divc;
 						} */
-		// printf("Div C high write %02X %06X\n",val,pbr|pc);
+		// snemdebug("Div C high write %02X %06X\n",val,pbr|pc);
 		return;
 	case 0x06: /* Divisor B */
 		divb = val;
@@ -128,7 +125,7 @@ void writeio(unsigned short addr, unsigned char val)
 			divr = 0xFFFF;
 			mulr = divc;
 		}
-		// printf("Div B low write %02X %06X\n",val,pbr|pc);
+		// snemdebug("Div B low write %02X %06X\n",val,pbr|pc);
 		return;
 	case 0x07: /* X low */
 		xirq = (xirq & 0x100) | val;
@@ -152,13 +149,13 @@ void writeio(unsigned short addr, unsigned char val)
 														dmaops++;
 														if (dmaops==3) return;
 												} */
-				// if (!dmalen[d]) printf("DMA %i
+				// if (!dmalen[d]) { snemdebug("DMA %i
 				// ctrl %02X src %06X dest %02X
 				// size %04X
-				// %i\n",d,dmactrl[d],(dmabank[d]<<16)|dmasrc[d],dmadest[d],dmalen[d],dmaops);
+				// %i\n",d,dmactrl[d],(dmabank[d]<<16)|dmasrc[d],dmadest[d],dmalen[d],dmaops); }
 				do {
 					if (dmactrl[d] & 0x80) {
-						// printf("Dest
+						// snemdebug("Dest
 						// %04X+%04X
 						// SRC
 						// %06X
@@ -170,10 +167,10 @@ void writeio(unsigned short addr, unsigned char val)
 						// if
 						// (dmabank[d]==0
 						// &&
-						// dmasrc[d]<0x2000)
-						// printf("%02X
+						// dmasrc[d]<0x2000) {
+						// snemdebug("%02X
 						// %06X
-						// %04X\n",temp,dmabank[d]|dmasrc[d],dmalen[d]);
+						// %04X\n",temp,dmabank[d]|dmasrc[d],dmalen[d]); }
 						writeppu(dmadest[d] + offset, temp);
 					}
 					if (!(dmactrl[d] & 8)) {
@@ -207,7 +204,7 @@ void writeio(unsigned short addr, unsigned char val)
 		break;
 	case 0x0C: /* HDMA enable */
 		hdmaena = val;
-		// printf("HDMA ena : %02X %06X %i
+		// snemdebug("HDMA ena : %02X %06X %i
 		// %i\n",val,pbr|pc,framenum,lines);
 		break;
 	case 0x0D: /* ROM speed select */
@@ -224,17 +221,17 @@ void writeio(unsigned short addr, unsigned char val)
 			accessspeed[(c << 3) | 4] = accessspeed[(c << 3) | 5] = speed;
 			accessspeed[(c << 3) | 6] = accessspeed[(c << 3) | 7] = speed;
 		}
-		printf("Set ROM speed to %i cycles\n", speed);
+		snemdebug("Set ROM speed to %i cycles\n", speed);
 		/*                if (val)
 						{
-								printf("High ROM speed\n");
+								snemdebug("High ROM speed\n");
 								exit(-1);
 						} */
 		break;
 	/*
 					if (!val) return;
-					printf("DMA enable %02X\n",val);
-					printf("Src %02X%04X Dest %04X Len
+					snemdebug("DMA enable %02X\n",val);
+					snemdebug("Src %02X%04X Dest %04X Len
 	   %04X\n",dmabank[0],dmasrc[0],dmadest[0],dmalen[0]);
 					dumpregs();
 					exit(-1); */
@@ -247,7 +244,7 @@ void writeio(unsigned short addr, unsigned char val)
 	case 0x160:
 	case 0x170:
 		dmactrl[(addr >> 4) & 7] = val;
-		// printf("Write ctrl %i %02X
+		// snemdebug("Write ctrl %i %02X
 		// %06X\n",(addr>>4)&7,val,pbr|pc);
 		break;
 	case 0x101:
@@ -329,7 +326,7 @@ void writeio(unsigned short addr, unsigned char val)
 	case 0x168:
 	case 0x178:
 		hdmaaddr[(addr >> 4) & 7] = (hdmaaddr[(addr >> 4) & 7] & 0xFF00) | val;
-		// printf("HDMA addr %i now %04X
+		// snemdebug("HDMA addr %i now %04X
 		// %06X\n",(addr>>4)&7,hdmaaddr[(addr>>4)&7],pbr|pc);
 		break;
 	case 0x109:
@@ -342,7 +339,7 @@ void writeio(unsigned short addr, unsigned char val)
 	case 0x179:
 		hdmaaddr[(addr >> 4) & 7] =
 			(hdmaaddr[(addr >> 4) & 7] & 0xFF) | (val << 8);
-		// printf("HDMA addr %i now %04X
+		// snemdebug("HDMA addr %i now %04X
 		// %06X\n",(addr>>4)&7,hdmaaddr[(addr>>4)&7],pbr|pc);
 		break;
 	case 0x10A:
@@ -354,13 +351,13 @@ void writeio(unsigned short addr, unsigned char val)
 	case 0x16A:
 	case 0x17A:
 		hdmacount[(addr >> 4) & 7] = val;
-		// printf("HDMA count %i now %04X
+		// snemdebug("HDMA count %i now %04X
 		// %06X\n",(addr>>4)&7,hdmacount[(addr>>4)&7],pbr|pc);
 		break;
-		// printf("%04X write %02X %06X %i
+		// snemdebug("%04X write %02X %06X %i
 		// %i\n",addr,val,pbr|pc,framenum,lines);
 		// default:
-		// printf("Write IO %04X %02X\n",addr,val);
+		// snemdebug("Write IO %04X %02X\n",addr,val);
 	}
 }
 
@@ -368,12 +365,12 @@ unsigned char readio(unsigned short addr)
 {
 	int temp = 0;
 	if (addr == 0x4016 || addr == 0x4017) {
-		// printf("Read oldstyle joypad\n");
+		// snemdebug("Read oldstyle joypad\n");
 		// dumpregs();
 		// exit(-1);
 	}
-	// if (addr!=0x4218 && addr!=0x4219) snemlog("Read IO %04X %02X:%04X
-	// %04X\n",addr,pbr>>16,pc,dp);
+	// if (addr!=0x4218 && addr!=0x4219) { snemlog("Read IO %04X %02X:%04X
+	// %04X\n",addr,pbr>>16,pc,dp); }
 	switch (addr & 0x1FF) {
 	case 0:
 		return 0;
@@ -408,24 +405,24 @@ unsigned char readio(unsigned short addr)
 		return 0;
 
 	case 0x14: /* Division Result Low */
-			   // printf("Read div low\n");
+			   // snemdebug("Read div low\n");
 		return divr;
 	case 0x15: /* Division Result High */
-			   // printf("Read div high\n");
+			   // snemdebug("Read div high\n");
 		return divr >> 8;
 	case 0x16: /* Multiplication Result Low */
-			   // printf("Read mul low\n");
+			   // snemdebug("Read mul low\n");
 		return mulr;
 	case 0x17: /* Multiplication Result High */
-			   // printf("Read mul high\n");
+			   // snemdebug("Read mul high\n");
 		return mulr >> 8;
 
 	case 0x18: /* Joypad #1 */
-			   // printf("Read joy low %02X %06X
+			   // snemdebug("Read joy low %02X %06X
 			   // %i\n",pad[0]>>8,pbr|pc,ins);
 		return pad[0] & 0xFF;
 	case 0x19:
-		// printf("Read joy high %02X
+		// snemdebug("Read joy high %02X
 		// %06X\n",pad[0]&0xFF,pbr|pc);
 		return pad[0] >> 8;
 
@@ -520,7 +517,7 @@ unsigned char readio(unsigned short addr)
 
 	default:
 		return 0;
-		// printf("Read IO %04X\n",addr);
+		// snemdebug("Read IO %04X\n",addr);
 		// dumpregs();
 		// exit(-1);
 	}

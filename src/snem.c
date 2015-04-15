@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <allegro.h>
 
@@ -58,7 +57,7 @@ void execframe()
 		cycles += 1364;
 		intthisline = 0;
 		while (cycles > 0) {
-			// if (ins==20) printf("1 %06X\n",pbr|pc);
+			// if (ins==20) snemdebug("1 %06X\n",pbr|pc);
 			/*                        pc7=pc8;
 									pc8=pc9;
 									pc9=pc10;
@@ -71,22 +70,22 @@ void execframe()
 									pc2=pc3;
 									pc3=pc4;
 									pc4=pbr|pc;
-			// if (pc==0xFB2A) printf("FB2A
-			X=%04X\n",x.w);
+			// if (pc==0xFB2A) { snemdebug("FB2A
+			X=%04X\n",x.w); }
 									if (pc==0xFD5F || pc==0xFD94)
 									{
-											printf("%04X %06X %06X %06X %06X
+											snemdebug("%04X %06X %06X %06X %06X
 			%06X %06X %06X %06X %06X %06X %06X
 			%06X\n",pc,pc2,pc3,pc4,pc7,pc8,pc9,pc10,pc11,pc12,pc13,pc14,pc15);
 											output=1;
 											timetolive=20;
 									}
-									if (pc==0xF58D) printf("F58D A=%04X
+									if (pc==0xF58D) snemdebug("F58D A=%04X
 			Y=%04X\n",a.w,y.w);
 			// if (pc==0xFD66) { timetolive=15; }
-			// if (pc==0xFD91) output=0;
-									if (pc==0xFADB) output=1;
-									if (pc==0xFAE6) output=0; */
+			// if (pc==0xFD91) { output=0; }
+				if (pc==0xFADB) { output=1; }
+				if (pc==0xFAE6) { output=0; } */
 			opcode = readmem(pbr | pc);
 			pc++;
 			opcodes[opcode][cpumode]();
@@ -105,32 +104,32 @@ void execframe()
 											dumpregs();
 											exit(-1);
 									} */
-			/*                        if (pc==0x9F64) output=1;
+			/*                        if (pc==0x9F64) { output=1; }
 									if (pc==0x9F67)
 									{
 											dumpregs();
-											printf("Hit E166 %06X %06X
+											snemdebug("Hit E166 %06X %06X
 			   %06X\n",pc2,pc3,pc4);
-											printf("%08X %08X %02X
+											snemdebug("%08X %08X %02X
 			   %02X\n",memlookup[4],memlookup[0x404],readmem(0x9F64),readmem(0x809F64));
 											exit(-1);
 									} */
 			// if ((pbr|pc)==0xC40142) { output=1;
 			// timetolive=300; }
-			/*                        if (x.w==0xE0BC && !e0bc) printf("X=E0BC
-			   at %06X\n",pbr|pc);
+			/*                        if (x.w==0xE0BC && !e0bc) { snemdebug("X=E0BC
+			at %06X\n",pbr|pc); }
 									e0bc=(x.w==0xE0BC); */
-			// if (pc==0x93E2) output=1;
-			// if (pc==0x93F3) timetolive=150;
-			// if (output) printf("%06X : %04X %04X
-			// %04X\n",pbr|pc,a.w,x.w,y.w);
-			// printf("End of op\n");
-			// if (output) printf("%06X ",pc);
-			// if (pc==0xBBE9) output=1;
-			// if (pc==0xBC18) output=0;
+			// if (pc==0x93E2) { output=1; }
+			// if (pc==0x93F3) { timetolive=150; }
+			// if (output) { snemdebug("%06X : %04X %04X
+			// %04X\n",pbr|pc,a.w,x.w,y.w); }
+			// snemdebug("End of op\n");
+			// if (output) { snemdebug("%06X ",pc); }
+			// if (pc==0xBBE9) { output=1; }
+			// if (pc==0xBC18) { output=0; }
 			// if (pc==0xB898) { ins=0; output=1; }
-			// if ((pbr|pc)==0x89262) printf("Hit 89262
-			// %04X\n",s.w);
+			// if ((pbr|pc)==0x89262) { snemdebug("Hit 89262
+			// %04X\n",s.w); }
 			ins++;
 			// if (ins==16640000) { output=1;
 			// timetolive=5000; }
@@ -140,23 +139,24 @@ void execframe()
 			else if (irq && (!p.i || inwai))
 				irq65c816();
 			oldnmi = nmi;
-			if (output)
-				printf("%06lu %02lu A=%04X X=%04X Y=%04X S=%04X %02X %i %i %04X "
+			if (output) {
+				snemdebug("%06lu %02lu A=%04X X=%04X Y=%04X S=%04X %02X %i %i %04X "
 					   "%i %02X %i %i\n",
 					   pc | pbr, dbr >> 16, a.w, x.w, y.w, s.w, opcode, p.m,
 					   cpumode, dp, lines, lines, xirq, yirq);
+			}
 			if (timetolive) {
 				timetolive--;
 				if (!timetolive) {
 					output = 0;
 				}
 			}
-			// if (pc==0x9DCD) printf("99BA %04X %04X
-			// %04X %i\n",a.w,x.w,y.w,ins);
-			// if (pc==0xAA7C) printf("AA7C %04X %04X
-			// %04X %i\n",a.w,x.w,y.w,ins);
-			// if (ins==286800) output=1;
-			// if (ins==290200) output=0;
+			// if (pc==0x9DCD) { snemdebug("99BA %04X %04X
+			// %04X %i\n",a.w,x.w,y.w,ins); }
+			// if (pc==0xAA7C) { snemdebug("AA7C %04X %04X
+			// %04X %i\n",a.w,x.w,y.w,ins); }
+			// if (ins==286800) { output=1; }
+			// if (ins==290200) { output=0; }
 		}
 		if (lines == 0xE0)
 			nmi = 1;
@@ -205,21 +205,21 @@ int main()
         FILE *f;
         int c;
         char s[256];
-// printf("1\n");
+// snemdebug("1\n");
         allocmem();
-// printf("2\n");
+// snemdebug("2\n");
         loadrom("asterix.smc");
-// printf("3\n");
+// snemdebug("3\n");
 // initmem();
-// printf("4\n");
+// snemdebug("4\n");
         initppu();
         initspc();
         resetppu();
         resetspc();
         resetdsp();
-// printf("3 %08X %08X\n",vram,vramb);
+// snemdebug("3 %08X %08X\n",vram,vramb);
 		reset65c816();
-// printf("4 %08X %08X\n",vram,vramb);
+// snemdebug("4 %08X %08X\n",vram,vramb);
         makeopcodetable();
         ins=0;
         install_keyboard();
@@ -231,7 +231,7 @@ int main()
 /*        f=fopen("rom.dmp","wb");
         fwrite(rom,2048*1024,1,f);
         fclose(f); */
-// printf("5 %08X %08X\n",vram,vramb);
+// snemdebug("5 %08X %08X\n",vram,vramb);
         while (!key[KEY_ESC])
         {
                 if (drawcount)

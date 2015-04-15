@@ -10,7 +10,6 @@
 unsigned char voiceon;
 void writeppu(unsigned short addr, unsigned char val);
 #include <allegro.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "snem.h"
@@ -160,17 +159,17 @@ void initppu()
 	for (c = 0; c < 16; c++) {
 		collookup[c] = (c << 4) | (c << 20);
 	}
-	// printf("%08X %08X\n",vram,vramb);
+	// snemdebug("%08X %08X\n",vram,vramb);
 }
 
 void resetppu()
 {
 	int c, d;
 	memset(&ppu, 0, sizeof(ppu));
-	// printf("1 %08X %08X\n",vram,vramb);
+	// snemdebug("1 %08X %08X\n",vram,vramb);
 	ppu.portctrl = ppu.vramaddr = 0;
 	ppu.palbuffer = 0;
-	// printf("2 %08X %08X\n",vram,vramb);
+	// snemdebug("2 %08X %08X\n",vram,vramb);
 	memset(vram, 0, 0x10000);
 	ppumask = 0;
 	for (c = 0; c < 10; c++) {
@@ -190,14 +189,14 @@ void dumpvram()
 	fwrite(ppu.pal, 512, 1, f);
 	fwrite(sprram, 544, 1, f);
 	fclose(f);
-	printf("left1 %i right1 %i left2 %i right2 %i\n", ppu.w1left, ppu.w1right,
+	snemdebug("left1 %i right1 %i left2 %i right2 %i\n", ppu.w1left, ppu.w1right,
 		   ppu.w2left, ppu.w2right);
-	printf("Window logic %02X enable %02X\n", ppu.windlogic, ppu.windena1);
-	printf("BG0 : %04X  BG1 : %04X  BG2 : %04X  BG3 : %04X\n", ppu.bg[0] << 1,
+	snemdebug("Window logic %02X enable %02X\n", ppu.windlogic, ppu.windena1);
+	snemdebug("BG0 : %04X  BG1 : %04X  BG2 : %04X  BG3 : %04X\n", ppu.bg[0] << 1,
 		   ppu.bg[1] << 1, ppu.bg[2] << 1, ppu.bg[3] << 1);
-	printf("CH0 : %04X  CH1 : %04X  CH2 : %04X  CH3 : %04X\n", ppu.chr[0] << 1,
+	snemdebug("CH0 : %04X  CH1 : %04X  CH2 : %04X  CH3 : %04X\n", ppu.chr[0] << 1,
 		   ppu.chr[1] << 1, ppu.chr[2] << 1, ppu.chr[3] << 1);
-	printf("BG3 yscroll %i\n", ppu.yscroll[2]);
+	snemdebug("BG3 yscroll %i\n", ppu.yscroll[2]);
 }
 
 int bgtype[8][4] = {
@@ -328,57 +327,58 @@ void recalcwindows()
 	int x;
 	unsigned short* w;
 	unsigned short w2[256], w3[256];
-	// if (!wfile) wfile=fopen("window.dmp","wb");
+	// if (!wfile) { wfile=fopen("window.dmp","wb"); }
 	w = &window[0][32];
-	if (ppu.windena1 & 0xA && !windowdisable) /* BG1 */
-	{
+	if (ppu.windena1 & 0xA && !windowdisable) { /* BG1 */
 		WINDOWLOGIC((ppu.windena1 & 0xF), (ppu.windlogic & 3))
 	} else {
-		for (x = 0; x < 256; x++)
+		for (x = 0; x < 256; x++) {
 			w[x] = 0xFFFF;
+		}
 	}
 	w = &window[1][32];
-	if (ppu.windena1 & 0xA0 && !windowdisable) /* BG2 */
-	{
+	if (ppu.windena1 & 0xA0 && !windowdisable) { /* BG2 */
 		WINDOWLOGIC((ppu.windena1 >> 4), ((ppu.windlogic >> 2) & 3))
 	} else {
-		for (x = 0; x < 256; x++)
+		for (x = 0; x < 256; x++) {
 			w[x] = 0xFFFF;
+		}
 	}
 	w = &window[2][32];
-	if (ppu.windena2 & 0xA && !windowdisable) /* BG3 */
-	{
+	if (ppu.windena2 & 0xA && !windowdisable) { /* BG3 */
 		WINDOWLOGIC((ppu.windena2 & 0xF), ((ppu.windlogic >> 4) & 3))
 	} else {
-		for (x = 0; x < 256; x++)
+		for (x = 0; x < 256; x++) {
 			w[x] = 0xFFFF;
+		}
 	}
 	w = &window[3][32];
-	if (ppu.windena2 & 0xA0 && !windowdisable) /* BG4 */
-	{
+	if (ppu.windena2 & 0xA0 && !windowdisable) { /* BG4 */
 		WINDOWLOGIC((ppu.windena2 >> 4), ((ppu.windlogic >> 6) & 3))
 	} else {
-		for (x = 0; x < 256; x++)
+		for (x = 0; x < 256; x++) {
 			w[x] = 0xFFFF;
+		}
 	}
 	w = &window[9][32];
-	if (ppu.windena3 & 0xA && !windowdisable) /* OBJ */
-	{
+	if (ppu.windena3 & 0xA && !windowdisable) { /* OBJ */
 		WINDOWLOGIC((ppu.windena3 & 0xF), (ppu.windlogic2 & 3))
 	} else {
-		for (x = 0; x < 256; x++)
+		for (x = 0; x < 256; x++) {
 			w[x] = 0xFFFF;
+		}
 	}
 	w = &window[5][32];
-	if (ppu.windena3 & 0xA0 && !windowdisable) /* Colour window */
-	{
+	if (ppu.windena3 & 0xA0 && !windowdisable) { /* Colour window */
 		WINDOWLOGIC((ppu.windena3 >> 4), ((ppu.windlogic2 >> 2) & 3))
 	} else {
-		for (x = 0; x < 256; x++)
+		for (x = 0; x < 256; x++) {
 			w[x] = 0xFFFF;
+		}
 	}
-	for (x = 0; x < 128; x++)
+	for (x = 0; x < 128; x++) {
 		window[6][x + 32] = window[5][x + 32] ^ 0xFFFFFFFF;
+	}
 }
 
 #define CONTINUOUS 1
@@ -391,15 +391,15 @@ void dohdma(int line)
 		if (!line) {
 			hdmaaddr[c] = dmasrc[c];
 			hdmacount[c] = 0;
-			// if (c==2)
-			// printf("Reset HDMA %i loading from
+			// if (c==2) {
+			// snemdebug("Reset HDMA %i loading from
 			// %02X%04X
-			// %i\n",c,dmabank[c],hdmaaddr[c],hdmacount[c]);
+			// %i\n",c,dmabank[c],hdmaaddr[c],hdmacount[c]); }
 		}
 		if (hdmaena & (1 << c) && hdmacount[c] != -1) {
 			if (hdmacount[c] <= 0) {
 				hdmacount[c] = readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-				// printf("HDMA %i count
+				// snemdebug("HDMA %i count
 				// now %04X at %02X%04X
 				// %02X
 				// %04X\n",c,hdmacount[c],dmabank[c],hdmaaddr[c],dmactrl[c],hdmadat[c]);
@@ -407,28 +407,29 @@ void dohdma(int line)
 					goto finishhdma;
 				hdmastat[c] = 0;
 				if (hdmacount[c] & 0x80) {
-					if (hdmacount[c] != 0x80)
+					if (hdmacount[c] != 0x80) {
 						hdmacount[c] &= 0x7F;
+					}
 					hdmastat[c] |= CONTINUOUS;
-					// printf("Continuous
+					// snemdebug("Continuous
 					// for %i
 					// lines\n",hdmacount[c]);
 				}
 				if (dmactrl[c] & 0x40) {
 					hdmastat[c] |= INDIRECT;
 					hdmaaddr2[c] = readmemw((dmabank[c] << 16) | hdmaaddr[c]);
-					// printf("Indirect
+					// snemdebug("Indirect
 					// :
 					// %02X%04X\n",dmaibank[c],hdmaaddr2[c]);
 					hdmaaddr[c] += 2;
 				}
-				// printf("Channel %i now
+				// snemdebug("Channel %i now
 				// %02X%04X\n",c,dmabank[c],hdmaaddr[c]);
-				// if (c==5)
-				// printf("Channel 4 :
+				// if (c==5) {
+				// snemdebug("Channel 4 :
 				// dest %04X read from
 				// %02X %04X %04X stat
-				// %i\n",dmadest[c],dmabank[c],hdmaaddr[c],hdmaaddr2[c],hdmastat[c]);
+				// %i\n",dmadest[c],dmabank[c],hdmaaddr[c],hdmaaddr2[c],hdmastat[c]); }
 				switch (dmactrl[c] & 7) {
 				case 1: /* Two registers */
 					if (hdmastat[c] & INDIRECT)
@@ -462,10 +463,10 @@ void dohdma(int line)
 						hdmadat[c] =
 							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
 					writeppu(dmadest[c], hdmadat[c]);
-					// if (c==2)
-					// printf("Channel
+					// if (c==2) {
+					// snemdebug("Channel
 					// 2 now
-					// %02X%04X\n",dmabank[c],hdmaaddr[c]);
+					// %02X%04X\n",dmabank[c],hdmaaddr[c]); }
 					break;
 				case 3: /* Two registers write twice */
 					if (hdmastat[c] & INDIRECT)
@@ -643,8 +644,7 @@ void dohdma(int line)
 void doblit()
 {
 	// drawvol(otherscr);
-	/*for (int c=0;c<8;c++)
-	{
+	/*for (int c=0;c<8;c++)	{
 	if (voiceon&1)
 	   rectfill(otherscr,(c*20)+8,2,(c*20)+24,10,makecol(255,255,255));
 	voiceon>>=1;
@@ -790,7 +790,7 @@ void drawline(int line)
 		ppu.pri = (ppu.spraddr & 0x1F) << 2;
 	else
 		ppu.pri = ppu.spraddr >> 2;
-	// if (ppu.prirotation) snemlog("PPU.PRI %02X\n",ppu.pri);
+	// if (ppu.prirotation) { snemlog("PPU.PRI %02X\n",ppu.pri); }
 	for (ss = 0; ss < 2; ss++) {
 		if (ss) {
 			b = mainscr;
@@ -813,13 +813,12 @@ void drawline(int line)
 			for (d = 0; d < 12; d++) {
 				c = draworder[ppu.mode][d];
 				pri = (c & 4) ? 0x2000 : 0;
-				if (c & 8) /* Sprites */
-				{
+				if (c & 8) { /* Sprites */
 					if (layers & 16 && !(ppumask & 16)) {
 						pri = c & 3;
 						addr = 0x1FC;
 						for (sprc = 127; sprc >= 0; sprc--) {
-							/* if (ppu.prirotation) c=(sprc+(ppu.pri-1))&127;
+							/* if (ppu.prirotation) { c=(sprc+(ppu.pri-1))&127; }
                             else */	c =	sprc;
 							dat = sprram[(c >> 2) + 512];
 							dat >>= ((c & 3) << 1);
@@ -834,8 +833,7 @@ void drawline(int line)
 									(y + (sprsize[ppu.sprsize][(dat >> 1) & 1]
 										  << 3)) &&
 								pri == ((sprram[addr + 3] >> 4) & 3) &&
-								((x < 320) /* || (x>456) */)) /* Draw sprite */
-							{
+								((x < 320) /* || (x>456) */)) { /* Draw sprite */
 								// x-=56;
 								// x&=511;
 								// p=(unsigned long *)(b->line[line]+( ((64-((x^63)&63))+(x&~63))<<1) );
@@ -853,11 +851,11 @@ void drawline(int line)
 										<< 4) +
 									   ppu.sprbase; /* Calculate tile address */
 								y = line - y;
-								if (sprram[addr + 3] & 0x80)
+								if (sprram[addr + 3] & 0x80) {
 									y = y ^
 										((sprsize[ppu.sprsize][(dat >> 1) & 1]
-										  << 3) -
-										 1);
+										  << 3) - 1);
+								}
 								tile += (y & 7);
 								tile += ((y & ~7) << 5);
 								dat >>= 1;
@@ -2132,7 +2130,7 @@ void drawline(int line)
 		pw4 = (unsigned short*)window[8];
 		break;
 	}
-	// printf("CGWSEL %02X\n",ppu.cgwsel&0x30);
+	// snemdebug("CGWSEL %02X\n",ppu.cgwsel&0x30);
 	docolour(pw, pw2, pw3, pw4);
 	if (line == 224)
 		doblit();
@@ -2144,7 +2142,7 @@ void dumphdma()
 {
 	int c;
 	for (c = 0; c < 8; c++) {
-		printf("HDMA %i %s - src %06X dest %04X mode %02X stat %i len %i\n", c,
+		snemdebug("HDMA %i %s - src %06X dest %04X mode %02X stat %i len %i\n", c,
 			   (hdmaena & (1 << c)) ? "on" : "off",
 			   (dmabank[c] << 16) | dmasrc[c], dmadest[c], dmactrl[c],
 			   hdmastat[c], hdmacount[c]);
@@ -2155,7 +2153,7 @@ void writeppu(unsigned short addr, unsigned char val)
 {
 	int r, g, b, c;
 	unsigned short tempaddr;
-	// printf("Write PPU %04X %02X %04X\n",addr,val,x.w);
+	// snemdebug("Write PPU %04X %02X %04X\n",addr,val,x.w);
 	switch (addr & 0xFF) {
 	case 0x00: /* Screen enable */
 		snemlog("Screen enable %02X %06X %i\n", val, pbr | pc, lines);
@@ -2165,14 +2163,14 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x01: /* Sprite size */
 		ppu.sprsize = val >> 5;
 		ppu.sprbase = (val & 7) << 13;
-		// printf("Sprite size write %02X %06X\n",val,pbr|pc);
+		// snemdebug("Sprite size write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x02: /* Sprite address low */
 		ppu.spraddr = (ppu.spraddr & 0x200) | (val << 1);
 		ppu.spraddrs = ppu.spraddr;
 		break;
 	case 0x03: /* Sprite address high */
-			   // printf("Write sprite address %06X\n",pbr|pc);
+			   // snemdebug("Write sprite address %06X\n",pbr|pc);
 		if (val & 1)
 			ppu.spraddr |= 0x200;
 		else
@@ -2183,9 +2181,9 @@ void writeppu(unsigned short addr, unsigned char val)
 		// snemlog("PRIROTATE %i\n",ppu.prirotation);
 		break;
 	case 0x04: /* Sprite data */
-			   // printf("Write SPR %04X %02X
+			   // snemdebug("Write SPR %04X %02X
 			   // %06X\n",ppu.spraddr,val,pbr|pc);
-		// printf("SPR %02X %04X %06X\n",val,ppu.spraddr,pbr|pc);
+		// snemdebug("SPR %02X %04X %06X\n",val,ppu.spraddr,pbr|pc);
 		sprram[ppu.spraddr++] = val;
 		if (ppu.spraddr >= 544)
 			ppu.spraddr = 0;
@@ -2193,7 +2191,7 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x05: /* Screen mode */
 		ppu.mode = val & 15;
 		ppu.tilesize = val >> 4;
-		// printf("PPU mode %i %01X\n",ppu.mode,ppu.mode>>4);
+		// snemdebug("PPU mode %i %01X\n",ppu.mode,ppu.mode>>4);
 		break;
 	case 0x06: /* Mosaic */
 		ppu.mosaic = val >> 4;
@@ -2201,33 +2199,33 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x07: /* BG1 address */
 		ppu.bg[0] = (val & 0xFC) << 8;
 		ppu.size[0] = val & 3;
-		// printf("BG0 %04X\n",ppu.bg[0]<<1);
+		// snemdebug("BG0 %04X\n",ppu.bg[0]<<1);
 		break;
 	case 0x08: /* BG2 address */
 		ppu.bg[1] = (val & 0xFC) << 8;
 		ppu.size[1] = val & 3;
-		// printf("BG1 %04X\n",ppu.bg[1]<<1);
+		// snemdebug("BG1 %04X\n",ppu.bg[1]<<1);
 		break;
 	case 0x09: /* BG3 address */
 		ppu.bg[2] = (val & 0xFC) << 8;
 		ppu.size[2] = val & 3;
-		// printf("BG2 %04X\n",ppu.bg[2]<<1);
+		// snemdebug("BG2 %04X\n",ppu.bg[2]<<1);
 		break;
 	case 0x0A: /* BG4 address */
 		ppu.bg[3] = (val & 0xFC) << 8;
 		ppu.size[3] = val & 3;
-		// printf("BG3 %04X\n",ppu.bg[3]<<1);
+		// snemdebug("BG3 %04X\n",ppu.bg[3]<<1);
 		break;
 	case 0x0B: /* BG1+2 address */
 		ppu.chr[0] = (val & 0xF) << 12;
 		ppu.chr[1] = (val & 0xF0) << 8;
-		// printf("CHR0 %04X\nCHR1
+		// snemdebug("CHR0 %04X\nCHR1
 		// %04X\n",ppu.chr[0]<<1,ppu.chr[1]<<1);
 		break;
 	case 0x0C: /* BG3+4 address */
 		ppu.chr[2] = (val & 0xF) << 12;
 		ppu.chr[3] = (val & 0xF0) << 8;
-		// printf("CHR2 %04X\nCHR3
+		// snemdebug("CHR2 %04X\nCHR3
 		// %04X\n",ppu.chr[2]<<1,ppu.chr[3]<<1);
 		break;
 	case 0x0D: /* BG1 xscroll */
@@ -2235,7 +2233,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		break;
 	case 0x0E: /* BG1 yscroll */
 		ppu.yscroll[0] = (ppu.yscroll[0] >> 8) | (val << 8);
-		// printf("BG1 yscroll %i %06X
+		// snemdebug("BG1 yscroll %i %06X
 		// %04X\n",ppu.yscroll[0],pbr|pc,dp);
 		break;
 	case 0x0F: /* BG2 xscroll */
@@ -2243,15 +2241,15 @@ void writeppu(unsigned short addr, unsigned char val)
 		break;
 	case 0x10: /* BG2 yscroll */
 		ppu.yscroll[1] = (ppu.yscroll[1] >> 8) | (val << 8);
-		// printf("BG2 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
+		// snemdebug("BG2 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
 		break;
 	case 0x11: /* BG3 xscroll */
 		ppu.xscroll[2] = (ppu.xscroll[2] >> 8) | (val << 8);
-		// printf("BG3 xscroll %i %06X\n",ppu.xscroll[2],pbr|pc);
+		// snemdebug("BG3 xscroll %i %06X\n",ppu.xscroll[2],pbr|pc);
 		break;
 	case 0x12: /* BG3 yscroll */
 		ppu.yscroll[2] = (ppu.yscroll[2] >> 8) | (val << 8);
-		// printf("BG3 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
+		// snemdebug("BG3 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
 		break;
 	case 0x13: /* BG4 xscroll */
 		ppu.xscroll[3] = (ppu.xscroll[3] >> 8) | (val << 8);
@@ -2261,7 +2259,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		break;
 	case 0x15: /* Video port control */
 		ppu.portctrl = val;
-		// printf("Video port control %02X\n",val);
+		// snemdebug("Video port control %02X\n",val);
 		switch (val & 3) {
 		case 0:
 			ppu.vinc = 1;
@@ -2273,35 +2271,35 @@ void writeppu(unsigned short addr, unsigned char val)
 		case 3:
 			ppu.vinc = 128;
 		}
-		// printf("vinc %i remap %i\n",ppu.vinc,(val>>2)&3);
+		// snemdebug("vinc %i remap %i\n",ppu.vinc,(val>>2)&3);
 		/* if (val&0xC)
 		{
-		printf("Bad VRAM write mode %i\n",val&15);
+		snemdebug("Bad VRAM write mode %i\n",val&15);
 		dumpregs();
 		exit(-1);
 } */
 		break;
 	case 0x16: /* VRAM address low */
 		ppu.vramaddr = (ppu.vramaddr & 0xFF00) | val;
-		// printf("%06X VRAM addr %04X
+		// snemdebug("%06X VRAM addr %04X
 		// %i\n",ppu.vramaddr,pbr|pc,ppu.vinc);
 		ppu.firstread = 1;
 		wroteaddr = pbr | pc;
 		break;
 	case 0x17: /* VRAM address high */
 		ppu.vramaddr = (ppu.vramaddr & 0xFF) | (val << 8);
-		// printf("%06X VRAM addr %04X
+		// snemdebug("%06X VRAM addr %04X
 		// %i\n",ppu.vramaddr,pbr|pc,ppu.vinc);
 		ppu.firstread = 1;
 		wroteaddr = pbr | pc;
 		break;
 	case 0x18:
 		ppu.firstread = 1;
-		// printf("%04X",ppu.vramaddr);
-		// if (((ppu.vramaddr<<1)&0xF000)==0x1000) printf("Write
-		// %04X %02X %06X\n",(ppu.vramaddr<<1),val,pbr|pc);
-		// if (val==0x7F) printf("Write %04X 7F
-		// %06X\n",ppu.vramaddr,pbr|pc);
+		// snemdebug("%04X",ppu.vramaddr);
+		// if (((ppu.vramaddr<<1)&0xF000)==0x1000) { snemdebug("Write
+		// %04X %02X %06X\n",(ppu.vramaddr<<1),val,pbr|pc); }
+		// if (val==0x7F) { snemdebug("Write %04X 7F
+		// %06X\n",ppu.vramaddr,pbr|pc); }
 		// if (((ppu.vramaddr<<1)==0xE000) ||
 		// ((ppu.vramaddr<<1)==0xD2B0) ||
 		// ((ppu.vramaddr<<1)==0xC18E))
@@ -2309,7 +2307,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		// output=1;
 		// timetolive=50;
 		// }
-		// printf("Write %04X %02X %06X %06X %02X%02X%02X
+		// snemdebug("Write %04X %02X %06X %06X %02X%02X%02X
 		// %02X%02X\n",(ppu.vramaddr<<1),val,pbr|pc,wroteaddr,ram[0xE4],ram[0xE3],ram[0xE2],ram[0xEF],ram[0xEE]);
 		tempaddr = ppu.vramaddr;
 		switch (ppu.portctrl & 0xC) {
@@ -2326,25 +2324,24 @@ void writeppu(unsigned short addr, unsigned char val)
 					   ((tempaddr >> 7) & 7);
 			break;
 		}
-		// if ((ppu.portctrl&0xC)==4)
-		// {
+		// if ((ppu.portctrl&0xC)==4) {
 		//	tempaddr = (tempaddr & 0xff00) | ((tempaddr &
 		//	0x001f) << 3) | ((tempaddr >> 5) & 7);
 		/*	temp=tempaddr&0xFF00;
 			temp|=((tempaddr&0x1F)<<3);
 			tempaddr=temp|((temp>>5)&7); */
 		//	}
-		//	if (((tempaddr<<1)&0xFC00)==0x6000) printf("VRAM write
-		//	%04X %02X %06X %04X\n",tempaddr<<1,val,pbr|pc,x.w);
+		//	if (((tempaddr<<1)&0xFC00)==0x6000) { snemdebug("VRAM write
+		//	%04X %02X %06X %04X\n",tempaddr<<1,val,pbr|pc,x.w); }
 		vramb[(tempaddr << 1) & 0xFFFF] = val;
 		if (!(ppu.portctrl & 0x80))
 			ppu.vramaddr += ppu.vinc;
 		break;
 	case 0x19:
 		ppu.firstread = 1;
-		// printf("%04X",ppu.vramaddr);
-		// if ((ppu.vramaddr&~0x7FF)==ppu.bg[2]) printf("Write
-		// %04X %02X %06X\n",(ppu.vramaddr<<1)+1,val,pbr|pc);
+		// snemdebug("%04X",ppu.vramaddr);
+		// if ((ppu.vramaddr&~0x7FF)==ppu.bg[2]) { snemdebug("Write
+		// %04X %02X %06X\n",(ppu.vramaddr<<1)+1,val,pbr|pc); }
 		tempaddr = ppu.vramaddr;
 		switch (ppu.portctrl & 0xC) {
 		case 0x4:
@@ -2368,7 +2365,7 @@ void writeppu(unsigned short addr, unsigned char val)
 			temp|=((tempaddr&0x1F)<<3);
 			tempaddr=temp|((temp>>5)&7); */
 		//	}
-		//	if (!tempaddr) printf("VRAM write %04X %02X
+		//	if (!tempaddr) snemdebug("VRAM write %04X %02X
 		//	%06X\n",tempaddr<<1,val,pbr|pc);
 		vramb[((tempaddr << 1) & 0xFFFF) | 1] = val;
 		if (ppu.portctrl & 0x80)
@@ -2380,36 +2377,36 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x1B:
 		ppu.m7a = (ppu.m7a >> 8) | (val << 8);
 		ppu.matrixr = (short)ppu.m7a * ((short)ppu.m7b >> 8);
-		// printf("M7A %04X\n",ppu.m7a);
+		// snemdebug("M7A %04X\n",ppu.m7a);
 		return;
 	case 0x1C:
 		ppu.m7b = (ppu.m7b >> 8) | (val << 8);
 		ppu.matrixr = (short)ppu.m7a * ((short)ppu.m7b >> 8);
-		// printf("M7B %04X\n",ppu.m7b);
+		// snemdebug("M7B %04X\n",ppu.m7b);
 		// m7write=1;
 		return;
 	case 0x1D:
 		ppu.m7c = (ppu.m7c >> 8) | (val << 8);
-		// printf("M7C %04X\n",ppu.m7c);
+		// snemdebug("M7C %04X\n",ppu.m7c);
 		return;
 	case 0x1E:
 		ppu.m7d = (ppu.m7d >> 8) | (val << 8);
-		// printf("M7D %04X\n",ppu.m7d);
+		// snemdebug("M7D %04X\n",ppu.m7d);
 		return;
 	case 0x1F:
 		ppu.m7x = (ppu.m7x >> 8) | (val << 8);
-		// printf("M7X %04X\n",ppu.m7x);
+		// snemdebug("M7X %04X\n",ppu.m7x);
 		return;
 	case 0x20:
 		ppu.m7y = (ppu.m7y >> 8) | (val << 8);
-		// printf("M7Y %04X\n",ppu.m7y);
+		// snemdebug("M7Y %04X\n",ppu.m7y);
 		return;
 	case 0x21: /* Palette select */
 		ppu.palindex = val;
 		ppu.palbuffer = 0;
 		break;
 	case 0x22: /* Palette write */
-		// printf("2122 write %02x %06X
+		// snemdebug("2122 write %02x %06X
 		// %i\n",val,pbr|pc,ppu.palindex);
 		if (!ppu.palbuffer)
 			ppu.palbuffer = val | 0x100;
@@ -2424,7 +2421,7 @@ void writeppu(unsigned short addr, unsigned char val)
 						  ((float)c / (float)15));
 				pallookup[c][ppu.palindex] = makecol(r << 3, g << 3, b << 3);
 			}
-			// printf("Pal %i = %04X %04X %i %i
+			// snemdebug("Pal %i = %04X %04X %i %i
 			//	%i\n",ppu.palindex,ppu.pal[ppu.palindex],pallookup[ppu.palindex],r,g,b);
 			ppu.palindex++;
 			ppu.palindex &= 255;
@@ -2432,7 +2429,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		}
 		break;
 	case 0x23: /* BG window enable */
-		// printf("Windena1 write %02X %06X
+		// snemdebug("Windena1 write %02X %06X
 		// %i\n",val,pbr|pc,lastline);
 		if (val != ppu.windena1)
 			windowschanged = 1;
@@ -2440,7 +2437,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		// windowschanged=1;
 		break;
 	case 0x24: /* BG window enable */
-		// printf("Windena2 write %02X %06X
+		// snemdebug("Windena2 write %02X %06X
 		//	%i\n",val,pbr|pc,lastline);
 		if (val != ppu.windena2)
 			windowschanged = 1;
@@ -2448,7 +2445,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		// windowschanged=1;
 		break;
 	case 0x25: /* BG window enable */
-		// printf("Windena3 write %02X %06X
+		// snemdebug("Windena3 write %02X %06X
 		//	%i\n",val,pbr|pc,lastline);
 		if (val != ppu.windena3)
 			windowschanged = 1;
@@ -2460,50 +2457,50 @@ void writeppu(unsigned short addr, unsigned char val)
 			windowschanged = 1;
 		ppu.w1left = val;
 		// windowschanged=1;
-		// printf("W1L write %02X %06X\n",val,pbr|pc);
+		// snemdebug("W1L write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x27: /* Window 1 right */
 		if (val != ppu.w1right)
 			windowschanged = 1;
 		ppu.w1right = val;
 		// windowschanged=1;
-		// printf("W1R write %02X %06X\n",val,pbr|pc);
+		// snemdebug("W1R write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x28: /* Window 2 left */
 		if (val != ppu.w2left)
 			windowschanged = 1;
 		ppu.w2left = val;
 		// windowschanged=1;
-		// printf("W2L write %02X %06X\n",val,pbr|pc);
+		// snemdebug("W2L write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x29: /* Window 2 right */
 		if (val != ppu.w2right)
 			windowschanged = 1;
 		ppu.w2right = val;
 		// windowschanged=1;
-		// printf("W2R write %02X %06X\n",val,pbr|pc);
+		// snemdebug("W2R write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x2A: /* BG window logic */
 		if (val != ppu.windlogic)
 			windowschanged = 1;
 		ppu.windlogic = val;
 		// windowschanged=1;
-		// printf("WL write %02X %06X\n",val,pbr|pc);
+		// snemdebug("WL write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x2B: /* BG window logic */
 		if (val != ppu.windlogic2)
 			windowschanged = 1;
 		ppu.windlogic2 = val;
 		// windowschanged=1;
-		// printf("WL2 write %02X %06X\n",val,pbr|pc);
+		// snemdebug("WL2 write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x2C:
 		ppu.main = val;
-		// printf("Main screen enable %02X %i\n",val,lastline);
+		// snemdebug("Main screen enable %02X %i\n",val,lastline);
 		break;
 	case 0x2D:
 		ppu.sub = val;
-		// printf("Sub screen enable %02X %i\n",val,lastline);
+		// snemdebug("Sub screen enable %02X %i\n",val,lastline);
 		break;
 	case 0x2E:
 		ppu.wmaskmain = val;
@@ -2513,11 +2510,11 @@ void writeppu(unsigned short addr, unsigned char val)
 		break;
 	case 0x30:
 		ppu.cgwsel = val;
-		// printf("CGWSEL now %02X\n",val);
+		// snemdebug("CGWSEL now %02X\n",val);
 		break;
 	case 0x31:
 		ppu.cgadsub = val;
-		// printf("CGADSUB now %02X\n",val);
+		// snemdebug("CGADSUB now %02X\n",val);
 		break;
 	case 0x32:
 		if (val & 0x20)
@@ -2526,13 +2523,13 @@ void writeppu(unsigned short addr, unsigned char val)
 			ppu.fixedc.g = (val & 0x1F) << 3;
 		if (val & 0x80)
 			ppu.fixedc.b = (val & 0x1F) << 3;
-		// printf("FIXEDCOL %i %i
+		// snemdebug("FIXEDCOL %i %i
 		// %i\n",ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b);
 		ppu.fixedcol = (((ppu.fixedc.r >> 3) << _rgb_r_shift_16) |
 						((ppu.fixedc.g >> 2) << _rgb_g_shift_16) |
 						((ppu.fixedc.b >> 3) << _rgb_b_shift_16));
 		// ppu.fixedcol=makecol(ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b);
-		// printf("FIXEDCOL %i %i %i
+		// snemdebug("FIXEDCOL %i %i %i
 		// %04X\n",ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b,ppu.fixedcol);
 		break;
 	case 0x40:
@@ -2544,7 +2541,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		setzf = 0;
 		break;
 	case 0x80: /* WRAM */
-		// printf("Write WRAM %05X %02X\n",ppu.wramaddr,val);
+		// snemdebug("Write WRAM %05X %02X\n",ppu.wramaddr,val);
 		ram[ppu.wramaddr & 0x1FFFF] = val;
 		ppu.wramaddr++;
 		break;
@@ -2558,9 +2555,9 @@ void writeppu(unsigned short addr, unsigned char val)
 		ppu.wramaddr = (ppu.wramaddr & 0x00FFFF) | (val << 16);
 		break;
 	// default:
-		// printf("Write PPU %04X %02X\n",addr,val);
+		// snemdebug("Write PPU %04X %02X\n",addr,val);
 	}
-	// printf("\n");
+	// snemdebug("\n");
 }
 
 int spcskip = 4;
@@ -2568,14 +2565,14 @@ int spcskip = 4;
 unsigned char doskipper()
 {
 	int temp = spcskip;
-	// printf("Do skipper!\n");
+	// snemdebug("Do skipper!\n");
 	spcskip++;
 	if (spcskip == 19)
 		spcskip = 0;
 	// skip&=3;
 	// if (!(&1)) skip&=~1;
 	// else        skip|=1;
-	// printf("Skipper %i %i  ",temp,temp>>1);
+	// snemdebug("Skipper %i %i  ",temp,temp>>1);
 	switch (temp >> 1) {
 	case 0:
 	case 1:
@@ -2632,13 +2629,13 @@ unsigned char readppu(unsigned short addr)
 	unsigned char temp;
 	switch (addr & 0xFF) {
 	case 0x34:
-		// printf("Read 2134\n");
+		// snemdebug("Read 2134\n");
 		return ppu.matrixr;
 	case 0x35:
-		// printf("Read 2134\n");
+		// snemdebug("Read 2134\n");
 		return ppu.matrixr >> 8;
 	case 0x36:
-		// printf("Read 2134\n");
+		// snemdebug("Read 2134\n");
 		return ppu.matrixr >> 16;
 	case 0x37: /* Latch v/h counters */
 		vcount = lines;
@@ -2675,7 +2672,7 @@ unsigned char readppu(unsigned short addr)
 	case 0x3F:
 		if (pal)
 			return 0x10;
-		// printf("Read type %06X\n",pbr|pc);
+		// snemdebug("Read type %06X\n",pbr|pc);
 		return 0x00; /* NTSC */ // 0x10; /* PAL */
 	case 0x40:
 	case 0x42:
@@ -2685,7 +2682,7 @@ unsigned char readppu(unsigned short addr)
 		spcskip++;
 		if (spcskip == 41)
 			spcskip = 0;
-		// printf("Read 2140 %i %i
+		// snemdebug("Read 2140 %i %i
 		// %04X\n",spcskip,spcskip>>1,pc);
 		switch (spcskip >> 1) {
 		case 0:
@@ -2739,7 +2736,7 @@ unsigned char readppu(unsigned short addr)
 		spcskip++;
 		if (spcskip == 41)
 			spcskip = 0;
-		// printf("Read 2141 %i %i
+		// snemdebug("Read 2141 %i %i
 		// %04X\n",spcskip,spcskip>>1,pc);
 		switch (spcskip >> 1) {
 		case 0:
@@ -2898,7 +2895,7 @@ void dumpchar()
 	}
 	clear(screen);
 	destroy_bitmap(dasbuffer);
-	// printf("%01X\n",ppu.sdr&0xF);
+	// snemdebug("%01X\n",ppu.sdr&0xF);
 }
 
 void dumpbg2()

@@ -1,5 +1,4 @@
 #include <allegro.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "snem.h"
@@ -59,15 +58,15 @@ void writedsp(unsigned short a, unsigned char v)
 	int c;
 	unsigned long templ;
 	if (a & 1) {
-		// if (curdspreg==0x62) spcoutput=1;
-		// if (curdspreg==0x4C) spcoutput=0;
+		// if (curdspreg==0x62) { spcoutput=1; }
+		// if (curdspreg==0x4C) { spcoutput=0; }
 		dspregs[curdspreg] = v;
-		// if (!(curdspreg&0xE)) printf("Write DSP %02X %02X
-		// %04X\n",curdspreg,v,getspcpc());
-		// if (curdspreg==4) spcoutput=1;
-		// if (curdspreg==0x14) spcoutput=0;
-		// if (v) printf("Write DSP %02X %02X
-		// %04X\n",curdspreg,v,getspcpc());
+		// if (!(curdspreg&0xE)) { snemdebug("Write DSP %02X %02X
+		// %04X\n",curdspreg,v,getspcpc()); }
+		// if (curdspreg==4) { spcoutput=1; }
+		// if (curdspreg==0x14) { spcoutput=0; }
+		// if (v) { snemdebug("Write DSP %02X %02X
+		// %04X\n",curdspreg,v,getspcpc()); }
 		switch (curdspreg) {
 		case 0x00:
 		case 0x10:
@@ -97,7 +96,7 @@ void writedsp(unsigned short a, unsigned char v)
 		case 0x52:
 		case 0x62:
 		case 0x72:
-			// printf("Write pitchl %02X
+			// snemdebug("Write pitchl %02X
 			// %04X\n",v,getspcpc());
 			dsp.pitch[curdspreg >> 4] =
 				(dsp.pitch[curdspreg >> 4] & 0x3F00) | v;
@@ -110,7 +109,7 @@ void writedsp(unsigned short a, unsigned char v)
 		case 0x53:
 		case 0x63:
 		case 0x73:
-			// printf("Write pitchh %02X
+			// snemdebug("Write pitchh %02X
 			// %04X\n",v,getspcpc());
 			dsp.pitch[curdspreg >> 4] =
 				(dsp.pitch[curdspreg >> 4] & 0xFF) | ((v & 0x3F) << 8);
@@ -129,7 +128,7 @@ void writedsp(unsigned short a, unsigned char v)
 				templ = (dsp.dir << 8) + (v << 2);
 				dsp.voiceaddr[curdspreg >> 4] =
 					spcram[templ] | (spcram[templ + 1] << 8);
-				// printf("Sourcenum select
+				// snemdebug("Sourcenum select
 				// channel %i %02X %03X %04X
 				// %04X\n",curdspreg>>4,v,v<<2,(dsp.dir<<8)+(v<<2),dsp.voiceaddr[curdspreg>>4]);
 				dsp.brrstat[curdspreg >> 4] = 0;
@@ -174,7 +173,7 @@ void writedsp(unsigned short a, unsigned char v)
 				(dsp.adsr1[curdspreg >> 4] & 0x80) ? 2 : 0;
 			break;
 		case 0x4C:
-			// if (v) printf("Voice on %02X\n",v);
+			// if (v) { snemdebug("Voice on %02X\n",v); }
 			for (c = 0; c < 8; c++) {
 				if (v & (1 << c)) {
 					dsp.voiceon[c] = 1;
@@ -192,7 +191,7 @@ void writedsp(unsigned short a, unsigned char v)
 			}
 			break;
 		case 0x5C:
-			// if (v) printf("Voice off %02X\n",v);
+			// if (v) { snemdebug("Voice off %02X\n",v); }
 			for (c = 0; c < 8; c++) {
 				if (v & (1 << c)) {
 					dsp.adsrstat[c] = RELEASE;
@@ -257,12 +256,14 @@ int range[8], filter[8];
 inline signed short decodebrr(int v, int c)
 {
 	signed short temp = v & 0xF;
-	if (temp & 8)
+	if (temp & 8) {
 		temp |= 0xFFF0;
-	if (range[c] <= 12)
+	}
+	if (range[c] <= 12) {
 		temp <<= range[c];
-	else
+	} else {
 		temp = (temp & 8) ? 0xF800 : 0;
+	}
 	switch (filter[c]) {
 	case 0:
 		break;
@@ -303,9 +304,10 @@ signed short getbrr(int c)
 {
 	int temp;
 	signed short sample;
-	if (!dsp.voiceon[c])
+	if (!dsp.voiceon[c]) {
 		return 0;
-	// printf("Voice 0 %02X %i
+	}
+	// snemdebug("Voice 0 %02X %i
 	// %04X\n",dsp.brrctrl[c],dsp.brrstat[c],dsp.voiceaddr[c]);
 	if (!dsp.brrstat[c]) {
 		dsp.brrstat[c] = 1;
@@ -313,14 +315,13 @@ signed short getbrr(int c)
 		range[c] = dsp.brrctrl[c] >> 4;
 		filter[c] = (dsp.brrctrl[c] >> 2) & 3;
 	}
-	if (dsp.brrstat[c] & 1) /* First nibble */
-	{
+	if (dsp.brrstat[c] & 1) { /* First nibble */
 		temp = spcram[dsp.voiceaddr[c]] >> 4;
 		dsp.brrstat[c]++;
 		sample = decodebrr(temp, c); //(temp<<(dsp.brrctrl[c]>>4))>>1;
 	} else {
 		temp = spcram[dsp.voiceaddr[c]++] & 0xF;
-		// if (temp&8) (unsigned long)temp|=0xFFFFFFF0;
+		// if (temp&8) { (unsigned long)temp|=0xFFFFFFF0; }
 		dsp.brrstat[c]++;
 		sample = decodebrr(temp, c);
 		// sample=(temp<<(dsp.brrctrl[c]>>4))>>1;
@@ -362,12 +363,13 @@ void refillbuffer()
 {
 	unsigned short* p = NULL;
 	int c;
-	if (!dspqlen)
+	if (!dspqlen) {
 		return;
+	}
 	// return;
 	// snemlog("DSPpos %i\n",dsppos);
-	// while (!dspqlen)
-	// sleep(1);
+	// while (!dspqlen) {
+	// sleep(1); }
 	while (!p)
 		p = get_audio_stream_buffer(as);
 	for (c = 0; c < (6400 / 5); c++)
@@ -398,44 +400,48 @@ void polldsp()
 	signed short s;
 	short totalsamplel = 0, totalsampler = 0;
 	for (c = 0; c < 8; c++) {
-		// if (dsp.voiceon[0]) printf("Pitch %i
-		// %i\n",dsp.pitchcounter[c],dsp.pitch[c]);
+		// if (dsp.voiceon[0]) { snemdebug("Pitch %i
+		// %i\n",dsp.pitchcounter[c],dsp.pitch[c]); }
 		dsp.pitchcounter[c] += dsp.pitch[c];
-		if (dsp.pitchcounter[c] < 0) // || dsp.voiceend[c])
+		if (dsp.pitchcounter[c] < 0) { // || dsp.voiceend[c])
 			sample = dspsamples[c];
-		else
+		} else {
 			while (dsp.pitchcounter[c] >= 0 && dsp.pitch[c]) {
 				s = (signed short)getbrr(c);
 				sample = (int)s;
 				dspsamples[c] = sample;
-				// if (sample && dsp.evol[c]) printf(":%i
-				// %i ",s,sample);
+				// if (sample && dsp.evol[c]) { snemdebug(":%i
+				// %i ",s,sample); }
 				dsp.pitchcounter[c] -= 0x1000;
 			}
+		}
 		if (dsp.non & (1 << c)) {
 			sample = dsp.noise & 0x3FFF;
-			if (dsp.noise & 0x4000)
+			if (dsp.noise & 0x4000) {
 				sample |= 0xFFFF8000;
+			}
 		}
-		// if (totalsamplel<-15000 || totalsamplel>15000)
-		// printf("Overflow - %i %i %i\n",c,sample,totalsamplel);
-		// if (sample && dsp.evol[c]) printf("%i %04X %04X
-		// ",c,sample,dsp.evol[c]);
+		// if (totalsamplel<-15000 || totalsamplel>15000) {
+		// snemdebug("Overflow - %i %i %i\n",c,sample,totalsamplel); }
+		// if (sample && dsp.evol[c]) { snemdebug("%i %04X %04X
+		// ",c,sample,dsp.evol[c]); }
 		sample *= dsp.evol[c];
 		sample >>= 11;
 		dsp.outx[c] = sample >> 8;
-		// if (sample) printf("%04X %i %i
-		// ",sample,dsp.volumel[c],dsp.volumer[c]);
-		if (dsp.volumel[c])
+		// if (sample) { snemdebug("%04X %i %i
+		// ",sample,dsp.volumel[c],dsp.volumer[c]); }
+		if (dsp.volumel[c]) {
 			totalsamplel += (((sample * dsp.volumel[c]) >> 7) >> 3);
-		if (dsp.volumer[c])
+		}
+		if (dsp.volumer[c]) {
 			totalsampler += (((sample * dsp.volumer[c]) >> 7) >> 3);
-		// if (sample) printf("%04X
-		// %04X\n",totalsamplel,totalsampler);
+		}
+		// if (sample) { snemdebug("%04X
+		// %04X\n",totalsamplel,totalsampler); }
 		dsp.edelay[c]--;
 		if (dsp.edelay[c] <= 0) {
-			// if (c==7) printf("%i
-			// %i\n",dsp.etype[c],dsp.adsrstat[c]);
+			// if (c==7) { snemdebug("%i
+			// %i\n",dsp.etype[c],dsp.adsrstat[c]); }
 			if (dsp.adsrstat[c] == RELEASE) {
 				dsp.edelay[c] = 1;
 				dsp.evol[c] -= 8;
@@ -463,9 +469,9 @@ void polldsp()
 					break;
 				case 2:
 				case 3: /* ADSR */
-						// if (c==7) printf("ADSR
-						// state now
-					// %i\n",dsp.adsrstat[c]);
+					// if (c==7) { snemdebug("ADSR
+					// state now
+					// %i\n",dsp.adsrstat[c]); }
 					switch (dsp.adsrstat[c]) {
 					case ATTACK:
 						if ((dsp.adsr1[c] & 0xF) == 0xF) {
@@ -492,11 +498,11 @@ void polldsp()
 						break;
 					case SUSTAIN:
 						dsp.evol[c] -= ((dsp.evol[c] - 1) >> 8) + 1;
-						// printf("Evol
+						// snemdebug("Evol
 						// %i now
 						// %i\n",c,dsp.evol[c]);
 						dsp.edelay[c] = ratetable[dsp.adsr2[c] & 0x1F];
-						// printf("edelay
+						// snemdebug("edelay
 						// now %i %02X
 						// %02X
 						// %02X\n",dsp.edelay[c],dsp.adsr1[c],dsp.adsr2[c],dsp.gain[c]);
@@ -508,10 +514,12 @@ void polldsp()
 					}
 					break;
 				}
-			if (dsp.evol[c] > 0x7FF)
+			if (dsp.evol[c] > 0x7FF) {
 				dsp.evol[c] = 0x7FF;
-			if (dsp.evol[c] < 0)
+			}
+			if (dsp.evol[c] < 0) {
 				dsp.evol[c] = 0;
+			}
 			dsp.envx[c] = (dsp.evol[c] >> 4);
 		}
 	}
@@ -537,15 +545,15 @@ void polldsp()
 		bufferready++;
 		wakeupsoundthread();
 		// snemlog("DSPRSEL %i DSPWSEL %i\n",dsprsel,dspwsel);
-		// while (dsprsel==dspwsel) sleep(0);
+		// while (dsprsel==dspwsel) { sleep(0); }
 		// snemlog("Over\n");
 	}
-	// if (dsppos==6400) refillbuffer();
-	/*        if (!sndfile) sndfile=fopen("sound.pcm","wb");
-			putc(totalsamplel&0xFF,sndfile);
-			putc(totalsamplel>>8,sndfile);
-			putc(totalsampler&0xFF,sndfile);
-			putc(totalsampler>>8,sndfile); */
+	// if (dsppos==6400) { refillbuffer(); }
+	/* if (!sndfile) { sndfile=fopen("sound.pcm","wb"); }
+	putc(totalsamplel&0xFF,sndfile);
+	putc(totalsamplel>>8,sndfile);
+	putc(totalsampler&0xFF,sndfile);
+	putc(totalsampler>>8,sndfile); */
 	spctotal++;
-	// if (spctotal==188111) exit(0);
+	// if (spctotal==188111) { exit(0); }
 }
