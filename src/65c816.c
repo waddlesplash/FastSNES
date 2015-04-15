@@ -157,7 +157,7 @@ unsigned long indirectly()
 	pc++;
 	unsigned long addr = (readmemw(temp) | (readmem(temp + 2) << 16)) + y.w;
 	if (pc == 0xFDC9)
-		printf("INDy %04X %06X\n", temp, addr);
+		printf("INDy %04lu %06lu\n", temp, addr);
 	// if (output) printf("INDy %06X %02X %06X\n",addr,opcode,pbr|pc);
 	return addr;
 }
@@ -1044,7 +1044,7 @@ void ldaIndirectLongy16()
 	addr = indirectly();
 	a.w = readmemw(addr);
 	if (pc == 0xFDC9)
-		printf("LDA %06X %04X\n", addr, a.w);
+		printf("LDA %06lu %04X\n", addr, a.w);
 	setzn16(a.w);
 }
 
