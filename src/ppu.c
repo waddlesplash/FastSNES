@@ -50,6 +50,9 @@ int hcount, vcount;
 unsigned long window[10][164];
 int twowrite = 0;
 int windowschanged;
+typedef struct {
+	unsigned char r, g, b;
+} rgb_color;
 struct {
 	unsigned char screna;
 	unsigned char portctrl;
@@ -79,7 +82,7 @@ struct {
 	unsigned char wmaskmain, wmasksub;
 	unsigned short spraddrs;
 	unsigned char cgadsub, cgwsel;
-	RGB fixedc;
+	rgb_color fixedc;
 	unsigned short fixedcol;
 	int mosaic;
 	unsigned short pri;
