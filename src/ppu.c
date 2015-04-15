@@ -160,17 +160,17 @@ void initppu()
 	for (c = 0; c < 16; c++) {
 		collookup[c] = (c << 4) | (c << 20);
 	}
-	//        printf("%08X %08X\n",vram,vramb);
+	// printf("%08X %08X\n",vram,vramb);
 }
 
 void resetppu()
 {
 	int c, d;
 	memset(&ppu, 0, sizeof(ppu));
-	//        printf("1 %08X %08X\n",vram,vramb);
+	// printf("1 %08X %08X\n",vram,vramb);
 	ppu.portctrl = ppu.vramaddr = 0;
 	ppu.palbuffer = 0;
-	//        printf("2 %08X %08X\n",vram,vramb);
+	// printf("2 %08X %08X\n",vram,vramb);
 	memset(vram, 0, 0x10000);
 	ppumask = 0;
 	for (c = 0; c < 10; c++) {
@@ -328,7 +328,7 @@ void recalcwindows()
 	int x;
 	unsigned short* w;
 	unsigned short w2[256], w3[256];
-	//        if (!wfile) wfile=fopen("window.dmp","wb");
+	// if (!wfile) wfile=fopen("window.dmp","wb");
 	w = &window[0][32];
 	if (ppu.windena1 & 0xA && !windowdisable) /* BG1 */
 	{
@@ -391,18 +391,18 @@ void dohdma(int line)
 		if (!line) {
 			hdmaaddr[c] = dmasrc[c];
 			hdmacount[c] = 0;
-			//                                if (c==2)
-			//                                printf("Reset HDMA %i loading from
-			//                                %02X%04X
-			//                                %i\n",c,dmabank[c],hdmaaddr[c],hdmacount[c]);
+			// if (c==2)
+			// printf("Reset HDMA %i loading from
+			// %02X%04X
+			// %i\n",c,dmabank[c],hdmaaddr[c],hdmacount[c]);
 		}
 		if (hdmaena & (1 << c) && hdmacount[c] != -1) {
 			if (hdmacount[c] <= 0) {
 				hdmacount[c] = readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-				//                                        printf("HDMA %i count
-				//                                        now %04X at %02X%04X
-				//                                        %02X
-				//                                        %04X\n",c,hdmacount[c],dmabank[c],hdmaaddr[c],dmactrl[c],hdmadat[c]);
+				// printf("HDMA %i count
+				// now %04X at %02X%04X
+				// %02X
+				// %04X\n",c,hdmacount[c],dmabank[c],hdmaaddr[c],dmactrl[c],hdmadat[c]);
 				if (!hdmacount[c])
 					goto finishhdma;
 				hdmastat[c] = 0;
@@ -410,25 +410,25 @@ void dohdma(int line)
 					if (hdmacount[c] != 0x80)
 						hdmacount[c] &= 0x7F;
 					hdmastat[c] |= CONTINUOUS;
-					//                                                printf("Continuous
-					//                                                for %i
-					//                                                lines\n",hdmacount[c]);
+					// printf("Continuous
+					// for %i
+					// lines\n",hdmacount[c]);
 				}
 				if (dmactrl[c] & 0x40) {
 					hdmastat[c] |= INDIRECT;
 					hdmaaddr2[c] = readmemw((dmabank[c] << 16) | hdmaaddr[c]);
-					//                                                printf("Indirect
-					//                                                :
-					//                                                %02X%04X\n",dmaibank[c],hdmaaddr2[c]);
+					// printf("Indirect
+					// :
+					// %02X%04X\n",dmaibank[c],hdmaaddr2[c]);
 					hdmaaddr[c] += 2;
 				}
-				//                                        printf("Channel %i now
-				//                                        %02X%04X\n",c,dmabank[c],hdmaaddr[c]);
-				//                                        if (c==5)
-				//                                        printf("Channel 4 :
-				//                                        dest %04X read from
-				//                                        %02X %04X %04X stat
-				//                                        %i\n",dmadest[c],dmabank[c],hdmaaddr[c],hdmaaddr2[c],hdmastat[c]);
+				// printf("Channel %i now
+				// %02X%04X\n",c,dmabank[c],hdmaaddr[c]);
+				// if (c==5)
+				// printf("Channel 4 :
+				// dest %04X read from
+				// %02X %04X %04X stat
+				// %i\n",dmadest[c],dmabank[c],hdmaaddr[c],hdmaaddr2[c],hdmastat[c]);
 				switch (dmactrl[c] & 7) {
 				case 1: /* Two registers */
 					if (hdmastat[c] & INDIRECT)
@@ -462,10 +462,10 @@ void dohdma(int line)
 						hdmadat[c] =
 							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
 					writeppu(dmadest[c], hdmadat[c]);
-					//                                                if (c==2)
-					//                                                printf("Channel
-					//                                                2 now
-					//                                                %02X%04X\n",dmabank[c],hdmaaddr[c]);
+					// if (c==2)
+					// printf("Channel
+					// 2 now
+					// %02X%04X\n",dmabank[c],hdmaaddr[c]);
 					break;
 				case 3: /* Two registers write twice */
 					if (hdmastat[c] & INDIRECT)
@@ -642,13 +642,13 @@ void dohdma(int line)
 
 void doblit()
 {
-	//        drawvol(otherscr);
-	/*        for (int c=0;c<8;c++)
-			{
-					if (voiceon&1)
-					   rectfill(otherscr,(c*20)+8,2,(c*20)+24,10,makecol(255,255,255));
-					voiceon>>=1;
-			} */
+	// drawvol(otherscr);
+	/*for (int c=0;c<8;c++)
+	{
+	if (voiceon&1)
+	   rectfill(otherscr,(c*20)+8,2,(c*20)+24,10,makecol(255,255,255));
+	voiceon>>=1;
+	} */
 	blit(otherscr, sysb, 64, 1, 0, 0, 256, 224);
 	stretch_blit(sysb, screen, 0, 0, 256, 224, 0, 0, 512, 448);
 }
@@ -738,17 +738,17 @@ void docolour(unsigned short* pw, unsigned short* pw2, unsigned short* pw3,
 					dat = pallookup[ppu.screna & 15][pw2[x] & 255];
 				else
 					dat = ppu.fixedcol;
-				/*                                asr=(sgetr(pw[x])-sgetr(dat))>>1;
-												if (asr<0) asr=0;
-												asg=(sgetg(pw[x])-sgetg(dat))>>1;
-												if (asg<0) asg=0;
-												asb=(sgetb(pw[x])-sgetb(dat))>>1;
-												if (asb<0) asb=0;
-												pw[x]=(((asr >> 3) <<
+				/* asr=(sgetr(pw[x])-sgetr(dat))>>1;
+				if (asr<0) asr=0;
+				asg=(sgetg(pw[x])-sgetg(dat))>>1;
+				if (asg<0) asg=0;
+				asb=(sgetb(pw[x])-sgetb(dat))>>1;
+				if (asb<0) asb=0;
+				pw[x]=(((asr >> 3) <<
 				   _rgb_r_shift_16) |
-												   ((asg >> 2) <<
+				   ((asg >> 2) <<
 				   _rgb_g_shift_16) |
-												   ((asb >> 3) <<
+				   ((asb >> 3) <<
 				   _rgb_b_shift_16)); */
 				pw[x] = cgsubh(pw[x], dat);
 			} else
@@ -790,7 +790,7 @@ void drawline(int line)
 		ppu.pri = (ppu.spraddr & 0x1F) << 2;
 	else
 		ppu.pri = ppu.spraddr >> 2;
-	//        if (ppu.prirotation) snemlog("PPU.PRI %02X\n",ppu.pri);
+	// if (ppu.prirotation) snemlog("PPU.PRI %02X\n",ppu.pri);
 	for (ss = 0; ss < 2; ss++) {
 		if (ss) {
 			b = mainscr;
@@ -819,9 +819,8 @@ void drawline(int line)
 						pri = c & 3;
 						addr = 0x1FC;
 						for (sprc = 127; sprc >= 0; sprc--) {
-							/*                                                        if (ppu.prirotation) c=(sprc+(ppu.pri-1))&127;
-                                                        else                 */ c =
-								sprc;
+							/* if (ppu.prirotation) c=(sprc+(ppu.pri-1))&127;
+                            else */	c =	sprc;
 							dat = sprram[(c >> 2) + 512];
 							dat >>= ((c & 3) << 1);
 							dat &= 3;
@@ -837,9 +836,9 @@ void drawline(int line)
 								pri == ((sprram[addr + 3] >> 4) & 3) &&
 								((x < 320) /* || (x>456) */)) /* Draw sprite */
 							{
-								//                                                                x-=56;
-								//                                                                x&=511;
-								//                                                                p=(unsigned long *)(b->line[line]+( ((64-((x^63)&63))+(x&~63))<<1) );
+								// x-=56;
+								// x&=511;
+								// p=(unsigned long *)(b->line[line]+( ((64-((x^63)&63))+(x&~63))<<1) );
 								if (wmask & 0x10)
 									wp = (unsigned long*)(((unsigned char*)
 															   window[9]) +
@@ -1529,22 +1528,22 @@ void drawline(int line)
 											  masklookuph[1][(b5.b.l >> 6) &
 															 3])) &
 											(wp[3] >> 16);
-										/*                                                                                pw[0]&=~(masklookuph[1][b5.b.l&3]&wp[0]);
-																														pw[0]|=(bitlookuph[1][b1.b.l&3][b1.b.h&3]|(bitlookuph[1][b2.b.l&3][b2.b.h&3]<<2)|(col&masklookuph[1][b5.b.l&3]))&wp[0];
-																														pw[1]&=~(masklookuph[1][(b5.b.l>>2)&3]&(wp[0]>>16));
-																														pw[1]|=(bitlookuph[1][(b1.b.l>>2)&3][(b1.b.h>>2)&3]|(bitlookuph[1][(b2.b.l>>2)&3][(b2.b.h>>2)&3]<<2)|(col&masklookuph[1][(b5.b.l>>2)&3]))&(wp[0]>>16);
-																														pw[2]&=~(masklookuph[1][(b5.b.l>>4)&3]&wp[1]);
-																														pw[2]|=(bitlookuph[1][(b1.b.l>>4)&3][(b1.b.h>>4)&3]|(bitlookuph[1][(b2.b.l>>4)&3][(b2.b.h>>4)&3]<<2)|(col&masklookuph[1][(b5.b.l>>4)&3]))&wp[1];
-																														pw[3]&=~(masklookuph[1][(b5.b.l>>6)&3]&(wp[1]>>16));
-																														pw[3]|=(bitlookuph[1][(b1.b.l>>6)&3][(b1.b.h>>6)&3]|(bitlookuph[1][(b2.b.l>>6)&3][(b2.b.h>>6)&3]<<2)|(col&masklookuph[1][(b5.b.l>>6)&3]))&(wp[1]>>16);
-																														pw[4]&=~(masklookuph[1][b5.b.h&3]&wp[2]);
-																														pw[4]|=(bitlookuph[1][b3.b.l&3][b3.b.h&3]|(bitlookuph[1][b4.b.l&3][b4.b.h&3]<<2)|(col&masklookuph[1][b5.b.h&3]))&wp[2];
-																														pw[5]&=~(masklookuph[1][(b5.b.h>>2)&3]&(wp[2]>>16));
-																														pw[5]|=(bitlookuph[1][(b3.b.l>>2)&3][(b3.b.h>>2)&3]|(bitlookuph[1][(b4.b.l>>2)&3][(b4.b.h>>2)&3]<<2)|(col&masklookuph[1][(b5.b.h>>2)&3]))&(wp[2]>>16);
-																														pw[6]&=~(masklookuph[1][(b5.b.h>>4)&3]&wp[3]);
-																														pw[6]|=(bitlookuph[1][(b3.b.l>>4)&3][(b3.b.h>>4)&3]|(bitlookuph[1][(b4.b.l>>4)&3][(b4.b.h>>4)&3]<<2)|(col&masklookuph[1][(b5.b.h>>4)&3]))&wp[3];
-																														pw[7]&=~(masklookuph[1][(b5.b.h>>6)&3]&(wp[3]>>16));
-																														pw[7]|=(bitlookuph[1][(b3.b.l>>6)&3][(b3.b.h>>6)&3]|(bitlookuph[1][(b4.b.l>>6)&3][(b4.b.h>>6)&3]<<2)|(col&masklookuph[1][(b5.b.h>>6)&3]))&(wp[3]>>16); */
+										/* pw[0]&=~(masklookuph[1][b5.b.l&3]&wp[0]);
+										pw[0]|=(bitlookuph[1][b1.b.l&3][b1.b.h&3]|(bitlookuph[1][b2.b.l&3][b2.b.h&3]<<2)|(col&masklookuph[1][b5.b.l&3]))&wp[0];
+										pw[1]&=~(masklookuph[1][(b5.b.l>>2)&3]&(wp[0]>>16));
+										pw[1]|=(bitlookuph[1][(b1.b.l>>2)&3][(b1.b.h>>2)&3]|(bitlookuph[1][(b2.b.l>>2)&3][(b2.b.h>>2)&3]<<2)|(col&masklookuph[1][(b5.b.l>>2)&3]))&(wp[0]>>16);
+										pw[2]&=~(masklookuph[1][(b5.b.l>>4)&3]&wp[1]);
+										pw[2]|=(bitlookuph[1][(b1.b.l>>4)&3][(b1.b.h>>4)&3]|(bitlookuph[1][(b2.b.l>>4)&3][(b2.b.h>>4)&3]<<2)|(col&masklookuph[1][(b5.b.l>>4)&3]))&wp[1];
+										pw[3]&=~(masklookuph[1][(b5.b.l>>6)&3]&(wp[1]>>16));
+										pw[3]|=(bitlookuph[1][(b1.b.l>>6)&3][(b1.b.h>>6)&3]|(bitlookuph[1][(b2.b.l>>6)&3][(b2.b.h>>6)&3]<<2)|(col&masklookuph[1][(b5.b.l>>6)&3]))&(wp[1]>>16);
+										pw[4]&=~(masklookuph[1][b5.b.h&3]&wp[2]);
+										pw[4]|=(bitlookuph[1][b3.b.l&3][b3.b.h&3]|(bitlookuph[1][b4.b.l&3][b4.b.h&3]<<2)|(col&masklookuph[1][b5.b.h&3]))&wp[2];
+										pw[5]&=~(masklookuph[1][(b5.b.h>>2)&3]&(wp[2]>>16));
+										pw[5]|=(bitlookuph[1][(b3.b.l>>2)&3][(b3.b.h>>2)&3]|(bitlookuph[1][(b4.b.l>>2)&3][(b4.b.h>>2)&3]<<2)|(col&masklookuph[1][(b5.b.h>>2)&3]))&(wp[2]>>16);
+										pw[6]&=~(masklookuph[1][(b5.b.h>>4)&3]&wp[3]);
+										pw[6]|=(bitlookuph[1][(b3.b.l>>4)&3][(b3.b.h>>4)&3]|(bitlookuph[1][(b4.b.l>>4)&3][(b4.b.h>>4)&3]<<2)|(col&masklookuph[1][(b5.b.h>>4)&3]))&wp[3];
+										pw[7]&=~(masklookuph[1][(b5.b.h>>6)&3]&(wp[3]>>16));
+										pw[7]|=(bitlookuph[1][(b3.b.l>>6)&3][(b3.b.h>>6)&3]|(bitlookuph[1][(b4.b.l>>6)&3][(b4.b.h>>6)&3]<<2)|(col&masklookuph[1][(b5.b.h>>6)&3]))&(wp[3]>>16); */
 									} else {
 										pw[7] &= ~(masklookuph[0][b5.b.h & 3] &
 												   (wp[3] >> 16));
@@ -1774,21 +1773,21 @@ void drawline(int line)
 															 3])) &
 											(wp[3] >> 16);
 										/*                                                                                pw[0]&=~(masklookuph[1][b5.b.l&3]&wp[0]);
-																														pw[0]|=(bitlookuph[1][b1.b.l&3][b1.b.h&3]|(col&masklookuph[1][b5.b.l&3]))&wp[0];
-																														pw[1]&=~(masklookuph[1][(b5.b.l>>2)&3]&(wp[0]>>16));
-																														pw[1]|=(bitlookuph[1][(b1.b.l>>2)&3][(b1.b.h>>2)&3]|(col&masklookuph[1][(b5.b.l>>2)&3]))&(wp[0]>>16);
-																														pw[2]&=~(masklookuph[1][(b5.b.l>>4)&3]&wp[1]);
-																														pw[2]|=(bitlookuph[1][(b1.b.l>>4)&3][(b1.b.h>>4)&3]|(col&masklookuph[1][(b5.b.l>>4)&3]))&wp[1];
-																														pw[3]&=~(masklookuph[1][(b5.b.l>>6)&3]&(wp[1]>>16));
-																														pw[3]|=(bitlookuph[1][(b1.b.l>>6)&3][(b1.b.h>>6)&3]|(col&masklookuph[1][(b5.b.l>>6)&3]))&(wp[1]>>16);
-																														pw[4]&=~(masklookuph[1][b5.b.h&3]&wp[2]);
-																														pw[4]|=(bitlookuph[1][b3.b.l&3][b3.b.h&3]|(col&masklookuph[1][b5.b.h&3]))&wp[2];
-																														pw[5]&=~(masklookuph[1][(b5.b.h>>2)&3]&(wp[2]>>16));
-																														pw[5]|=(bitlookuph[1][(b3.b.l>>2)&3][(b3.b.h>>2)&3]|(col&masklookuph[1][(b5.b.h>>2)&3]))&(wp[2]>>16);
-																														pw[6]&=~(masklookuph[1][(b5.b.h>>4)&3]&wp[3]);
-																														pw[6]|=(bitlookuph[1][(b3.b.l>>4)&3][(b3.b.h>>4)&3]|(col&masklookuph[1][(b5.b.h>>4)&3]))&wp[3];
-																														pw[7]&=~(masklookuph[1][(b5.b.h>>6)&3]&(wp[3]>>16));
-																														pw[7]|=(bitlookuph[1][(b3.b.l>>6)&3][(b3.b.h>>6)&3]|(col&masklookuph[1][(b5.b.h>>6)&3]))&(wp[3]>>16); */
+										pw[0]|=(bitlookuph[1][b1.b.l&3][b1.b.h&3]|(col&masklookuph[1][b5.b.l&3]))&wp[0];
+										pw[1]&=~(masklookuph[1][(b5.b.l>>2)&3]&(wp[0]>>16));
+										pw[1]|=(bitlookuph[1][(b1.b.l>>2)&3][(b1.b.h>>2)&3]|(col&masklookuph[1][(b5.b.l>>2)&3]))&(wp[0]>>16);
+										pw[2]&=~(masklookuph[1][(b5.b.l>>4)&3]&wp[1]);
+										pw[2]|=(bitlookuph[1][(b1.b.l>>4)&3][(b1.b.h>>4)&3]|(col&masklookuph[1][(b5.b.l>>4)&3]))&wp[1];
+										pw[3]&=~(masklookuph[1][(b5.b.l>>6)&3]&(wp[1]>>16));
+										pw[3]|=(bitlookuph[1][(b1.b.l>>6)&3][(b1.b.h>>6)&3]|(col&masklookuph[1][(b5.b.l>>6)&3]))&(wp[1]>>16);
+										pw[4]&=~(masklookuph[1][b5.b.h&3]&wp[2]);
+										pw[4]|=(bitlookuph[1][b3.b.l&3][b3.b.h&3]|(col&masklookuph[1][b5.b.h&3]))&wp[2];
+										pw[5]&=~(masklookuph[1][(b5.b.h>>2)&3]&(wp[2]>>16));
+										pw[5]|=(bitlookuph[1][(b3.b.l>>2)&3][(b3.b.h>>2)&3]|(col&masklookuph[1][(b5.b.h>>2)&3]))&(wp[2]>>16);
+										pw[6]&=~(masklookuph[1][(b5.b.h>>4)&3]&wp[3]);
+										pw[6]|=(bitlookuph[1][(b3.b.l>>4)&3][(b3.b.h>>4)&3]|(col&masklookuph[1][(b5.b.h>>4)&3]))&wp[3];
+										pw[7]&=~(masklookuph[1][(b5.b.h>>6)&3]&(wp[3]>>16));
+										pw[7]|=(bitlookuph[1][(b3.b.l>>6)&3][(b3.b.h>>6)&3]|(col&masklookuph[1][(b5.b.h>>6)&3]))&(wp[3]>>16); */
 									} else {
 										pw[7] &= ~(masklookuph[0][b5.b.h & 3] &
 												   (wp[3] >> 16));
@@ -2133,7 +2132,7 @@ void drawline(int line)
 		pw4 = (unsigned short*)window[8];
 		break;
 	}
-	//        printf("CGWSEL %02X\n",ppu.cgwsel&0x30);
+	// printf("CGWSEL %02X\n",ppu.cgwsel&0x30);
 	docolour(pw, pw2, pw3, pw4);
 	if (line == 224)
 		doblit();
@@ -2156,37 +2155,37 @@ void writeppu(unsigned short addr, unsigned char val)
 {
 	int r, g, b, c;
 	unsigned short tempaddr;
-	//        printf("Write PPU %04X %02X %04X\n",addr,val,x.w);
+	// printf("Write PPU %04X %02X %04X\n",addr,val,x.w);
 	switch (addr & 0xFF) {
 	case 0x00: /* Screen enable */
 		snemlog("Screen enable %02X %06X %i\n", val, pbr | pc, lines);
-		//                if (val==0x80) { output=1; timetolive=5000; }
+		// if (val==0x80) { output=1; timetolive=5000; }
 		ppu.screna = val;
 		break;
 	case 0x01: /* Sprite size */
 		ppu.sprsize = val >> 5;
 		ppu.sprbase = (val & 7) << 13;
-		//                printf("Sprite size write %02X %06X\n",val,pbr|pc);
+		// printf("Sprite size write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x02: /* Sprite address low */
 		ppu.spraddr = (ppu.spraddr & 0x200) | (val << 1);
 		ppu.spraddrs = ppu.spraddr;
 		break;
 	case 0x03: /* Sprite address high */
-			   //                printf("Write sprite address %06X\n",pbr|pc);
+			   // printf("Write sprite address %06X\n",pbr|pc);
 		if (val & 1)
 			ppu.spraddr |= 0x200;
 		else
 			ppu.spraddr &= ~0x200;
-		//                ppu.spraddr=(ppu.spraddr&0x1FE)|(val&0x200);
+		// ppu.spraddr=(ppu.spraddr&0x1FE)|(val&0x200);
 		ppu.spraddrs = ppu.spraddr;
 		ppu.prirotation = val & 0x80;
-		//                snemlog("PRIROTATE %i\n",ppu.prirotation);
+		// snemlog("PRIROTATE %i\n",ppu.prirotation);
 		break;
 	case 0x04: /* Sprite data */
-			   //                printf("Write SPR %04X %02X
-			   //                %06X\n",ppu.spraddr,val,pbr|pc);
-		//                printf("SPR %02X %04X %06X\n",val,ppu.spraddr,pbr|pc);
+			   // printf("Write SPR %04X %02X
+			   // %06X\n",ppu.spraddr,val,pbr|pc);
+		// printf("SPR %02X %04X %06X\n",val,ppu.spraddr,pbr|pc);
 		sprram[ppu.spraddr++] = val;
 		if (ppu.spraddr >= 544)
 			ppu.spraddr = 0;
@@ -2194,7 +2193,7 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x05: /* Screen mode */
 		ppu.mode = val & 15;
 		ppu.tilesize = val >> 4;
-		//                printf("PPU mode %i %01X\n",ppu.mode,ppu.mode>>4);
+		// printf("PPU mode %i %01X\n",ppu.mode,ppu.mode>>4);
 		break;
 	case 0x06: /* Mosaic */
 		ppu.mosaic = val >> 4;
@@ -2202,57 +2201,57 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x07: /* BG1 address */
 		ppu.bg[0] = (val & 0xFC) << 8;
 		ppu.size[0] = val & 3;
-		//                printf("BG0 %04X\n",ppu.bg[0]<<1);
+		// printf("BG0 %04X\n",ppu.bg[0]<<1);
 		break;
 	case 0x08: /* BG2 address */
 		ppu.bg[1] = (val & 0xFC) << 8;
 		ppu.size[1] = val & 3;
-		//                printf("BG1 %04X\n",ppu.bg[1]<<1);
+		// printf("BG1 %04X\n",ppu.bg[1]<<1);
 		break;
 	case 0x09: /* BG3 address */
 		ppu.bg[2] = (val & 0xFC) << 8;
 		ppu.size[2] = val & 3;
-		//                printf("BG2 %04X\n",ppu.bg[2]<<1);
+		// printf("BG2 %04X\n",ppu.bg[2]<<1);
 		break;
 	case 0x0A: /* BG4 address */
 		ppu.bg[3] = (val & 0xFC) << 8;
 		ppu.size[3] = val & 3;
-		//                printf("BG3 %04X\n",ppu.bg[3]<<1);
+		// printf("BG3 %04X\n",ppu.bg[3]<<1);
 		break;
 	case 0x0B: /* BG1+2 address */
 		ppu.chr[0] = (val & 0xF) << 12;
 		ppu.chr[1] = (val & 0xF0) << 8;
-		//                printf("CHR0 %04X\nCHR1
-		//                %04X\n",ppu.chr[0]<<1,ppu.chr[1]<<1);
+		// printf("CHR0 %04X\nCHR1
+		// %04X\n",ppu.chr[0]<<1,ppu.chr[1]<<1);
 		break;
 	case 0x0C: /* BG3+4 address */
 		ppu.chr[2] = (val & 0xF) << 12;
 		ppu.chr[3] = (val & 0xF0) << 8;
-		//                printf("CHR2 %04X\nCHR3
-		//                %04X\n",ppu.chr[2]<<1,ppu.chr[3]<<1);
+		// printf("CHR2 %04X\nCHR3
+		// %04X\n",ppu.chr[2]<<1,ppu.chr[3]<<1);
 		break;
 	case 0x0D: /* BG1 xscroll */
 		ppu.xscroll[0] = (ppu.xscroll[0] >> 8) | (val << 8);
 		break;
 	case 0x0E: /* BG1 yscroll */
 		ppu.yscroll[0] = (ppu.yscroll[0] >> 8) | (val << 8);
-		//                printf("BG1 yscroll %i %06X
-		//                %04X\n",ppu.yscroll[0],pbr|pc,dp);
+		// printf("BG1 yscroll %i %06X
+		// %04X\n",ppu.yscroll[0],pbr|pc,dp);
 		break;
 	case 0x0F: /* BG2 xscroll */
 		ppu.xscroll[1] = (ppu.xscroll[1] >> 8) | (val << 8);
 		break;
 	case 0x10: /* BG2 yscroll */
 		ppu.yscroll[1] = (ppu.yscroll[1] >> 8) | (val << 8);
-		//                printf("BG2 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
+		// printf("BG2 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
 		break;
 	case 0x11: /* BG3 xscroll */
 		ppu.xscroll[2] = (ppu.xscroll[2] >> 8) | (val << 8);
-		//                printf("BG3 xscroll %i %06X\n",ppu.xscroll[2],pbr|pc);
+		// printf("BG3 xscroll %i %06X\n",ppu.xscroll[2],pbr|pc);
 		break;
 	case 0x12: /* BG3 yscroll */
 		ppu.yscroll[2] = (ppu.yscroll[2] >> 8) | (val << 8);
-		//                printf("BG3 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
+		// printf("BG3 yscroll %i %06X\n",ppu.yscroll[2],pbr|pc);
 		break;
 	case 0x13: /* BG4 xscroll */
 		ppu.xscroll[3] = (ppu.xscroll[3] >> 8) | (val << 8);
@@ -2262,7 +2261,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		break;
 	case 0x15: /* Video port control */
 		ppu.portctrl = val;
-		//                printf("Video port control %02X\n",val);
+		// printf("Video port control %02X\n",val);
 		switch (val & 3) {
 		case 0:
 			ppu.vinc = 1;
@@ -2274,44 +2273,44 @@ void writeppu(unsigned short addr, unsigned char val)
 		case 3:
 			ppu.vinc = 128;
 		}
-		//                printf("vinc %i remap %i\n",ppu.vinc,(val>>2)&3);
-		/*                if (val&0xC)
-						{
-								printf("Bad VRAM write mode %i\n",val&15);
-								dumpregs();
-								exit(-1);
-						} */
+		// printf("vinc %i remap %i\n",ppu.vinc,(val>>2)&3);
+		/* if (val&0xC)
+		{
+		printf("Bad VRAM write mode %i\n",val&15);
+		dumpregs();
+		exit(-1);
+} */
 		break;
 	case 0x16: /* VRAM address low */
 		ppu.vramaddr = (ppu.vramaddr & 0xFF00) | val;
-		//                printf("%06X VRAM addr %04X
-		//                %i\n",ppu.vramaddr,pbr|pc,ppu.vinc);
+		// printf("%06X VRAM addr %04X
+		// %i\n",ppu.vramaddr,pbr|pc,ppu.vinc);
 		ppu.firstread = 1;
 		wroteaddr = pbr | pc;
 		break;
 	case 0x17: /* VRAM address high */
 		ppu.vramaddr = (ppu.vramaddr & 0xFF) | (val << 8);
-		//                printf("%06X VRAM addr %04X
-		//                %i\n",ppu.vramaddr,pbr|pc,ppu.vinc);
+		// printf("%06X VRAM addr %04X
+		// %i\n",ppu.vramaddr,pbr|pc,ppu.vinc);
 		ppu.firstread = 1;
 		wroteaddr = pbr | pc;
 		break;
 	case 0x18:
 		ppu.firstread = 1;
-		//                printf("%04X",ppu.vramaddr);
-		//                if (((ppu.vramaddr<<1)&0xF000)==0x1000) printf("Write
-		//                %04X %02X %06X\n",(ppu.vramaddr<<1),val,pbr|pc);
-		//                if (val==0x7F) printf("Write %04X 7F
-		//                %06X\n",ppu.vramaddr,pbr|pc);
-		//                if (((ppu.vramaddr<<1)==0xE000) ||
-		//                ((ppu.vramaddr<<1)==0xD2B0) ||
-		//                ((ppu.vramaddr<<1)==0xC18E))
-		//                {
-		//                        output=1;
-		//                        timetolive=50;
-		//                }
-		//                printf("Write %04X %02X %06X %06X %02X%02X%02X
-		//                %02X%02X\n",(ppu.vramaddr<<1),val,pbr|pc,wroteaddr,ram[0xE4],ram[0xE3],ram[0xE2],ram[0xEF],ram[0xEE]);
+		// printf("%04X",ppu.vramaddr);
+		// if (((ppu.vramaddr<<1)&0xF000)==0x1000) printf("Write
+		// %04X %02X %06X\n",(ppu.vramaddr<<1),val,pbr|pc);
+		// if (val==0x7F) printf("Write %04X 7F
+		// %06X\n",ppu.vramaddr,pbr|pc);
+		// if (((ppu.vramaddr<<1)==0xE000) ||
+		// ((ppu.vramaddr<<1)==0xD2B0) ||
+		// ((ppu.vramaddr<<1)==0xC18E))
+		// {
+		// output=1;
+		// timetolive=50;
+		// }
+		// printf("Write %04X %02X %06X %06X %02X%02X%02X
+		// %02X%02X\n",(ppu.vramaddr<<1),val,pbr|pc,wroteaddr,ram[0xE4],ram[0xE3],ram[0xE2],ram[0xEF],ram[0xEE]);
 		tempaddr = ppu.vramaddr;
 		switch (ppu.portctrl & 0xC) {
 		case 0x4:
@@ -2327,25 +2326,25 @@ void writeppu(unsigned short addr, unsigned char val)
 					   ((tempaddr >> 7) & 7);
 			break;
 		}
-		//                if ((ppu.portctrl&0xC)==4)
-		//                {
-		//                        tempaddr = (tempaddr & 0xff00) | ((tempaddr &
-		//                        0x001f) << 3) | ((tempaddr >> 5) & 7);
-		/*                        temp=tempaddr&0xFF00;
-								temp|=((tempaddr&0x1F)<<3);
-								tempaddr=temp|((temp>>5)&7); */
-		//                }
-		//                if (((tempaddr<<1)&0xFC00)==0x6000) printf("VRAM write
-		//                %04X %02X %06X %04X\n",tempaddr<<1,val,pbr|pc,x.w);
+		// if ((ppu.portctrl&0xC)==4)
+		// {
+		//	tempaddr = (tempaddr & 0xff00) | ((tempaddr &
+		//	0x001f) << 3) | ((tempaddr >> 5) & 7);
+		/*	temp=tempaddr&0xFF00;
+			temp|=((tempaddr&0x1F)<<3);
+			tempaddr=temp|((temp>>5)&7); */
+		//	}
+		//	if (((tempaddr<<1)&0xFC00)==0x6000) printf("VRAM write
+		//	%04X %02X %06X %04X\n",tempaddr<<1,val,pbr|pc,x.w);
 		vramb[(tempaddr << 1) & 0xFFFF] = val;
 		if (!(ppu.portctrl & 0x80))
 			ppu.vramaddr += ppu.vinc;
 		break;
 	case 0x19:
 		ppu.firstread = 1;
-		//                printf("%04X",ppu.vramaddr);
-		//                if ((ppu.vramaddr&~0x7FF)==ppu.bg[2]) printf("Write
-		//                %04X %02X %06X\n",(ppu.vramaddr<<1)+1,val,pbr|pc);
+		// printf("%04X",ppu.vramaddr);
+		// if ((ppu.vramaddr&~0x7FF)==ppu.bg[2]) printf("Write
+		// %04X %02X %06X\n",(ppu.vramaddr<<1)+1,val,pbr|pc);
 		tempaddr = ppu.vramaddr;
 		switch (ppu.portctrl & 0xC) {
 		case 0x4:
@@ -2361,16 +2360,16 @@ void writeppu(unsigned short addr, unsigned char val)
 					   ((tempaddr >> 7) & 7);
 			break;
 		}
-		//                if ((ppu.portctrl&0xC)==4)
-		//                {
-		//                        tempaddr = (tempaddr & 0xff00) | ((tempaddr &
-		//                        0x001f) << 3) | ((tempaddr >> 5) & 7);
-		/*                        temp=tempaddr&0xFF00;
-								temp|=((tempaddr&0x1F)<<3);
-								tempaddr=temp|((temp>>5)&7); */
-		//                }
-		//                if (!tempaddr) printf("VRAM write %04X %02X
-		//                %06X\n",tempaddr<<1,val,pbr|pc);
+		// if ((ppu.portctrl&0xC)==4)
+		// {
+		//	tempaddr = (tempaddr & 0xff00) | ((tempaddr &
+		//	0x001f) << 3) | ((tempaddr >> 5) & 7);
+		/*	temp=tempaddr&0xFF00;
+			temp|=((tempaddr&0x1F)<<3);
+			tempaddr=temp|((temp>>5)&7); */
+		//	}
+		//	if (!tempaddr) printf("VRAM write %04X %02X
+		//	%06X\n",tempaddr<<1,val,pbr|pc);
 		vramb[((tempaddr << 1) & 0xFFFF) | 1] = val;
 		if (ppu.portctrl & 0x80)
 			ppu.vramaddr += ppu.vinc;
@@ -2381,37 +2380,37 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x1B:
 		ppu.m7a = (ppu.m7a >> 8) | (val << 8);
 		ppu.matrixr = (short)ppu.m7a * ((short)ppu.m7b >> 8);
-		//                printf("M7A %04X\n",ppu.m7a);
+		// printf("M7A %04X\n",ppu.m7a);
 		return;
 	case 0x1C:
 		ppu.m7b = (ppu.m7b >> 8) | (val << 8);
 		ppu.matrixr = (short)ppu.m7a * ((short)ppu.m7b >> 8);
-		//                printf("M7B %04X\n",ppu.m7b);
-		//                m7write=1;
+		// printf("M7B %04X\n",ppu.m7b);
+		// m7write=1;
 		return;
 	case 0x1D:
 		ppu.m7c = (ppu.m7c >> 8) | (val << 8);
-		//                printf("M7C %04X\n",ppu.m7c);
+		// printf("M7C %04X\n",ppu.m7c);
 		return;
 	case 0x1E:
 		ppu.m7d = (ppu.m7d >> 8) | (val << 8);
-		//                printf("M7D %04X\n",ppu.m7d);
+		// printf("M7D %04X\n",ppu.m7d);
 		return;
 	case 0x1F:
 		ppu.m7x = (ppu.m7x >> 8) | (val << 8);
-		//                printf("M7X %04X\n",ppu.m7x);
+		// printf("M7X %04X\n",ppu.m7x);
 		return;
 	case 0x20:
 		ppu.m7y = (ppu.m7y >> 8) | (val << 8);
-		//                printf("M7Y %04X\n",ppu.m7y);
+		// printf("M7Y %04X\n",ppu.m7y);
 		return;
 	case 0x21: /* Palette select */
 		ppu.palindex = val;
 		ppu.palbuffer = 0;
 		break;
 	case 0x22: /* Palette write */
-			   //                printf("2122 write %02x %06X
-			   //                %i\n",val,pbr|pc,ppu.palindex);
+		// printf("2122 write %02x %06X
+		// %i\n",val,pbr|pc,ppu.palindex);
 		if (!ppu.palbuffer)
 			ppu.palbuffer = val | 0x100;
 		else {
@@ -2425,86 +2424,86 @@ void writeppu(unsigned short addr, unsigned char val)
 						  ((float)c / (float)15));
 				pallookup[c][ppu.palindex] = makecol(r << 3, g << 3, b << 3);
 			}
-			//                        printf("Pal %i = %04X %04X %i %i
-			//                        %i\n",ppu.palindex,ppu.pal[ppu.palindex],pallookup[ppu.palindex],r,g,b);
+			// printf("Pal %i = %04X %04X %i %i
+			//	%i\n",ppu.palindex,ppu.pal[ppu.palindex],pallookup[ppu.palindex],r,g,b);
 			ppu.palindex++;
 			ppu.palindex &= 255;
 			ppu.palbuffer = 0;
 		}
 		break;
 	case 0x23: /* BG window enable */
-			   //                printf("Windena1 write %02X %06X
-			   //                %i\n",val,pbr|pc,lastline);
+		// printf("Windena1 write %02X %06X
+		// %i\n",val,pbr|pc,lastline);
 		if (val != ppu.windena1)
 			windowschanged = 1;
 		ppu.windena1 = val;
-		//                windowschanged=1;
+		// windowschanged=1;
 		break;
 	case 0x24: /* BG window enable */
-			   //                printf("Windena2 write %02X %06X
-			   //                %i\n",val,pbr|pc,lastline);
+		// printf("Windena2 write %02X %06X
+		//	%i\n",val,pbr|pc,lastline);
 		if (val != ppu.windena2)
 			windowschanged = 1;
 		ppu.windena2 = val;
-		//                windowschanged=1;
+		// windowschanged=1;
 		break;
 	case 0x25: /* BG window enable */
-			   //                printf("Windena3 write %02X %06X
-			   //                %i\n",val,pbr|pc,lastline);
+		// printf("Windena3 write %02X %06X
+		//	%i\n",val,pbr|pc,lastline);
 		if (val != ppu.windena3)
 			windowschanged = 1;
 		ppu.windena3 = val;
-		//                windowschanged=1;
+		// windowschanged=1;
 		break;
 	case 0x26: /* Window 1 left */
 		if (val != ppu.w1left)
 			windowschanged = 1;
 		ppu.w1left = val;
-		//                windowschanged=1;
-		//                printf("W1L write %02X %06X\n",val,pbr|pc);
+		// windowschanged=1;
+		// printf("W1L write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x27: /* Window 1 right */
 		if (val != ppu.w1right)
 			windowschanged = 1;
 		ppu.w1right = val;
-		//                windowschanged=1;
-		//                printf("W1R write %02X %06X\n",val,pbr|pc);
+		// windowschanged=1;
+		// printf("W1R write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x28: /* Window 2 left */
 		if (val != ppu.w2left)
 			windowschanged = 1;
 		ppu.w2left = val;
-		//                windowschanged=1;
-		//                printf("W2L write %02X %06X\n",val,pbr|pc);
+		// windowschanged=1;
+		// printf("W2L write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x29: /* Window 2 right */
 		if (val != ppu.w2right)
 			windowschanged = 1;
 		ppu.w2right = val;
-		//                windowschanged=1;
-		//                printf("W2R write %02X %06X\n",val,pbr|pc);
+		// windowschanged=1;
+		// printf("W2R write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x2A: /* BG window logic */
 		if (val != ppu.windlogic)
 			windowschanged = 1;
 		ppu.windlogic = val;
-		//                windowschanged=1;
-		//                printf("WL write %02X %06X\n",val,pbr|pc);
+		// windowschanged=1;
+		// printf("WL write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x2B: /* BG window logic */
 		if (val != ppu.windlogic2)
 			windowschanged = 1;
 		ppu.windlogic2 = val;
-		//                windowschanged=1;
-		//                printf("WL2 write %02X %06X\n",val,pbr|pc);
+		// windowschanged=1;
+		// printf("WL2 write %02X %06X\n",val,pbr|pc);
 		break;
 	case 0x2C:
 		ppu.main = val;
-		//                printf("Main screen enable %02X %i\n",val,lastline);
+		// printf("Main screen enable %02X %i\n",val,lastline);
 		break;
 	case 0x2D:
 		ppu.sub = val;
-		//                printf("Sub screen enable %02X %i\n",val,lastline);
+		// printf("Sub screen enable %02X %i\n",val,lastline);
 		break;
 	case 0x2E:
 		ppu.wmaskmain = val;
@@ -2514,11 +2513,11 @@ void writeppu(unsigned short addr, unsigned char val)
 		break;
 	case 0x30:
 		ppu.cgwsel = val;
-		//                printf("CGWSEL now %02X\n",val);
+		// printf("CGWSEL now %02X\n",val);
 		break;
 	case 0x31:
 		ppu.cgadsub = val;
-		//                printf("CGADSUB now %02X\n",val);
+		// printf("CGADSUB now %02X\n",val);
 		break;
 	case 0x32:
 		if (val & 0x20)
@@ -2527,14 +2526,14 @@ void writeppu(unsigned short addr, unsigned char val)
 			ppu.fixedc.g = (val & 0x1F) << 3;
 		if (val & 0x80)
 			ppu.fixedc.b = (val & 0x1F) << 3;
-		//                printf("FIXEDCOL %i %i
-		//                %i\n",ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b);
+		// printf("FIXEDCOL %i %i
+		// %i\n",ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b);
 		ppu.fixedcol = (((ppu.fixedc.r >> 3) << _rgb_r_shift_16) |
 						((ppu.fixedc.g >> 2) << _rgb_g_shift_16) |
 						((ppu.fixedc.b >> 3) << _rgb_b_shift_16));
-		//                ppu.fixedcol=makecol(ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b);
-		//                printf("FIXEDCOL %i %i %i
-		//                %04X\n",ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b,ppu.fixedcol);
+		// ppu.fixedcol=makecol(ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b);
+		// printf("FIXEDCOL %i %i %i
+		// %04X\n",ppu.fixedc.r,ppu.fixedc.g,ppu.fixedc.b,ppu.fixedcol);
 		break;
 	case 0x40:
 	case 0x41:
@@ -2545,7 +2544,7 @@ void writeppu(unsigned short addr, unsigned char val)
 		setzf = 0;
 		break;
 	case 0x80: /* WRAM */
-		//                printf("Write WRAM %05X %02X\n",ppu.wramaddr,val);
+		// printf("Write WRAM %05X %02X\n",ppu.wramaddr,val);
 		ram[ppu.wramaddr & 0x1FFFF] = val;
 		ppu.wramaddr++;
 		break;
@@ -2558,10 +2557,10 @@ void writeppu(unsigned short addr, unsigned char val)
 	case 0x83: /* WRAM addr high */
 		ppu.wramaddr = (ppu.wramaddr & 0x00FFFF) | (val << 16);
 		break;
-		//                default:
-		//                printf("Write PPU %04X %02X\n",addr,val);
+	// default:
+		// printf("Write PPU %04X %02X\n",addr,val);
 	}
-	//        printf("\n");
+	// printf("\n");
 }
 
 int spcskip = 4;
@@ -2569,14 +2568,14 @@ int spcskip = 4;
 unsigned char doskipper()
 {
 	int temp = spcskip;
-	//        printf("Do skipper!\n");
+	// printf("Do skipper!\n");
 	spcskip++;
 	if (spcskip == 19)
 		spcskip = 0;
-	//        skip&=3;
-	//        if (!(&1)) skip&=~1;
-	//        else        skip|=1;
-	//        printf("Skipper %i %i  ",temp,temp>>1);
+	// skip&=3;
+	// if (!(&1)) skip&=~1;
+	// else        skip|=1;
+	// printf("Skipper %i %i  ",temp,temp>>1);
 	switch (temp >> 1) {
 	case 0:
 	case 1:
@@ -2633,13 +2632,13 @@ unsigned char readppu(unsigned short addr)
 	unsigned char temp;
 	switch (addr & 0xFF) {
 	case 0x34:
-		//                        printf("Read 2134\n");
+		// printf("Read 2134\n");
 		return ppu.matrixr;
 	case 0x35:
-		//                        printf("Read 2134\n");
+		// printf("Read 2134\n");
 		return ppu.matrixr >> 8;
 	case 0x36:
-		//                        printf("Read 2134\n");
+		// printf("Read 2134\n");
 		return ppu.matrixr >> 16;
 	case 0x37: /* Latch v/h counters */
 		vcount = lines;
@@ -2676,7 +2675,7 @@ unsigned char readppu(unsigned short addr)
 	case 0x3F:
 		if (pal)
 			return 0x10;
-		//                        printf("Read type %06X\n",pbr|pc);
+		// printf("Read type %06X\n",pbr|pc);
 		return 0x00; /* NTSC */ // 0x10; /* PAL */
 	case 0x40:
 	case 0x42:
@@ -2686,8 +2685,8 @@ unsigned char readppu(unsigned short addr)
 		spcskip++;
 		if (spcskip == 41)
 			spcskip = 0;
-		//                printf("Read 2140 %i %i
-		//                %04X\n",spcskip,spcskip>>1,pc);
+		// printf("Read 2140 %i %i
+		// %04X\n",spcskip,spcskip>>1,pc);
 		switch (spcskip >> 1) {
 		case 0:
 			return a.b.l;
@@ -2740,8 +2739,8 @@ unsigned char readppu(unsigned short addr)
 		spcskip++;
 		if (spcskip == 41)
 			spcskip = 0;
-		//                printf("Read 2141 %i %i
-		//                %04X\n",spcskip,spcskip>>1,pc);
+		// printf("Read 2141 %i %i
+		// %04X\n",spcskip,spcskip>>1,pc);
 		switch (spcskip >> 1) {
 		case 0:
 			return a.b.h;
@@ -2882,10 +2881,10 @@ void dumpchar()
 		if (key[KEY_F]) {
 			while (key[KEY_F])
 				yield_timeslice();
-			//                        set_palette(ppu.pal);
+			// set_palette(ppu.pal);
 		}
 		tile = page << 9;
-		//                ppu.vram[0xf200]=ppu.vram[0xf201]=ppu.vram[0xf210]=ppu.vram[0xf211]=0xFF;
+		// ppu.vram[0xf200]=ppu.vram[0xf201]=ppu.vram[0xf210]=ppu.vram[0xf211]=0xFF;
 		for (y = 0; y < 32; y++) {
 			for (x = 0; x < 16; x++) {
 				drawchar(tile++, x << 3, y << 3, col);
@@ -2899,7 +2898,7 @@ void dumpchar()
 	}
 	clear(screen);
 	destroy_bitmap(dasbuffer);
-	//        printf("%01X\n",ppu.sdr&0xF);
+	// printf("%01X\n",ppu.sdr&0xF);
 }
 
 void dumpbg2()
@@ -2922,7 +2921,7 @@ void dumpbg2()
 				tile = vram[addr++];
 				tile &= 0x3FF;
 				tile = 0x6000 + (tile * 16);
-				//                                tile>>=1;
+				// tile>>=1;
 				for (y = 0; y < 8; y++) {
 					dat1 = vramb[tile];
 					dat2 = vramb[tile + 1];
@@ -2931,7 +2930,7 @@ void dumpbg2()
 						col = (dat1 & 0x80) ? 1 : 0;
 						col |= (dat2 & 0x80) ? 2 : 0;
 						putpixel(dasbuffer, (d * 8) + x, (c * 8) + y, col);
-						//                                                dasbuffer->line[(c<<3)+y][(d<<3)+x]=col;
+						// dasbuffer->line[(c<<3)+y][(d<<3)+x]=col;
 						dat1 <<= 1;
 						dat2 <<= 1;
 					}

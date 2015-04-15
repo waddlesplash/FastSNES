@@ -39,14 +39,14 @@ int spctimer[3], spctimer2[3], spclimit[3];
 
 unsigned char readfromspc(unsigned short addr)
 {
-	//        printf("Read SPC %04X %02X %06X\n",addr,spctocpu[addr&3],pbr|pc);
+	// printf("Read SPC %04X %02X %06X\n",addr,spctocpu[addr&3],pbr|pc);
 	return spctocpu[addr & 3];
 }
 
 void writetospc(unsigned short addr, unsigned char val)
 {
 	spcram[(addr & 3) + 0xF4] = val;
-	//        printf("Set SPC %02X %02X %06X\n",(addr&3)+0xF4,val,pbr|pc);
+	// printf("Set SPC %02X %02X %06X\n",(addr&3)+0xF4,val,pbr|pc);
 }
 unsigned char dspaddr;
 unsigned char voiceon;
@@ -63,7 +63,7 @@ void writespcregs(unsigned short a, unsigned char v)
 			spcreadhigh = spcrom;
 		else
 			spcreadhigh = spcram + 0xFFC0;
-		//                printf("Write F1 %02X %04X\n",v,spc.pc);
+		// printf("Write F1 %02X %04X\n",v,spc.pc);
 		break;
 	case 0xF2:
 	case 0xF3:
@@ -79,13 +79,13 @@ void writespcregs(unsigned short a, unsigned char v)
 	case 0xF6:
 	case 0xF7:
 		spctocpu[a & 3] = v;
-		//                printf("SPC writes %02X to %02X\n",v,a);
+		// printf("SPC writes %02X to %02X\n",v,a);
 		break;
 	case 0xFA:
 	case 0xFB:
 	case 0xFC:
 		spclimit[a - 0xFA] = v;
-		//                printf("SPC limit %i = %02X\n",a-0xFA,v);
+		// printf("SPC limit %i = %02X\n",a-0xFA,v);
 		break;
 	case 0xFD:
 	case 0xFE:
@@ -109,7 +109,7 @@ unsigned char readspcregs(unsigned short a)
 	case 0xFD:
 	case 0xFE:
 	case 0xFF:
-		//              printf("Read timer %04X\n",spc.pc);
+		// printf("Read timer %04X\n",spc.pc);
 		v = spcram[a];
 		spcram[a] = 0;
 		return v;
@@ -141,7 +141,7 @@ void resetspc()
 	spc.pc = 0xFFC0;
 	spcreadhigh = spcrom;
 	spc.x = spc.ya.w = 0;
-	//        printf("Reset SPC %04X\n",spc.pc);
+	// printf("Reset SPC %04X\n",spc.pc);
 	spccycles = 0;
 	spc.p.p = 0;
 	spctimer[0] = spctimer[1] = spctimer[2] = 0;
@@ -205,7 +205,7 @@ void execspc()
 	unsigned short addr, addr2, tempw;
 	unsigned long templ;
 	int spccount;
-	//        snemlog("ExecSPC %i\n",spccycles);
+	// snemlog("ExecSPC %i\n",spccycles);
 	while (spccycles > 0) {
 		spc3 = spc2;
 		spc2 = spc.pc;
@@ -510,7 +510,7 @@ void execspc()
 			addr = readspc(spc.pc) + (readspc(spc.pc + 1) << 8) + spc.x;
 			spc.pc += 2;
 			spc.pc = readspc(addr) | (readspc(addr + 1) << 8);
-			//                        printf("JMPx %06X\n",spc.pc);
+			// printf("JMPx %06X\n",spc.pc);
 			spccycles(6);
 			break;
 
@@ -683,18 +683,18 @@ void execspc()
 		case 0x3F: /* CALL */
 			addr = readspc(spc.pc) + (readspc(spc.pc + 1) << 8);
 			spc.pc += 2;
-			//                        printf("CALL %04X->",spc.pc);
+			// printf("CALL %04X->",spc.pc);
 			writespc(spc.s + 0x100, spc.pc >> 8);
 			spc.s--;
 			writespc(spc.s + 0x100, spc.pc & 0xFF);
 			spc.s--;
 			spc.pc = addr;
-			//                        printf("%04X\n",spc.pc);
+			// printf("%04X\n",spc.pc);
 			spccycles(8);
 			break;
 
 		case 0x40: /* SETP */
-				   //                        printf("SETP!!\n");
+				   // printf("SETP!!\n");
 			spc.p.p = 0x100;
 			spccycles(2);
 			break;
@@ -871,7 +871,7 @@ void execspc()
 		case 0x5F: /* JMP xxxx */
 			getabs();
 			spc.pc = addr;
-			//                        printf("JMP %04X\n",spc.pc);
+			// printf("JMP %04X\n",spc.pc);
 			spccycles(3);
 			break;
 
@@ -962,7 +962,7 @@ void execspc()
 			spc.pc = readspc(spc.s + 0x100);
 			spc.s++;
 			spc.pc |= (readspc(spc.s + 0x100) << 8);
-			//                        printf("RET %04X\n",spc.pc);
+			// printf("RET %04X\n",spc.pc);
 			spccycles(5);
 			break;
 
@@ -1027,16 +1027,16 @@ void execspc()
 		case 0x7A: /* ADDW YA,xx */
 			addr = readspc(spc.pc) + spc.p.p;
 			spc.pc++;
-			//                        printf("ADDW %04X ",addr);
+			// printf("ADDW %04X ",addr);
 			tempw = readspc(addr) | (readspc(addr + 1) << 8);
-			//                        printf("%04X+%04X",tempw,spc.ya.w);
+			// printf("%04X+%04X",tempw,spc.ya.w);
 			templ = spc.ya.w + tempw;
 			spc.p.v = (!((spc.ya.w ^ tempw) & 0x8000) &&
 					   ((spc.ya.w ^ templ) & 0x8000));
 			spc.ya.w = templ & 0xFFFF;
 			setspczn16(spc.ya.w);
 			spc.p.c = templ & 0x10000;
-			//                        printf("=%04X\n",spc.ya.w);
+			// printf("=%04X\n",spc.ya.w);
 			/*                        templ=spc.ya.w+tempw;
 									spc.p.c=templ&0x10000;
 									spc.p.v=(!((spc.ya.w^tempw)&0x8000)&&((spc.ya.w^templ)&0x8000));
@@ -1358,7 +1358,7 @@ void execspc()
 		case 0xAE: /* POP A */
 			spc.s++;
 			spc.ya.b.a = readspc(spc.s + 0x100);
-			//                        setspczn(spc.ya.b.a);
+			// setspczn(spc.ya.b.a);
 			spccycles(4);
 			break;
 
@@ -1528,15 +1528,15 @@ void execspc()
 		case 0xCE: /* POP X */
 			spc.s++;
 			spc.x = readspc(spc.s + 0x100);
-			//                        setspczn(spc.x);
+			// setspczn(spc.x);
 			spccycles(4);
 			break;
 
 		case 0xCF: /* MUL YA */
-				   //                        printf("MUL
-				   //                        %02X*%02X=",spc.ya.b.a,spc.ya.b.y);
+				   // printf("MUL
+				   // %02X*%02X=",spc.ya.b.a,spc.ya.b.y);
 			spc.ya.w = spc.ya.b.a * spc.ya.b.y;
-			//                        printf("%04X\n",spc.ya.w);
+			// printf("%04X\n",spc.ya.w);
 			setspczn(spc.ya.b.y);
 			spccycles(9);
 			break;
@@ -1713,7 +1713,7 @@ void execspc()
 		case 0xEE: /* POP Y */
 			spc.s++;
 			spc.ya.b.y = readspc(spc.s + 0x100);
-			//                        setspczn(spc.ya.b.y);
+			// setspczn(spc.ya.b.y);
 			spccycles(4);
 			break;
 
@@ -1739,9 +1739,9 @@ void execspc()
 		case 0xF5: /* MOV A,(xxxx+X) */
 			addr = readspc(spc.pc) + (readspc(spc.pc + 1) << 8) + spc.x;
 			spc.pc += 2;
-			//                        printf("MOVA %04X",addr);
+			// printf("MOVA %04X",addr);
 			spc.ya.b.a = readspc(addr);
-			//                        printf(" %02X\n",spc.ya.b.a);
+			// printf(" %02X\n",spc.ya.b.a);
 			setspczn(spc.ya.b.a);
 			spccycles(5);
 			break;
@@ -2038,8 +2038,8 @@ void execspc()
 			spccycles -= (spccount * 20.7796875f); // 20.36383f);
 		else
 			spccycles -= (spccount * 20.9395313f);
-		//                spctotal2+=(spccount*20.78f);//20.36383f);
-		//                spctotal3+=spccount;
+		// spctotal2+=(spccount*20.78f);//20.36383f);
+		// spctotal3+=spccount;
 		spctimer[0] -= spccount;
 		if (spctimer[0] <= 0) {
 			spctimer[0] += 128;
@@ -2073,14 +2073,14 @@ void execspc()
 		dsptotal -= spccount;
 		if (dsptotal <= 0) {
 			dsptotal += 32;
-			//                        snemlog("PollDSP\n");
+			// snemlog("PollDSP\n");
 			polldsp();
 		}
-		//                spctotal+=spccount;
-		//                if (spcoutput) printf("%04X : %04X %02X %02X
-		//                %02X\n",spc.pc,spc.ya.w,spc.x,spc.s,opcode);
-		//                if (spc.pc==0x12F7) printf("12F7 from %04X
-		//                %04X\n",spc2,spc3);
+		// spctotal+=spccount;
+		// if (spcoutput) printf("%04X : %04X %02X %02X
+		// %02X\n",spc.pc,spc.ya.w,spc.x,spc.s,opcode);
+		// if (spc.pc==0x12F7) printf("12F7 from %04X
+		// %04X\n",spc2,spc3);
 	}
-	//        snemlog("End of execSPC\n");
+	// snemlog("End of execSPC\n");
 }

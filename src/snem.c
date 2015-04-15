@@ -48,8 +48,8 @@ void execframe()
 		spctotal3 = 0.0f;
 	}
 	for (lines = 0; lines < ((pal) ? 312 : 262); lines++) {
-		//                snemlog("%i %02X:%04X %i %i
-		//                %i\n",lines,pbr>>16,pc,irqenable,xirq,yirq);
+		// snemlog("%i %02X:%04X %i %i
+		// %i\n",lines,pbr>>16,pc,irqenable,xirq,yirq);
 		if ((irqenable == 2 /* || irqenable==1 */) && (lines == yirq)) {
 			irq = 1; /* snemlog("Raise IRQ line %i %02X\n",lines,lines); */
 		}
@@ -58,7 +58,7 @@ void execframe()
 		cycles += 1364;
 		intthisline = 0;
 		while (cycles > 0) {
-			//                        if (ins==20) printf("1 %06X\n",pbr|pc);
+			// if (ins==20) printf("1 %06X\n",pbr|pc);
 			/*                        pc7=pc8;
 									pc8=pc9;
 									pc9=pc10;
@@ -71,7 +71,7 @@ void execframe()
 									pc2=pc3;
 									pc3=pc4;
 									pc4=pbr|pc;
-			//                        if (pc==0xFB2A) printf("FB2A
+			// if (pc==0xFB2A) printf("FB2A
 			X=%04X\n",x.w);
 									if (pc==0xFD5F || pc==0xFD94)
 									{
@@ -83,8 +83,8 @@ void execframe()
 									}
 									if (pc==0xF58D) printf("F58D A=%04X
 			Y=%04X\n",a.w,y.w);
-			//                        if (pc==0xFD66) { timetolive=15; }
-			//                        if (pc==0xFD91) output=0;
+			// if (pc==0xFD66) { timetolive=15; }
+			// if (pc==0xFD91) output=0;
 									if (pc==0xFADB) output=1;
 									if (pc==0xFAE6) output=0; */
 			opcode = readmem(pbr | pc);
@@ -95,9 +95,9 @@ void execframe()
 				if (((1364 - cycles) >> 2) >= xirq) {
 					irq = 1;
 					intthisline = 1;
-					//                                        snemlog("Raise IRQ
-					//                                        horiz %i
-					//                                        %i\n",lines,irqenable);
+					// snemlog("Raise IRQ
+					// horiz %i
+					// %i\n",lines,irqenable);
 				}
 			}
 			/*                        if (pc==0x9665)
@@ -115,26 +115,26 @@ void execframe()
 			   %02X\n",memlookup[4],memlookup[0x404],readmem(0x9F64),readmem(0x809F64));
 											exit(-1);
 									} */
-			//                        if ((pbr|pc)==0xC40142) { output=1;
-			//                        timetolive=300; }
+			// if ((pbr|pc)==0xC40142) { output=1;
+			// timetolive=300; }
 			/*                        if (x.w==0xE0BC && !e0bc) printf("X=E0BC
 			   at %06X\n",pbr|pc);
 									e0bc=(x.w==0xE0BC); */
-			//                        if (pc==0x93E2) output=1;
-			//                        if (pc==0x93F3) timetolive=150;
-			//                        if (output) printf("%06X : %04X %04X
-			//                        %04X\n",pbr|pc,a.w,x.w,y.w);
-			//                        printf("End of op\n");
-			//                        if (output) printf("%06X ",pc);
-			//                        if (pc==0xBBE9) output=1;
-			//                        if (pc==0xBC18) output=0;
-			//                        if (pc==0xB898) { ins=0; output=1; }
-			//                        if ((pbr|pc)==0x89262) printf("Hit 89262
-			//                        %04X\n",s.w);
+			// if (pc==0x93E2) output=1;
+			// if (pc==0x93F3) timetolive=150;
+			// if (output) printf("%06X : %04X %04X
+			// %04X\n",pbr|pc,a.w,x.w,y.w);
+			// printf("End of op\n");
+			// if (output) printf("%06X ",pc);
+			// if (pc==0xBBE9) output=1;
+			// if (pc==0xBC18) output=0;
+			// if (pc==0xB898) { ins=0; output=1; }
+			// if ((pbr|pc)==0x89262) printf("Hit 89262
+			// %04X\n",s.w);
 			ins++;
-			//                        if (ins==16640000) { output=1;
-			//                        timetolive=5000; }
-			//                        if (ins==6050000 && times==1) output=1;
+			// if (ins==16640000) { output=1;
+			// timetolive=5000; }
+			// if (ins==6050000 && times==1) output=1;
 			if (oldnmi != nmi && nmienable && nmi)
 				nmi65c816();
 			else if (irq && (!p.i || inwai))
@@ -151,19 +151,19 @@ void execframe()
 					output = 0;
 				}
 			}
-			//                        if (pc==0x9DCD) printf("99BA %04X %04X
-			//                        %04X %i\n",a.w,x.w,y.w,ins);
-			//                        if (pc==0xAA7C) printf("AA7C %04X %04X
-			//                        %04X %i\n",a.w,x.w,y.w,ins);
-			//                        if (ins==286800) output=1;
-			//                        if (ins==290200) output=0;
+			// if (pc==0x9DCD) printf("99BA %04X %04X
+			// %04X %i\n",a.w,x.w,y.w,ins);
+			// if (pc==0xAA7C) printf("AA7C %04X %04X
+			// %04X %i\n",a.w,x.w,y.w,ins);
+			// if (ins==286800) output=1;
+			// if (ins==290200) output=0;
 		}
 		if (lines == 0xE0)
 			nmi = 1;
 		if (lines == 0xE0) {
 			vbl = joyscan = 1;
 			readjoy();
-			//                        snemlog("Enter VBL\n");
+			// snemlog("Enter VBL\n");
 		}
 		if (lines == 0xE3)
 			joyscan = 0;
@@ -205,21 +205,21 @@ int main()
         FILE *f;
         int c;
         char s[256];
-//        printf("1\n");
+// printf("1\n");
         allocmem();
-//        printf("2\n");
+// printf("2\n");
         loadrom("asterix.smc");
-//        printf("3\n");
-//        initmem();
-//        printf("4\n");
+// printf("3\n");
+// initmem();
+// printf("4\n");
         initppu();
         initspc();
         resetppu();
         resetspc();
         resetdsp();
-//        printf("3 %08X %08X\n",vram,vramb);
+// printf("3 %08X %08X\n",vram,vramb);
 		reset65c816();
-//        printf("4 %08X %08X\n",vram,vramb);
+// printf("4 %08X %08X\n",vram,vramb);
         makeopcodetable();
         ins=0;
         install_keyboard();
@@ -231,7 +231,7 @@ int main()
 /*        f=fopen("rom.dmp","wb");
         fwrite(rom,2048*1024,1,f);
         fclose(f); */
-//        printf("5 %08X %08X\n",vram,vramb);
+// printf("5 %08X %08X\n",vram,vramb);
         while (!key[KEY_ESC])
         {
                 if (drawcount)
@@ -248,7 +248,7 @@ int main()
                         }
                 }
                 if (drawcount>1) drawcount=1;
-//                drawcount=1;
+// drawcount=1;
                 if (key[KEY_1])
                 {
                         while (key[KEY_1]);
@@ -292,7 +292,7 @@ int main()
         }
         dumpregs();
         dumpspcregs();
-//        dumpvram();
+// dumpvram();
         dumphdma();
         return 0;
 }

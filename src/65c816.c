@@ -24,10 +24,10 @@ unsigned long absolutex()
 {
 	unsigned long temp = (readmemw(pbr | pc)) + x.w + dbr;
 	pc += 2;
-	//        if ((temp&0xFFFF)>0x2200 && (temp&0xFFFF)<0x8000) printf("ABSX
-	//        %04X %06X\n",x.w,temp);
-	//        if (output) printf("ABSX 0000,%04X - %06X\n",x.w,temp);
-	//        if (output) printf("Addr %06X\n",temp);
+	// if ((temp&0xFFFF)>0x2200 && (temp&0xFFFF)<0x8000) printf("ABSX
+	// %04X %06X\n",x.w,temp);
+	// if (output) printf("ABSX 0000,%04X - %06X\n",x.w,temp);
+	// if (output) printf("Addr %06X\n",temp);
 	return temp;
 }
 
@@ -53,7 +53,7 @@ unsigned long absolutelongx()
 	pc += 2;
 	temp += (readmem(pbr | pc) << 16);
 	pc++;
-	//        printf("abslx %06X %04X\n",temp,x.w);
+	// printf("abslx %06X %04X\n",temp,x.w);
 	return temp;
 }
 
@@ -125,7 +125,7 @@ unsigned long jindirectx() /* JSR (,x) uses PBR instead of DBR, and 2 byte
 	unsigned long temp =
 		(readmem(pbr | pc) + (readmem((pbr | pc) + 1) << 8) + x.w) + pbr;
 	pc += 2;
-	//        printf("Temp %06X\n",temp);
+	// printf("Temp %06X\n",temp);
 	return temp;
 }
 
@@ -147,7 +147,7 @@ unsigned long indirectl()
 	unsigned long temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
 	unsigned long addr = readmemw(temp) | (readmem(temp + 2) << 16);
-	//        printf("IND %06X\n",addr);
+	// printf("IND %06X\n",addr);
 	return addr;
 }
 
@@ -158,7 +158,7 @@ unsigned long indirectly()
 	unsigned long addr = (readmemw(temp) | (readmem(temp + 2) << 16)) + y.w;
 	if (pc == 0xFDC9)
 		printf("INDy %04X %06X\n", temp, addr);
-	//        if (output) printf("INDy %06X %02X %06X\n",addr,opcode,pbr|pc);
+	// if (output) printf("INDy %06X %02X %06X\n",addr,opcode,pbr|pc);
 	return addr;
 }
 
@@ -458,7 +458,7 @@ void decZp8()
 	temp--;
 	setzn8(temp);
 	writemem(addr, temp);
-	//        if (output && addr==4) printf("DEC 4 %02X %i %i\n",temp,p.z,p.n);
+	// if (output && addr==4) printf("DEC 4 %02X %i %i\n",temp,p.z,p.n);
 }
 void decZp16()
 {
@@ -673,7 +673,7 @@ void txs8()
 {
 	readmem(pbr | pc);
 	s.b.l = x.b.l;
-	//        setzn8(s.b.l);
+	// setzn8(s.b.l);
 }
 void txy8()
 {
@@ -722,7 +722,7 @@ void txs16()
 {
 	readmem(pbr | pc);
 	s.w = x.w;
-	//        setzn16(s.w);
+	// setzn16(s.w);
 }
 void txy16()
 {
@@ -1154,7 +1154,7 @@ void staLongx16()
 {
 	addr = absolutelongx();
 	writememw(addr, a.w);
-	//        printf("Written %06X %04X %04X\n",addr,a.w,readmemw(addr));
+	// printf("Written %06X %04X %04X\n",addr,a.w,readmemw(addr));
 }
 void staIndirect16()
 {
@@ -2520,19 +2520,19 @@ void bitImm8()
 	unsigned char temp = readmem(pbr | pc);
 	pc++;
 	p.z = !(temp & a.b.l);
-	//        setzf=0;
-	//        p.v=temp&0x40;
-	//        p.n=temp&0x80;
+	// setzf=0;
+	// p.v=temp&0x40;
+	// p.n=temp&0x80;
 }
 void bitImm16()
 {
 	unsigned short temp = readmemw(pbr | pc);
 	pc += 2;
 	p.z = !(temp & a.w);
-	//        printf("BIT %04X %04X %i\n",a.w,temp,p.z);
+	// printf("BIT %04X %04X %i\n",a.w,temp,p.z);
 	setzf = 0;
-	//        p.v=temp&0x4000;
-	//        p.n=temp&0x8000;
+	// p.v=temp&0x4000;
+	// p.n=temp&0x8000;
 }
 
 void bitZp8()
@@ -2844,7 +2844,7 @@ void phb()
 	readmem(pbr | pc);
 	writemem(s.w, dbr >> 16);
 	s.w--;
-	//        printf("PHB %04X\n",s.w);
+	// printf("PHB %04X\n",s.w);
 }
 void phbe()
 {
@@ -2858,7 +2858,7 @@ void phk()
 	readmem(pbr | pc);
 	writemem(s.w, pbr >> 16);
 	s.w--;
-	//        printf("PHK %04X\n",s.w);
+	// printf("PHK %04X\n",s.w);
 }
 void phke()
 {
@@ -2875,7 +2875,7 @@ void pea()
 	s.w--;
 	writemem(s.w, addr & 0xFF);
 	s.w--;
-	//        printf("PEA %04X\n",s.w);
+	// printf("PEA %04X\n",s.w);
 }
 
 void pei()
@@ -3271,21 +3271,21 @@ void bne()
 {
 	signed char temp = (signed char)readmem(pbr | pc);
 	pc++;
-	//        if (pc==0x8D44) printf("BNE %i %i ",setzf,p.z);
+	// if (pc==0x8D44) printf("BNE %i %i ",setzf,p.z);
 	if (setzf > 0)
 		p.z = 1;
 	if (setzf < 0)
 		p.z = 0;
 	setzf = 0;
-	//        if (pc==0x8D44) printf("%i\n",p.z);
-	//        if (skipz) //printf("skipz ");
+	// if (pc==0x8D44) printf("%i\n",p.z);
+	// if (skipz) //printf("skipz ");
 	if (!p.z) // && !skipz)
 	{
 		pc += temp;
 		cycles -= 6;
 		clockspc(6);
 	}
-	//        if (skipz) //printf("%04X\n",pc);
+	// if (skipz) //printf("%04X\n",pc);
 	skipz = 0;
 }
 void bpl()
@@ -3369,7 +3369,7 @@ void jmpind()
 void jmpindx()
 {
 	addr = (readmemw(pbr | pc)) + x.w + pbr;
-	//        //printf("Read %06X\n",addr);
+	// //printf("Read %06X\n",addr);
 	pc = readmemw(addr);
 }
 
@@ -3408,14 +3408,14 @@ void jsrIndx()
 {
 	addr = jindirectx();
 	pc--;
-	//        //printf("Addr %06X\n",addr);
+	// //printf("Addr %06X\n",addr);
 	writemem(s.w, pc >> 8);
 	s.w--;
 	writemem(s.w, pc & 0xFF);
 	s.w--;
 	pc = readmemw(addr);
 	// printf("JSR %04X\n",s.w);
-	//        //printf("PC %04X\n",pc);
+	// //printf("PC %04X\n",pc);
 }
 void jsrIndxe()
 {
@@ -3510,7 +3510,7 @@ void rti()
 	s.w++;
 	clockspc(6);
 	temp = readmem(s.w);
-	//        //printf("%04X -> %02X\n",s.w,temp);
+	// //printf("%04X -> %02X\n",s.w,temp);
 	p.c = temp & 1;
 	p.z = temp & 2;
 	p.i = temp & 4;
@@ -3520,15 +3520,15 @@ void rti()
 	p.v = temp & 0x40;
 	p.n = temp & 0x80;
 	s.w++;
-	pc = readmem(s.w); //  //printf("%04X -> %02X\n",s.w,pc);
+	pc = readmem(s.w); // //printf("%04X -> %02X\n",s.w,pc);
 	s.w++;
 	pc |= (readmem(s.w) << 8); // //printf("%04X -> %02X\n",s.w,pc>>8);
 	s.w++;
 	pbr = readmem(s.w) << 16; ////printf("%04X -> %02X\n",s.w,pbr>>16);
 	updatecpumode();
 	// printf("RTI %04X\n",s.w);
-	//        output=0;
-	//        //printf("RTI to %06X\n",pbr|pc);
+	// output=0;
+	// //printf("RTI to %06X\n",pbr|pc);
 }
 
 /* Shift group */
@@ -4205,7 +4205,7 @@ void wai()
 	readmem(pbr | pc);
 	inwai = 1;
 	pc--;
-	//        printf("WAI %06X\n",pbr|pc);
+	// printf("WAI %06X\n",pbr|pc);
 }
 
 void mvp()
@@ -4290,7 +4290,7 @@ void reset65c816()
 	p.x = p.m = 1;
 	skipz = 0;
 	printf("Reset to %04X\n", pc);
-	//        exit(-1);
+	// exit(-1);
 }
 
 void dumpregs()
@@ -4308,14 +4308,14 @@ void dumpregs()
 
 void badopcode()
 {
-	//        FILE *f=fopen("rom.dmp","wb");
+	// FILE *f=fopen("rom.dmp","wb");
 	snemlog("Bad opcode %02X\n", opcode);
 	pc--;
 	dumpregs();
 	// printf("%02X
 	// %06X\n",readmem(0x3F8A82),rom[((0x3F8A82>>16)*0x8000)+(((0x3F8A82>>12)&3)*0x2000)+(0x3F8A82&0x1FFF)]);
-	//        fwrite(rom,2048*1024,1,f);
-	//        fclose(f);
+	// fwrite(rom,2048*1024,1,f);
+	// fclose(f);
 	exit(-1);
 }
 
@@ -4902,7 +4902,7 @@ void updatecpumode()
 void nmi65c816()
 {
 	unsigned char temp = 0;
-	//        printf("NMI %i %i %i\n",p.i,inwai,irqenable);
+	// printf("NMI %i %i %i\n",p.i,inwai,irqenable);
 	readmem(pbr | pc);
 	cycles -= 6;
 	clockspc(6);
@@ -4910,13 +4910,13 @@ void nmi65c816()
 		pc++;
 	inwai = 0;
 	if (!p.e) {
-		//                //printf("%02X -> %04X\n",pbr>>16,s.w);
+		// //printf("%02X -> %04X\n",pbr>>16,s.w);
 		writemem(s.w, pbr >> 16);
 		s.w--;
-		//                //printf("%02X -> %04X\n",pc>>8,s.w);
+		// //printf("%02X -> %04X\n",pc>>8,s.w);
 		writemem(s.w, pc >> 8);
 		s.w--;
-		//                //printf("%02X -> %04X\n",pc&0xFF,s.w);
+		// //printf("%02X -> %04X\n",pc&0xFF,s.w);
 		writemem(s.w, pc & 0xFF);
 		s.w--;
 		if (p.c)
@@ -4935,14 +4935,14 @@ void nmi65c816()
 			temp |= 0x40;
 		if (p.n)
 			temp |= 0x80;
-		//                //printf("%02X -> %04X\n",temp,s.w);
+		// //printf("%02X -> %04X\n",temp,s.w);
 		writemem(s.w, temp);
 		s.w--;
 		pc = readmemw(0xFFEA);
 		pbr = 0;
 		p.i = 1;
 		p.d = 0;
-		//                printf("NMI\n");
+		// printf("NMI\n");
 	} else {
 		snemlog("Emulation mode NMI\n");
 		dumpregs();
@@ -4953,7 +4953,7 @@ void nmi65c816()
 void irq65c816()
 {
 	unsigned char temp = 0;
-	//        printf("IRQ %i %i %i\n",p.i,inwai,irqenable);
+	// printf("IRQ %i %i %i\n",p.i,inwai,irqenable);
 	readmem(pbr | pc);
 	cycles -= 6;
 	clockspc(6);
@@ -4994,7 +4994,7 @@ void irq65c816()
 		pbr = 0;
 		p.i = 1;
 		p.d = 0;
-		//                printf("IRQ\n");
+		// printf("IRQ\n");
 	} else {
 		snemlog("Emulation mode IRQ\n");
 		dumpregs();

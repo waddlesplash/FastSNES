@@ -36,7 +36,7 @@ void soundthread(PVOID pvoid)
 	while (!quited) {
 		WaitForSingleObject(soundobject, 100);
 		pollsound();
-		//                sleep(1);
+		// sleep(1);
 	}
 	soundrunning = 0;
 }
@@ -120,10 +120,10 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 	initsnem();
 	_beginthread(soundthread, 0, NULL);
 	soundobject = CreateEvent(NULL, FALSE, FALSE, NULL);
-	//        atexit(closesoundthread);
+	// atexit(closesoundthread);
 	frameobject = CreateEvent(NULL, FALSE, FALSE, NULL);
 	resetsnem();
-	//        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+	// SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 	/* Run the message loop. It will run until GetMessage() returns 0 */
 	while (!quited) {
 		/*                if (soundframe>=((pal)?5:6))
@@ -136,15 +136,15 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 			WaitForSingleObject(frameobject, 100);
 		if (infocus && romloaded) // && drawcount)
 		{
-			//                        snemlog("Drawcount %i\n",drawcount);
+			// snemlog("Drawcount %i\n",drawcount);
 			while (drawcount) {
 				execframe();
 				drawcount--;
 				soundframe++;
 			}
 		}
-		//                else
-		//                   sleep(1);
+		// else
+		// sleep(1);
 		if (changefps) {
 			if (romloaded)
 				sprintf(s, "NeuSneM v0.1 - %i fps", fps);
@@ -153,7 +153,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 			set_window_title(s);
 			changefps = 0;
 		}
-		//                sleep(0);
+		// sleep(0);
 		if (PeekMessage(&messages, NULL, 0, 0, PM_REMOVE)) {
 			if (messages.message == WM_QUIT)
 				quited = 1;

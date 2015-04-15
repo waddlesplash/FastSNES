@@ -11,13 +11,13 @@ void initmem();
 unsigned char* sram;
 void allocmem()
 {
-	//        FILE *f=fopen("finalf~1.srm","rb");
+	// FILE *f=fopen("finalf~1.srm","rb");
 	ram = (unsigned char*)malloc(128 * 1024);
 	memset(ram, 0x55, 128 * 1024);
 	sram = (unsigned char*)malloc(8192);
 	memset(sram, 0, 8192);
-	//        fread(sram,8192,1,f);
-	//        fclose(f);
+	// fread(sram,8192,1,f);
+	// fclose(f);
 }
 
 void loadrom(char* fn)
@@ -38,14 +38,14 @@ void loadrom(char* fn)
 	fseek(f, len & 512, SEEK_SET);
 	printf("%i %lu\n", len, ftell(f));
 	rom = (unsigned char*)malloc(4096 * 1024);
-	//        fread(rom,512,1,f);
+	// fread(rom,512,1,f);
 	/*        for (c=0;c<0x40000;c+=0x8000)
 			{
 					fread(&rom[c+0x40000],32768,1,f);
 					fread(&rom[c],32768,1,f);
 			} */
 	while (!feof(f) && c < 0x400000) {
-		//                printf("Read %06X\n",c);
+		// printf("Read %06X\n",c);
 		fread(&rom[c], 65536, 1, f);
 		c += 0x10000;
 	}
@@ -56,7 +56,7 @@ void loadrom(char* fn)
 		lorom = 1;
 	else
 		lorom = 0;
-	//        lorom=0;
+	// lorom=0;
 	initmem();
 	if (((readmem(0xFFFD) << 8) | readmem(0xFFFC)) == 0xFFFF) {
 		lorom ^= 1;
@@ -133,7 +133,7 @@ void initmem()
 			memread[(0x7F << 3) | c] = memwrite[(0x7F << 3) | c] = 1;
 			memlookup[(0x7F << 3) | c] = &ram[(c * 0x2000) + 0x10000];
 		}
-		//                printf("%08X\n",memlookup[(0x7F<<3)|4]);
+		// printf("%08X\n",memlookup[(0x7F<<3)|4]);
 		/*                for (c=0;c<96;c++)
 						{
 								for (d=0;d<4;d++)
@@ -153,7 +153,7 @@ void initmem()
 								memread[(0x70<<3)+c]=memwrite[(0x70<<3)+c]=0;
 								memlookup[(0x70<<3)+c]=sram;
 						} */
-		//                printf("%08X\n",memlookup[(0x7F<<3)|4]);
+		// printf("%08X\n",memlookup[(0x7F<<3)|4]);
 	} else {
 		for (c = 0; c < 2048; c++) {
 			memread[c] = 1;
@@ -237,8 +237,8 @@ unsigned char readmeml(unsigned long addr)
 			exit(-1);
 		case 0x6000:
 		case 0x7000:
-			//                        printf("Read SRAM %04X %02X
-			//                        %06X\n",addr,sram[addr&0x1FFF],pbr|pc);
+			// printf("Read SRAM %04X %02X
+			// %06X\n",addr,sram[addr&0x1FFF],pbr|pc);
 			if (!lorom)
 				return sram[addr & srammask];
 		default:
@@ -251,15 +251,15 @@ unsigned char readmeml(unsigned long addr)
 	if ((addr >> 16) >= 0xD0 && (addr >> 16) <= 0xFE)
 		return 0;
 	if ((addr >> 16) == 0x70) {
-		//                return 0;
-		//                printf("Read SRAM %04X
-		//                %02X\n",addr,sram[addr&0x1FFF]);
+		// return 0;
+		// printf("Read SRAM %04X
+		// %02X\n",addr,sram[addr&0x1FFF]);
 		if (srammask) {
-			//                        printf("Read SRAM %04X %04X %02X
-			//                        %04X\n",addr,addr&srammask,sram[addr&srammask],srammask);
+			// printf("Read SRAM %04X %04X %02X
+			// %04X\n",addr,addr&srammask,sram[addr&srammask],srammask);
 			return sram[addr & srammask];
 		}
-		//                printf("Read SRAM zero\n");
+		// printf("Read SRAM zero\n");
 		return 0;
 	}
 	if ((addr >> 16) == 0x60)
@@ -291,8 +291,8 @@ void writememl(unsigned long addr, unsigned char val)
 			return;
 		case 0x6000:
 		case 0x7000:
-			//                        printf("Write SRAM %04X %02X
-			//                        %06X\n",addr,val,pbr|pc);
+			// printf("Write SRAM %04X %02X
+			// %06X\n",addr,val,pbr|pc);
 			if (!lorom)
 				sram[addr & srammask] = val;
 			return;
@@ -313,10 +313,10 @@ void writememl(unsigned long addr, unsigned char val)
 	}
 	if ((addr >> 16) >= 0xD0 && (addr >> 16) <= 0xFE)
 		return;
-	//        if ((addr>>16)==0xD0) return;
+	// if ((addr>>16)==0xD0) return;
 	if ((addr >> 16) == 0x70) {
-		//                printf("Write SRAM %04X %04X
-		//                %02X\n",addr,addr&srammask,val);
+		// printf("Write SRAM %04X %04X
+		// %02X\n",addr,addr&srammask,val);
 		sram[addr & srammask] = val;
 		return;
 	}
