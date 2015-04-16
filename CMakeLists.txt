@@ -19,12 +19,15 @@ else()
 	endif()
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -Wall -Wno-comment")
-set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} --target=pe-i386")
+if(MSVC)
+	add_definitions(-Dinline=__inline -Dsleep=Sleep -DALLEGRO_NO_ASM)
+endif()
 
 aux_source_directory(src SRCS)
 set(RC_FILE src/snem.rc)
 
 add_executable(NeuSneM ${SRCS} ${RC_FILE})
 target_link_libraries(NeuSneM ${ALLEGRO_LIBS} winmm)
-set_target_properties(NeuSneM PROPERTIES LINK_FLAGS "-m32")
+if(MSVC)
+	set_target_properties(NeuSneM PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+endif()
