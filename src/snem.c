@@ -199,8 +199,11 @@ void resetsnem()
 }
 
 int windowdisable;
-#if 0
-int main()
+#if !defined(WIN32) && !defined(_WIN32)
+void wakeupmainthread() {}
+void wakeupsoundthread() {}
+
+int main(int argc, char* argv[])
 {
         FILE *f;
         int c;
@@ -208,7 +211,7 @@ int main()
 // snemdebug("1\n");
         allocmem();
 // snemdebug("2\n");
-        loadrom("asterix.smc");
+        loadrom(argv[1]);
 // snemdebug("3\n");
 // initmem();
 // snemdebug("4\n");
@@ -298,4 +301,4 @@ int main()
 }
 
 END_OF_MAIN();
-#endif
+#endif // !defined(WIN32) && !defined(_WIN32)

@@ -1,3 +1,5 @@
+#if defined(WIN32) || defined(_WIN32)
+
 #include <windows.h>
 #include <stdio.h>
 #include "resources.h"
@@ -239,3 +241,5 @@ WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+
+#endif // defined(WIN32) || defined(_WIN32)

@@ -2,7 +2,7 @@
 ### Project Setup
 ############
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-project(NeuSneM)
+project(NeuSneM C)
 # On some platforms, CMake automatically adds some libraries to this by
 # default (e.g. Windows) which we don't need, so unset it.
 unset(CMAKE_C_STANDARD_LIBRARIES)
@@ -27,7 +27,10 @@ aux_source_directory(src SRCS)
 set(RC_FILE src/snem.rc)
 
 add_executable(NeuSneM ${SRCS} ${RC_FILE})
-target_link_libraries(NeuSneM ${ALLEGRO_LIBS} winmm)
+target_link_libraries(NeuSneM ${ALLEGRO_LIBS})
+if(WIN32)
+	target_link_libraries(NeuSneM winmm)
+endif()
 if(MSVC)
 	set_target_properties(NeuSneM PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
 endif()

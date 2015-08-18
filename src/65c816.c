@@ -143,18 +143,20 @@ unsigned long sindirecty()
 
 unsigned long indirectl()
 {
-	unsigned long temp = (readmem(pbr | pc) + dp) & 0xFFFF;
+	unsigned long temp, addr;
+	temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
-	unsigned long addr = readmemw(temp) | (readmem(temp + 2) << 16);
+	addr = readmemw(temp) | (readmem(temp + 2) << 16);
 	// snemdebug("IND %06X\n",addr);
 	return addr;
 }
 
 unsigned long indirectly()
 {
-	unsigned long temp = (readmem(pbr | pc) + dp) & 0xFFFF;
+	unsigned long temp, addr;
+	temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
-	unsigned long addr = (readmemw(temp) | (readmem(temp + 2) << 16)) + y.w;
+	addr = (readmemw(temp) | (readmem(temp + 2) << 16)) + y.w;
 	if (pc == 0xFDC9) {
 		snemdebug("INDy %04lu %06lu\n", temp, addr);
 	}

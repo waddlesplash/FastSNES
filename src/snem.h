@@ -5,7 +5,7 @@ double spccycles;
 double spctotal2;
 double spctotal3;
 void execspc();
-inline void clockspc(int cyc)
+static inline void clockspc(int cyc)
 {
 	spccycles += cyc;
 	if (spccycles > 0)
