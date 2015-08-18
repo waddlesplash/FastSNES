@@ -199,59 +199,31 @@ void resetsnem()
 }
 
 int windowdisable;
+
 #if !defined(WIN32) && !defined(_WIN32)
 void wakeupmainthread() {}
 void wakeupsoundthread() {}
 
 int main(int argc, char* argv[])
 {
-        FILE *f;
-        int c;
-        char s[256];
-// snemdebug("1\n");
-        allocmem();
-// snemdebug("2\n");
-        loadrom(argv[1]);
-// snemdebug("3\n");
-// initmem();
-// snemdebug("4\n");
-        initppu();
-        initspc();
-        resetppu();
-        resetspc();
-        resetdsp();
-// snemdebug("3 %08X %08X\n",vram,vramb);
-		reset65c816();
-// snemdebug("4 %08X %08X\n",vram,vramb);
-        makeopcodetable();
-        ins=0;
-        install_keyboard();
-        install_timer();
-        install_int_ex(oncesec,MSEC_TO_TIMER(1000));
-        if (pal) install_int_ex(hz60,BPS_TO_TIMER(50));
-        else     install_int_ex(hz60,BPS_TO_TIMER(60));
-        initdsp();
-/*        f=fopen("rom.dmp","wb");
-        fwrite(rom,2048*1024,1,f);
-        fclose(f); */
-// snemdebug("5 %08X %08X\n",vram,vramb);
-        while (!key[KEY_ESC])
-        {
-                if (drawcount)
-                {
-                        drawcount--;
-                        execframe();
-                        c++;
-                        if (c>=((pal)?50:60))
-                        {
-                                spcclck=spctotal;
-                                spctotal=0;
-                                c=0;
-                                changefps=1;
-                        }
-                }
-                if (drawcount>1) drawcount=1;
-// drawcount=1;
+	FILE *f;
+	//int c;
+	char windowtitle[256];
+	initsnem();
+	loadrom(argv[1]);
+	resetsnem();
+	while (!key[KEY_ESC]) {
+		while (drawcount) {
+			execframe();
+			drawcount--;
+			/*c++;
+ 			if (c >= ((pal) ? 50 : 60)) {
+				spcclck = spctotal;
+				spctotal = 0;
+				c = 0;
+				changefps = 1;
+			}*/
+		}
                 if (key[KEY_1])
                 {
                         while (key[KEY_1]);
@@ -286,19 +258,18 @@ int main(int argc, char* argv[])
                    dumpchar();
                 if (key[KEY_F2])
                    dumpbg2();
-                if (changefps)
-                {
-                        changefps=0;
-                        sprintf(s,"NeuSneM - %i fps %i",fps,spcclck);
-                        set_window_title(s);
-                }
-        }
-        dumpregs();
-        dumpspcregs();
-// dumpvram();
-        dumphdma();
-        return 0;
+		if (changefps) {
+			changefps = 0;
+			sprintf(windowtitle, "NeuSneM: %i fps, %i", fps, spcclck);
+			set_window_title(windowtitle);
+		}
+	}
+	dumpregs();
+	dumpspcregs();
+	// dumpvram();
+	dumphdma();
+	return 0;
 }
 
-END_OF_MAIN();
+//END_OF_MAIN();
 #endif // !defined(WIN32) && !defined(_WIN32)

@@ -1,7 +1,7 @@
 #include "util.h"
 
 
-#ifdef SNEM_LOG
+#ifdef SNEM_LOG_TO_FILE
 FILE* snemlogf;
 void snemlog(const char* format, ...)
 {

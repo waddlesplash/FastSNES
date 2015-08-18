@@ -29,7 +29,7 @@ void loadrom(char* fn)
 	unsigned short temp, temp2;
 	spccycles = -10000;
 	if (!f) {
-		snemlog("File %s not found\n", fn);
+		printf("File %s not found\n", fn);
 		exit(-1);
 	}
 	fseek(f, -1, SEEK_END);

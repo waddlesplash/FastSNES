@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #ifdef SNEM_LOG
-void snemlog(const char* format, ...);
+#  define snemlog(...) printf(__VA_ARGS__);
 #  define snemdebug(...) printf(__VA_ARGS__);
 #else
 #  define snemlog(...)
