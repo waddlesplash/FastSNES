@@ -9,19 +9,19 @@
 void updatecpumode();
 int inwai = 0;
 /* Temporary variables */
-unsigned long addr;
+uint32_t addr;
 
 /* Addressing modes */
-unsigned long absolute()
+uint32_t absolute()
 {
-	unsigned long temp = readmemw(pbr | pc);
+	uint32_t temp = readmemw(pbr | pc);
 	pc += 2;
 	return temp | dbr;
 }
 
-unsigned long absolutex()
+uint32_t absolutex()
 {
-	unsigned long temp = (readmemw(pbr | pc)) + x.w + dbr;
+	uint32_t temp = (readmemw(pbr | pc)) + x.w + dbr;
 	pc += 2;
 	// if ((temp&0xFFFF)>0x2200 && (temp&0xFFFF)<0x8000) { snemdebug("ABSX
 	// %04X %06X\n",x.w,temp); }
@@ -30,25 +30,25 @@ unsigned long absolutex()
 	return temp;
 }
 
-unsigned long absolutey()
+uint32_t absolutey()
 {
-	unsigned long temp = (readmemw(pbr | pc)) + y.w + dbr;
+	uint32_t temp = (readmemw(pbr | pc)) + y.w + dbr;
 	pc += 2;
 	return temp;
 }
 
-unsigned long absolutelong()
+uint32_t absolutelong()
 {
-	unsigned long temp = readmemw(pbr | pc);
+	uint32_t temp = readmemw(pbr | pc);
 	pc += 2;
 	temp |= (readmem(pbr | pc) << 16);
 	pc++;
 	return temp;
 }
 
-unsigned long absolutelongx()
+uint32_t absolutelongx()
 {
-	unsigned long temp = (readmemw(pbr | pc)) + x.w;
+	uint32_t temp = (readmemw(pbr | pc)) + x.w;
 	pc += 2;
 	temp += (readmem(pbr | pc) << 16);
 	pc++;
@@ -56,10 +56,10 @@ unsigned long absolutelongx()
 	return temp;
 }
 
-unsigned long
+uint32_t
 zeropage() /* It's actually direct page, but I'm used to calling it zero page */
 {
-	unsigned long temp = readmem(pbr | pc);
+	uint32_t temp = readmem(pbr | pc);
 	pc++;
 	temp += dp;
 	if (dp & 0xFF) {
@@ -69,23 +69,9 @@ zeropage() /* It's actually direct page, but I'm used to calling it zero page */
 	return temp & 0xFFFF;
 }
 
-unsigned long zeropagex()
+uint32_t zeropagex()
 {
-	unsigned long temp = readmem(pbr | pc) + x.w;
-	pc++;
-	if (p.e)
-		temp &= 0xFF;
-	temp += dp;
-	if (dp & 0xFF) {
-		cycles -= 6;
-		clockspc(6);
-	}
-	return temp & 0xFFFF;
-}
-
-unsigned long zeropagey()
-{
-	unsigned long temp = readmem(pbr | pc) + y.w;
+	uint32_t temp = readmem(pbr | pc) + x.w;
 	pc++;
 	if (p.e)
 		temp &= 0xFF;
@@ -97,53 +83,67 @@ unsigned long zeropagey()
 	return temp & 0xFFFF;
 }
 
-unsigned long stack()
+uint32_t zeropagey()
 {
-	unsigned long temp = readmem(pbr | pc);
+	uint32_t temp = readmem(pbr | pc) + y.w;
+	pc++;
+	if (p.e)
+		temp &= 0xFF;
+	temp += dp;
+	if (dp & 0xFF) {
+		cycles -= 6;
+		clockspc(6);
+	}
+	return temp & 0xFFFF;
+}
+
+uint32_t stack()
+{
+	uint32_t temp = readmem(pbr | pc);
 	pc++;
 	temp += s.w;
 	return temp & 0xFFFF;
 }
 
-unsigned long indirect()
+uint32_t indirect()
 {
-	unsigned long temp = (readmem(pbr | pc) + dp) & 0xFFFF;
+	uint32_t temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
 	return (readmemw(temp)) + dbr;
 }
 
-unsigned long indirectx()
+uint32_t indirectx()
 {
-	unsigned long temp = (readmem(pbr | pc) + dp + x.w) & 0xFFFF;
+	uint32_t temp = (readmem(pbr | pc) + dp + x.w) & 0xFFFF;
 	pc++;
 	return (readmemw(temp)) + dbr;
 }
-unsigned long jindirectx() /* JSR (,x) uses PBR instead of DBR, and 2 byte
+uint32_t jindirectx() /* JSR (,x) uses PBR instead of DBR, and 2 byte
 							  address insted of 1 + dp */
 {
-	unsigned long temp =
+	uint32_t temp =
 		(readmem(pbr | pc) + (readmem((pbr | pc) + 1) << 8) + x.w) + pbr;
 	pc += 2;
 	// snemdebug("Temp %06X\n",temp);
 	return temp;
 }
 
-unsigned long indirecty()
+uint32_t indirecty()
 {
-	unsigned long temp = (readmem(pbr | pc) + dp) & 0xFFFF;
+	uint32_t temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
 	return (readmemw(temp)) + y.w + dbr;
 }
-unsigned long sindirecty()
+uint32_t sindirecty()
 {
-	unsigned long temp = (readmem(pbr | pc) + s.w) & 0xFFFF;
+	uint32_t temp = (readmem(pbr | pc) + s.w) & 0xFFFF;
 	pc++;
 	return (readmemw(temp)) + y.w + dbr;
 }
 
-unsigned long indirectl()
+uint32_t indirectl()
 {
-	unsigned long temp, addr;
+	uint32_t temp, addr;
 	temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
 	addr = readmemw(temp) | (readmem(temp + 2) << 16);
@@ -151,9 +151,9 @@ unsigned long indirectl()
 	return addr;
 }
 
-unsigned long indirectly()
+uint32_t indirectly()
 {
-	unsigned long temp, addr;
+	uint32_t temp, addr;
 	temp = (readmem(pbr | pc) + dp) & 0xFFFF;
 	pc++;
 	addr = (readmemw(temp) | (readmem(temp + 2) << 16)) + y.w;
@@ -370,7 +370,7 @@ void incZp8()
 }
 void incZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -393,7 +393,7 @@ void incZpx8()
 }
 void incZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -416,7 +416,7 @@ void incAbs8()
 }
 void incAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -439,7 +439,7 @@ void incAbsx8()
 }
 void incAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -464,7 +464,7 @@ void decZp8()
 }
 void decZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -487,7 +487,7 @@ void decZpx8()
 }
 void decZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -510,7 +510,7 @@ void decAbs8()
 }
 void decAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -533,7 +533,7 @@ void decAbsx8()
 }
 void decAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -1307,7 +1307,7 @@ void stzAbsx16()
 /* ADC group */
 void adcImm8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp = readmem(pbr | pc);
 	pc++;
 	if (p.d) {
@@ -1318,7 +1318,7 @@ void adcImm8()
 }
 void adcZp8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = zeropage();
 	temp = readmem(addr);
@@ -1330,7 +1330,7 @@ void adcZp8()
 }
 void adcZpx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = zeropagex();
 	temp = readmem(addr);
@@ -1342,7 +1342,7 @@ void adcZpx8()
 }
 void adcSp8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = stack();
 	temp = readmem(addr);
@@ -1354,7 +1354,7 @@ void adcSp8()
 }
 void adcAbs8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolute();
 	temp = readmem(addr);
@@ -1366,7 +1366,7 @@ void adcAbs8()
 }
 void adcAbsx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutex();
 	temp = readmem(addr);
@@ -1378,7 +1378,7 @@ void adcAbsx8()
 }
 void adcAbsy8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutey();
 	temp = readmem(addr);
@@ -1390,7 +1390,7 @@ void adcAbsy8()
 }
 void adcLong8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutelong();
 	temp = readmem(addr);
@@ -1402,7 +1402,7 @@ void adcLong8()
 }
 void adcLongx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutelongx();
 	temp = readmem(addr);
@@ -1414,7 +1414,7 @@ void adcLongx8()
 }
 void adcIndirect8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirect();
 	temp = readmem(addr);
@@ -1426,7 +1426,7 @@ void adcIndirect8()
 }
 void adcIndirectx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirectx();
 	temp = readmem(addr);
@@ -1438,7 +1438,7 @@ void adcIndirectx8()
 }
 void adcIndirecty8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirecty();
 	temp = readmem(addr);
@@ -1450,7 +1450,7 @@ void adcIndirecty8()
 }
 void adcsIndirecty8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = sindirecty();
 	temp = readmem(addr);
@@ -1462,7 +1462,7 @@ void adcsIndirecty8()
 }
 void adcIndirectLong8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirectl();
 	temp = readmem(addr);
@@ -1474,7 +1474,7 @@ void adcIndirectLong8()
 }
 void adcIndirectLongy8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirectly();
 	temp = readmem(addr);
@@ -1487,8 +1487,8 @@ void adcIndirectLongy8()
 
 void adcImm16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	tempw = readmemw(pbr | pc);
 	pc += 2;
 	if (p.d) {
@@ -1499,8 +1499,8 @@ void adcImm16()
 }
 void adcZp16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = zeropage();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1511,8 +1511,8 @@ void adcZp16()
 }
 void adcZpx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = zeropagex();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1523,8 +1523,8 @@ void adcZpx16()
 }
 void adcSp16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = stack();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1535,8 +1535,8 @@ void adcSp16()
 }
 void adcAbs16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolute();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1547,8 +1547,8 @@ void adcAbs16()
 }
 void adcAbsx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutex();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1559,8 +1559,8 @@ void adcAbsx16()
 }
 void adcAbsy16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutey();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1571,8 +1571,8 @@ void adcAbsy16()
 }
 void adcLong16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutelong();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1583,8 +1583,8 @@ void adcLong16()
 }
 void adcLongx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutelongx();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1595,8 +1595,8 @@ void adcLongx16()
 }
 void adcIndirect16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirect();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1607,8 +1607,8 @@ void adcIndirect16()
 }
 void adcIndirectx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirectx();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1619,8 +1619,8 @@ void adcIndirectx16()
 }
 void adcIndirecty16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirecty();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1631,8 +1631,8 @@ void adcIndirecty16()
 }
 void adcsIndirecty16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = sindirecty();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1643,8 +1643,8 @@ void adcsIndirecty16()
 }
 void adcIndirectLong16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirectl();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1655,8 +1655,8 @@ void adcIndirectLong16()
 }
 void adcIndirectLongy16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirectly();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1669,7 +1669,7 @@ void adcIndirectLongy16()
 /* SBC group */
 void sbcImm8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp = readmem(pbr | pc);
 	pc++;
 	if (p.d) {
@@ -1680,7 +1680,7 @@ void sbcImm8()
 }
 void sbcZp8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = zeropage();
 	temp = readmem(addr);
@@ -1692,7 +1692,7 @@ void sbcZp8()
 }
 void sbcZpx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = zeropagex();
 	temp = readmem(addr);
@@ -1704,7 +1704,7 @@ void sbcZpx8()
 }
 void sbcSp8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = stack();
 	temp = readmem(addr);
@@ -1716,7 +1716,7 @@ void sbcSp8()
 }
 void sbcAbs8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolute();
 	temp = readmem(addr);
@@ -1728,7 +1728,7 @@ void sbcAbs8()
 }
 void sbcAbsx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutex();
 	temp = readmem(addr);
@@ -1740,7 +1740,7 @@ void sbcAbsx8()
 }
 void sbcAbsy8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutey();
 	temp = readmem(addr);
@@ -1752,7 +1752,7 @@ void sbcAbsy8()
 }
 void sbcLong8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutelong();
 	temp = readmem(addr);
@@ -1764,7 +1764,7 @@ void sbcLong8()
 }
 void sbcLongx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = absolutelongx();
 	temp = readmem(addr);
@@ -1776,7 +1776,7 @@ void sbcLongx8()
 }
 void sbcIndirect8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirect();
 	temp = readmem(addr);
@@ -1788,7 +1788,7 @@ void sbcIndirect8()
 }
 void sbcIndirectx8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirectx();
 	temp = readmem(addr);
@@ -1800,7 +1800,7 @@ void sbcIndirectx8()
 }
 void sbcIndirecty8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirecty();
 	temp = readmem(addr);
@@ -1812,7 +1812,7 @@ void sbcIndirecty8()
 }
 void sbcIndirectLong8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirectl();
 	temp = readmem(addr);
@@ -1824,7 +1824,7 @@ void sbcIndirectLong8()
 }
 void sbcIndirectLongy8()
 {
-	unsigned short tempw;
+	uint16_t tempw;
 	unsigned char temp;
 	addr = indirectly();
 	temp = readmem(addr);
@@ -1837,8 +1837,8 @@ void sbcIndirectLongy8()
 
 void sbcImm16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	tempw = readmemw(pbr | pc);
 	pc += 2;
 	if (p.d) {
@@ -1849,8 +1849,8 @@ void sbcImm16()
 }
 void sbcZp16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = zeropage();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1861,8 +1861,8 @@ void sbcZp16()
 }
 void sbcZpx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = zeropagex();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1873,8 +1873,8 @@ void sbcZpx16()
 }
 void sbcSp16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = stack();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1885,8 +1885,8 @@ void sbcSp16()
 }
 void sbcAbs16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolute();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1897,8 +1897,8 @@ void sbcAbs16()
 }
 void sbcAbsx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutex();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1909,8 +1909,8 @@ void sbcAbsx16()
 }
 void sbcAbsy16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutey();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1921,8 +1921,8 @@ void sbcAbsy16()
 }
 void sbcLong16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutelong();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1933,8 +1933,8 @@ void sbcLong16()
 }
 void sbcLongx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = absolutelongx();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1945,8 +1945,8 @@ void sbcLongx16()
 }
 void sbcIndirect16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirect();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1957,8 +1957,8 @@ void sbcIndirect16()
 }
 void sbcIndirectx16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirectx();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1969,8 +1969,8 @@ void sbcIndirectx16()
 }
 void sbcIndirecty16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirecty();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1981,8 +1981,8 @@ void sbcIndirecty16()
 }
 void sbcIndirectLong16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirectl();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -1993,8 +1993,8 @@ void sbcIndirectLong16()
 }
 void sbcIndirectLongy16()
 {
-	unsigned long templ;
-	unsigned short tempw;
+	uint32_t templ;
+	uint16_t tempw;
 	addr = indirectly();
 	tempw = readmemw(addr);
 	if (p.d) {
@@ -2529,7 +2529,7 @@ void bitImm8()
 }
 void bitImm16()
 {
-	unsigned short temp = readmemw(pbr | pc);
+	uint16_t temp = readmemw(pbr | pc);
 	pc += 2;
 	p.z = !(temp & a.w);
 	// snemdebug("BIT %04X %04X %i\n",a.w,temp,p.z);
@@ -2549,7 +2549,7 @@ void bitZp8()
 }
 void bitZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	p.z = !(temp & a.w);
@@ -2568,7 +2568,7 @@ void bitZpx8()
 }
 void bitZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	p.z = !(temp & a.w);
@@ -2587,7 +2587,7 @@ void bitAbs8()
 }
 void bitAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	p.z = !(temp & a.w);
@@ -2606,7 +2606,7 @@ void bitAbsx8()
 }
 void bitAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutex();
 	temp = readmemw(addr);
 	p.z = !(temp & a.w);
@@ -2730,7 +2730,7 @@ void cmpIndirectLongy8()
 
 void cmpImm16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	temp = readmemw(pbr | pc);
 	pc += 2;
 	setzn16(a.w - temp);
@@ -2738,7 +2738,7 @@ void cmpImm16()
 }
 void cmpZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2746,7 +2746,7 @@ void cmpZp16()
 }
 void cmpSp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = stack();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2754,7 +2754,7 @@ void cmpSp16()
 }
 void cmpZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2762,7 +2762,7 @@ void cmpZpx16()
 }
 void cmpAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2770,7 +2770,7 @@ void cmpAbs16()
 }
 void cmpAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutex();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2778,7 +2778,7 @@ void cmpAbsx16()
 }
 void cmpAbsy16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutey();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2786,7 +2786,7 @@ void cmpAbsy16()
 }
 void cmpLong16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutelong();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2794,7 +2794,7 @@ void cmpLong16()
 }
 void cmpLongx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutelongx();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2802,7 +2802,7 @@ void cmpLongx16()
 }
 void cmpIndirect16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = indirect();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2810,7 +2810,7 @@ void cmpIndirect16()
 }
 void cmpIndirectx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = indirectx();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2818,7 +2818,7 @@ void cmpIndirectx16()
 }
 void cmpIndirecty16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = indirecty();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2826,7 +2826,7 @@ void cmpIndirecty16()
 }
 void cmpIndirectLong16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = indirectl();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -2834,7 +2834,7 @@ void cmpIndirectLong16()
 }
 void cmpIndirectLongy16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = indirectly();
 	temp = readmemw(addr);
 	setzn16(a.w - temp);
@@ -3144,7 +3144,7 @@ void cpxImm8()
 }
 void cpxImm16()
 {
-	unsigned short temp = readmemw(pbr | pc);
+	uint16_t temp = readmemw(pbr | pc);
 	pc += 2;
 	setzn16(x.w - temp);
 	p.c = (x.w >= temp);
@@ -3160,7 +3160,7 @@ void cpxZp8()
 }
 void cpxZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	setzn16(x.w - temp);
@@ -3177,7 +3177,7 @@ void cpxAbs8()
 }
 void cpxAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	setzn16(x.w - temp);
@@ -3194,7 +3194,7 @@ void cpyImm8()
 }
 void cpyImm16()
 {
-	unsigned short temp = readmemw(pbr | pc);
+	uint16_t temp = readmemw(pbr | pc);
 	pc += 2;
 	setzn16(y.w - temp);
 	p.c = (y.w >= temp);
@@ -3210,7 +3210,7 @@ void cpyZp8()
 }
 void cpyZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	setzn16(y.w - temp);
@@ -3227,7 +3227,7 @@ void cpyAbs8()
 }
 void cpyAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	setzn16(y.w - temp);
@@ -3342,7 +3342,7 @@ void bra()
 }
 void brl()
 {
-	unsigned short temp = readmemw(pbr | pc);
+	uint16_t temp = readmemw(pbr | pc);
 	pc += 2;
 	pc += temp;
 	cycles -= 6;
@@ -3564,7 +3564,7 @@ void aslZp8()
 }
 void aslZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3589,7 +3589,7 @@ void aslZpx8()
 }
 void aslZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3614,7 +3614,7 @@ void aslAbs8()
 }
 void aslAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3639,7 +3639,7 @@ void aslAbsx8()
 }
 void aslAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3679,7 +3679,7 @@ void lsrZp8()
 }
 void lsrZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3704,7 +3704,7 @@ void lsrZpx8()
 }
 void lsrZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropagex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3729,7 +3729,7 @@ void lsrAbs8()
 }
 void lsrAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3754,7 +3754,7 @@ void lsrAbsx8()
 }
 void lsrAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolutex();
 	temp = readmemw(addr);
 	cycles -= 6;
@@ -3804,7 +3804,7 @@ void rolZp8()
 }
 void rolZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = zeropage();
 	temp = readmemw(addr);
@@ -3837,7 +3837,7 @@ void rolZpx8()
 }
 void rolZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = zeropagex();
 	temp = readmemw(addr);
@@ -3870,7 +3870,7 @@ void rolAbs8()
 }
 void rolAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = absolute();
 	temp = readmemw(addr);
@@ -3903,7 +3903,7 @@ void rolAbsx8()
 }
 void rolAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = absolutex();
 	temp = readmemw(addr);
@@ -3957,7 +3957,7 @@ void rorZp8()
 }
 void rorZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = zeropage();
 	temp = readmemw(addr);
@@ -3990,7 +3990,7 @@ void rorZpx8()
 }
 void rorZpx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = zeropagex();
 	temp = readmemw(addr);
@@ -4023,7 +4023,7 @@ void rorAbs8()
 }
 void rorAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = absolute();
 	temp = readmemw(addr);
@@ -4056,7 +4056,7 @@ void rorAbsx8()
 }
 void rorAbsx16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	int tempc;
 	addr = absolutex();
 	temp = readmemw(addr);
@@ -4124,7 +4124,7 @@ void trbZp8()
 }
 void trbZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	p.z = !(a.w & temp);
@@ -4147,7 +4147,7 @@ void trbAbs8()
 }
 void trbAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	p.z = !(a.w & temp);
@@ -4170,7 +4170,7 @@ void tsbZp8()
 }
 void tsbZp16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = zeropage();
 	temp = readmemw(addr);
 	p.z = !(a.w & temp);
@@ -4193,7 +4193,7 @@ void tsbAbs8()
 }
 void tsbAbs16()
 {
-	unsigned short temp;
+	uint16_t temp;
 	addr = absolute();
 	temp = readmemw(addr);
 	p.z = !(a.w & temp);

@@ -1,7 +1,7 @@
 ############
 ### Project Setup
 ############
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(NeuSneM C)
 # On some platforms, CMake automatically adds some libraries to this by
 # default (e.g. Windows) which we don't need, so unset it.

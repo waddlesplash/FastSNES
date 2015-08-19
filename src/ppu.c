@@ -7,8 +7,6 @@
 /* Snem 0.1 by Tom Walker
   PPU emulation */
 
-unsigned char voiceon;
-void writeppu(unsigned short addr, unsigned char val);
 #include <allegro.h>
 #include <stdlib.h>
 
@@ -16,8 +14,11 @@ void writeppu(unsigned short addr, unsigned char val);
 #include "util.h"
 
 #define uint unsigned int
-#define uint16 unsigned short
-#define uint32 unsigned long
+#define uint16 uint16_t
+#define uint32 uint32_t
+
+unsigned char voiceon;
+void writeppu(uint16_t addr, unsigned char val);
 
 inline uint16 cgadd(uint32 x, uint32 y)
 {
@@ -30,7 +31,7 @@ inline uint16 cgaddh(uint32 x, uint32 y)
 {
 	return (x + y - ((x ^ y) & 0x0821)) >> 1;
 }
-inline unsigned int cgsub(unsigned long x, unsigned long y)
+inline unsigned int cgsub(uint32_t x, uint32_t y)
 {
 	unsigned int sub = x - y;
 	unsigned int borrows = (~(sub + ((~(x ^ y)) & 0x10820))) & 0x10820;
@@ -45,9 +46,9 @@ inline uint16 cgsubh(uint32 x, uint32 y)
 	return ((sub & ~(borrows - (borrows >> 5))) & 0xf79e) >> 1;
 }
 
-unsigned long wroteaddr;
+uint32_t wroteaddr;
 int hcount, vcount;
-unsigned long window[10][164];
+uint32_t window[10][164];
 int twowrite = 0;
 int windowschanged;
 typedef struct {
@@ -56,44 +57,44 @@ typedef struct {
 struct {
 	unsigned char screna;
 	unsigned char portctrl;
-	unsigned short vramaddr;
-	unsigned short bg[4], chr[4];
+	uint16_t vramaddr;
+	uint16_t bg[4], chr[4];
 	int mode;
 	unsigned char main, sub;
-	unsigned short palbuffer;
-	unsigned short pal[256];
+	uint16_t palbuffer;
+	uint16_t pal[256];
 	int palindex;
 	int xscroll[4], yscroll[4];
 	int ylatch;
-	unsigned long matrixr;
-	unsigned short m7a, m7b, m7c, m7d, m7x, m7y;
+	uint32_t matrixr;
+	uint16_t m7a, m7b, m7c, m7d, m7x, m7y;
 	unsigned char m7sel;
 	int size[4];
 	int vinc;
 	int sprsize;
 	int spraddr;
-	unsigned short sprbase;
+	uint16_t sprbase;
 	int firstread;
 	int tilesize;
-	unsigned long wramaddr;
+	uint32_t wramaddr;
 	unsigned char windena1, windena2, windena3;
 	int w1left, w1right, w2left, w2right;
 	unsigned char windlogic, windlogic2;
 	unsigned char wmaskmain, wmasksub;
-	unsigned short spraddrs;
+	uint16_t spraddrs;
 	unsigned char cgadsub, cgwsel;
 	rgb_color fixedc;
-	unsigned short fixedcol;
+	uint16_t fixedcol;
 	int mosaic;
-	unsigned short pri;
+	uint16_t pri;
 	int prirotation;
 } ppu;
 
 BITMAP* b, *mainscr, *subscr, *otherscr, *sysb;
-unsigned long bitlookup[2][4][4], masklookup[2][4];
-unsigned short bitlookuph[2][4][4], masklookuph[2][4];
-unsigned short pallookup[16][256];
-unsigned long collookup[16];
+uint32_t bitlookup[2][4][4], masklookup[2][4];
+uint16_t bitlookuph[2][4][4], masklookuph[2][4];
+uint16_t pallookup[16][256];
+uint32_t collookup[16];
 unsigned char sprram[544];
 
 void initppu()
@@ -108,7 +109,7 @@ void initppu()
 	sysb = create_system_bitmap(256, 224);
 	vramb = (unsigned char*)malloc(0x10000);
 	memset(vramb, 0, 0x10000);
-	vram = (unsigned short*)vramb;
+	vram = (uint16_t*)vramb;
 	for (c = 0; c < 4; c++) {
 		for (d = 0; d < 4; d++) {
 			bitlookup[0][c][d] = 0;
@@ -236,7 +237,7 @@ int draworder[16][12] = {
 };
 
 /* Lookup tables for address calculations */
-unsigned short ylookup[4][64] = {
+uint16_t ylookup[4][64] = {
 	{0x000, 0x020, 0x040, 0x060, 0x080, 0x0A0, 0x0C0, 0x0E0, 0x100, 0x120,
 	 0x140, 0x160, 0x180, 0x1A0, 0x1C0, 0x1E0, 0x200, 0x220, 0x240, 0x260,
 	 0x280, 0x2A0, 0x2C0, 0x2E0, 0x300, 0x320, 0x340, 0x360, 0x380, 0x3A0,
@@ -266,7 +267,7 @@ unsigned short ylookup[4][64] = {
 	 0xA40, 0xA60, 0xA80, 0xAA0, 0xAC0, 0xAE0, 0xB00, 0xB20, 0xB40, 0xB60,
 	 0xB80, 0xBA0, 0xBC0, 0xBE0}};
 
-unsigned short xlookup[2][64] = {
+uint16_t xlookup[2][64] = {
 	{0x000, 0x001, 0x002, 0x003, 0x004, 0x005, 0x006, 0x007, 0x008, 0x009,
 	 0x00A, 0x00B, 0x00C, 0x00D, 0x00E, 0x00F, 0x010, 0x011, 0x012, 0x013,
 	 0x014, 0x015, 0x016, 0x017, 0x018, 0x019, 0x01A, 0x01B, 0x01C, 0x01D,
@@ -328,8 +329,8 @@ int windowdisable = 0;
 void recalcwindows()
 {
 	int x;
-	unsigned short* w;
-	unsigned short w2[256], w3[256];
+	uint16_t* w;
+	uint16_t w2[256], w3[256];
 	// if (!wfile) { wfile=fopen("window.dmp","wb"); }
 	w = &window[0][32];
 	if (ppu.windena1 & 0xA && !windowdisable) { /* BG1 */
@@ -659,13 +660,13 @@ void doblit()
 #define sgetr(c) (((c >> _rgb_r_shift_16) & 0x1F) << 3)
 #define sgetg(c) (((c >> _rgb_g_shift_16) & 0x3F) << 2)
 #define sgetb(c) (((c >> _rgb_b_shift_16) & 0x1F) << 3)
-void docolour(unsigned short* pw, unsigned short* pw2, unsigned short* pw3,
-			  unsigned short* pw4)
+void docolour(uint16_t* pw, uint16_t* pw2, uint16_t* pw3,
+			  uint16_t* pw4)
 {
 	int x;
 	//int asr, asg, asb;
-	unsigned short dat;
-	unsigned short* pal = pallookup[ppu.screna & 15];
+	uint16_t dat;
+	uint16_t* pal = pallookup[ppu.screna & 15];
 	switch ((ppu.cgadsub >> 6) | ((ppu.cgwsel & 2) << 1)) {
 	case 0:
 		if (!ppu.fixedcol) {
@@ -768,20 +769,20 @@ void docolour(unsigned short* pw, unsigned short* pw2, unsigned short* pw3,
 int lastline;
 void drawline(int line)
 {
-	unsigned long aa, bb, cc, dd, arith;
+	uint32_t aa, bb, cc, dd, arith;
 	int ma, mb, mc, md, hoff, voff, cx, cy;
 	int c, d, x, xx, xxx, pri, y, yy, ss, sprc;
 	//int asr, asg, asb;
-	unsigned short addr, tile, dat, baseaddr;
+	uint16_t addr, tile, dat, baseaddr;
 	reg b1, b2, b3, b4, b5;
-	unsigned long* p;
-	unsigned short* pw, *pw2, *pw3, *pw4;
-	unsigned long* wp;
+	uint32_t* p;
+	uint16_t* pw, *pw2, *pw3, *pw4;
+	uint32_t* wp;
 	int col;
 	int l;
 	unsigned char layers = (ppu.main | ppu.sub); //&~ppumask;
 	int xsize, ysize;
-	unsigned short* xlk;
+	uint16_t* xlk;
 	unsigned char temp;
 	unsigned char wmask;
 	lastline = line;
@@ -839,16 +840,16 @@ void drawline(int line)
 								((x < 320) /* || (x>456) */)) { /* Draw sprite */
 								// x-=56;
 								// x&=511;
-								// p=(unsigned long *)(b->line[line]+( ((64-((x^63)&63))+(x&~63))<<1) );
+								// p=(uint32_t *)(b->line[line]+( ((64-((x^63)&63))+(x&~63))<<1) );
 								if (wmask & 0x10)
-									wp = (unsigned long*)(((unsigned char*)
+									wp = (uint32_t*)(((unsigned char*)
 															   window[9]) +
 														  (x << 1));
 								else
-									wp = (unsigned long*)(((unsigned char*)
+									wp = (uint32_t*)(((unsigned char*)
 															   window[7]) +
 														  (x << 1));
-								p = (unsigned long*)(b->line[line] + (x << 1));
+								p = (uint32_t*)(b->line[line] + (x << 1));
 								tile = ((sprram[addr + 2] |
 										 ((sprram[addr + 3] & 1) << 8))
 										<< 4) +
@@ -1029,14 +1030,14 @@ void drawline(int line)
 						arith = 0x40004000;
 					else
 						arith = 0;
-					p = (unsigned long*)(b->line[line] +
+					p = (uint32_t*)(b->line[line] +
 										 ((64 - (ppu.xscroll[c] & 7)) << 1));
 					if (wmask & (1 << c))
-						wp = (unsigned long*)((unsigned char*)window[c] +
+						wp = (uint32_t*)((unsigned char*)window[c] +
 											  ((64 - (ppu.xscroll[c] & 7))
 											   << 1));
 					else
-						wp = (unsigned long*)((unsigned char*)window[7] +
+						wp = (uint32_t*)((unsigned char*)window[7] +
 											  ((64 - (ppu.xscroll[c] & 7))
 											   << 1));
 					l = (line + ppu.yscroll[c]) & 1023;
@@ -2058,8 +2059,8 @@ void drawline(int line)
 							wp += 4;
 						}
 					} else if (!pri) {
-						pw = (unsigned short*)(((b->line[line])) + 128);
-						pw2 = (unsigned short*)((window[c]) + 32);
+						pw = (uint16_t*)(((b->line[line])) + 128);
+						pw2 = (uint16_t*)((window[c]) + 32);
 						cx = (((int)ppu.m7x << 19) >> 19);
 						cy = (((int)ppu.m7y << 19) >> 19);
 						hoff = ((int)ppu.xscroll[0] << 19) >> 19;
@@ -2104,7 +2105,7 @@ void drawline(int line)
 								}
 							}
 							if (col && *pw2)
-								*pw = (col | (unsigned short)arith);
+								*pw = (col | (uint16_t)arith);
 							aa += ma;
 							cc += mc;
 							pw++;
@@ -2116,21 +2117,21 @@ void drawline(int line)
 		}
 		b = otherscr;
 	}
-	pw = (unsigned short*)otherscr->line[line];
-	pw2 = (unsigned short*)subscr->line[line];
-	pw3 = (unsigned short*)mainscr->line[line];
+	pw = (uint16_t*)otherscr->line[line];
+	pw2 = (uint16_t*)subscr->line[line];
+	pw3 = (uint16_t*)mainscr->line[line];
 	switch (ppu.cgwsel & 0x30) {
 	case 0x00:
-		pw4 = (unsigned short*)window[7];
+		pw4 = (uint16_t*)window[7];
 		break;
 	case 0x10:
-		pw4 = (unsigned short*)window[6];
+		pw4 = (uint16_t*)window[6];
 		break;
 	case 0x20:
-		pw4 = (unsigned short*)window[5];
+		pw4 = (uint16_t*)window[5];
 		break;
 	case 0x30:
-		pw4 = (unsigned short*)window[8];
+		pw4 = (uint16_t*)window[8];
 		break;
 	}
 	// snemdebug("CGWSEL %02X\n",ppu.cgwsel&0x30);
@@ -2152,10 +2153,10 @@ void dumphdma()
 	}
 }
 
-void writeppu(unsigned short addr, unsigned char val)
+void writeppu(uint16_t addr, unsigned char val)
 {
 	int r, g, b, c;
-	unsigned short tempaddr;
+	uint16_t tempaddr;
 	// snemdebug("Write PPU %04X %02X %04X\n",addr,val,x.w);
 	switch (addr & 0xFF) {
 	case 0x00: /* Screen enable */
@@ -2379,12 +2380,12 @@ void writeppu(unsigned short addr, unsigned char val)
 		return;
 	case 0x1B:
 		ppu.m7a = (ppu.m7a >> 8) | (val << 8);
-		ppu.matrixr = (short)ppu.m7a * ((short)ppu.m7b >> 8);
+		ppu.matrixr = (int16_t)ppu.m7a * ((int16_t)ppu.m7b >> 8);
 		// snemdebug("M7A %04X\n",ppu.m7a);
 		return;
 	case 0x1C:
 		ppu.m7b = (ppu.m7b >> 8) | (val << 8);
-		ppu.matrixr = (short)ppu.m7a * ((short)ppu.m7b >> 8);
+		ppu.matrixr = (int16_t)ppu.m7a * ((int16_t)ppu.m7b >> 8);
 		// snemdebug("M7B %04X\n",ppu.m7b);
 		// m7write=1;
 		return;
@@ -2627,7 +2628,7 @@ unsigned char doskipper()
 	exit(-1);
 }
 
-unsigned char readppu(unsigned short addr)
+unsigned char readppu(uint16_t addr)
 {
 	unsigned char temp;
 	switch (addr & 0xFF) {
@@ -2799,7 +2800,7 @@ unsigned char readppu(unsigned short addr)
 	}
 }
 
-unsigned short getvramaddr()
+uint16_t getvramaddr()
 {
 	return ppu.vramaddr << 1;
 }
@@ -2808,7 +2809,7 @@ BITMAP* dasbuffer;
 void drawchar(int tile, int x, int y, int col)
 {
 	unsigned char dat, dat1, dat2, dat3, dat4;
-	unsigned short addr = tile << 5;
+	uint16_t addr = tile << 5;
 	int yy, xx;
 	if (!x)
 		textprintf(dasbuffer, font, 128, y, makecol(255, 255, 255), "%04X",
@@ -2905,7 +2906,7 @@ void dumpbg2()
 {
 	int col = 0;
 	int c, d;
-	unsigned short addr = 0xB000 >> 1;
+	uint16_t addr = 0xB000 >> 1;
 	int tile, x, y;
 	unsigned char dat1, dat2;
 	while (key[KEY_F2])

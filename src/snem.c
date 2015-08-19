@@ -6,8 +6,8 @@
 
 int intthisline;
 
-unsigned long pc2, pc3, pc4;
-unsigned long pc7, pc8, pc9, pc10, pc11, pc12, pc13, pc14, pc15;
+uint32_t pc2, pc3, pc4;
+uint32_t pc7, pc8, pc9, pc10, pc11, pc12, pc13, pc14, pc15;
 int framenum;
 int oldnmi = 0;
 int output = 0;
@@ -201,73 +201,63 @@ void resetsnem()
 int windowdisable;
 
 #if !defined(WIN32) && !defined(_WIN32)
-void wakeupmainthread() {}
+void wakeupmainthread()
+{
+	char windowtitle[256];
+	if (changefps) {
+		changefps = 0;
+		sprintf(windowtitle, "NeuSneM: %i fps, %i", fps, spcclck);
+		set_window_title(windowtitle);
+	}
+}
 void wakeupsoundthread() {}
 
 int main(int argc, char* argv[])
 {
-	FILE *f;
-	//int c;
-	char windowtitle[256];
 	initsnem();
 	loadrom(argv[1]);
 	resetsnem();
-	while (!key[KEY_ESC]) {
-		while (drawcount) {
+	while (1) {
+		//keypressed();
+		while (1) {
 			execframe();
 			drawcount--;
-			/*c++;
- 			if (c >= ((pal) ? 50 : 60)) {
-				spcclck = spctotal;
-				spctotal = 0;
-				c = 0;
-				changefps = 1;
-			}*/
 		}
-                if (key[KEY_1])
-                {
-                        while (key[KEY_1]);
-                        ppumask^=1;
-                }
-                if (key[KEY_2])
-                {
-                        while (key[KEY_2]);
-                        ppumask^=2;
-                }
-                if (key[KEY_3])
-                {
-                        while (key[KEY_3]);
-                        ppumask^=4;
-                }
-                if (key[KEY_4])
-                {
-                        while (key[KEY_4]);
-                        ppumask^=8;
-                }
-                if (key[KEY_5])
-                {
-                        while (key[KEY_5]);
-                        ppumask^=16;
-                }
-                if (key[KEY_6])
-                {
-                        while (key[KEY_6]);
-                        windowdisable^=1;
-                }
-                if (key[KEY_F1])
-                   dumpchar();
-                if (key[KEY_F2])
-                   dumpbg2();
-		if (changefps) {
-			changefps = 0;
-			sprintf(windowtitle, "NeuSneM: %i fps, %i", fps, spcclck);
-			set_window_title(windowtitle);
+		if (key[KEY_ESC])
+			return 1;
+		if (key[KEY_1]) {
+			while (key[KEY_1])
+				ppumask ^= 1;
 		}
+		if (key[KEY_2]) {
+			while (key[KEY_2])
+				ppumask ^= 2;
+		}
+		if (key[KEY_3]) {
+			while (key[KEY_3])
+				ppumask ^= 4;
+		}
+		if (key[KEY_4]) {
+			while (key[KEY_4])
+				ppumask ^= 8;
+		}
+		if (key[KEY_5]) {
+			while (key[KEY_5])
+				ppumask ^= 16;
+		}
+		if (key[KEY_6]) {
+			while (key[KEY_6])
+				windowdisable ^= 1;
+		}
+		if (key[KEY_F1])
+		   dumpchar();
+		if (key[KEY_F2])
+		   dumpbg2();
 	}
-	dumpregs();
-	dumpspcregs();
+	//dumpregs();
+	//dumpspcregs();
 	// dumpvram();
-	dumphdma();
+	//dumphdma();
 	return 0;
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 /* SPC700 */
 double spccycles;
 double spctotal2;
@@ -15,15 +17,15 @@ static inline void clockspc(int cyc)
 /* 65c816 */
 /* Registers */
 typedef union {
-	unsigned short w;
+	uint16_t w;
 	struct {
 		unsigned char l, h;
 	} b;
 } reg;
 
 reg a, x, y, s;
-unsigned long pbr, dbr;
-unsigned short pc, dp;
+uint32_t pbr, dbr;
+uint16_t pc, dp;
 
 struct {
 	int c, z, i, d, b, v, n, m, x, e;
@@ -55,10 +57,10 @@ unsigned char memread[2048], memwrite[2048];
 unsigned char accessspeed[2048];
 
 int lorom;
-unsigned char readmeml(unsigned long a);
-void writememl(unsigned long a, unsigned char v);
+unsigned char readmeml(uint32_t a);
+void writememl(uint32_t a, unsigned char v);
 
-static inline unsigned char readmem(unsigned long a)
+static inline unsigned char readmem(uint32_t a)
 {
 	// if (a==0xC05) { snemlog("Read %06X %06X
 	// %02X\n",a,pbr|pc,ram[0xC05]); }
@@ -83,7 +85,7 @@ static inline unsigned char readmem(unsigned long a)
 	return readmeml(a);
 }
 
-static inline void writemem(unsigned long ad, unsigned char v)
+static inline void writemem(uint32_t ad, unsigned char v)
 {
 	// if (ad==0xC05) { snemlog("WRiTE %04X %02X %06X\n",ad,v,pbr|pc);
 	// if ((ad>>16)==0x7E) { snemdebug("WRiTE %04X %02X %06X\n",ad,v,pbr|pc); }
@@ -159,7 +161,7 @@ static inline void writemem(unsigned long ad, unsigned char v)
 int nmi, vbl, joyscan;
 int nmienable;
 unsigned char* vramb;
-unsigned short* vram;
+uint16_t* vram;
 int ppumask;
 
 int yirq, xirq, irqenable, irq;
@@ -170,8 +172,8 @@ int skipz, setzf;
 int pal;
 
 /* DMA registers */
-unsigned short dmadest[8], dmasrc[8], dmalen[8];
-unsigned long hdmaaddr[8], hdmaaddr2[8];
+uint16_t dmadest[8], dmasrc[8], dmalen[8];
+uint32_t hdmaaddr[8], hdmaaddr2[8];
 unsigned char dmabank[8], dmaibank[8], dmactrl[8], hdmastat[8], hdmadat[8];
 int hdmacount[8];
 unsigned char hdmaena;

@@ -12,7 +12,7 @@ int framenum = 0;
 int oldnmi;
 
 int padpos, padstat;
-unsigned short pad[4];
+uint16_t pad[4];
 
 void readjoy()
 {
@@ -33,7 +33,7 @@ void readjoy()
 	// snemdebug("Read joy\n");
 }
 
-unsigned char readjoyold(unsigned short addr)
+unsigned char readjoyold(uint16_t addr)
 {
 	int temp;
 	if (addr == 0x4016) {
@@ -47,7 +47,7 @@ unsigned char readjoyold(unsigned short addr)
 	return 0xFF;
 }
 
-void writejoyold(unsigned short addr, unsigned char val)
+void writejoyold(uint16_t addr, unsigned char val)
 {
 	if (addr == 0x4016) {
 		// snemdebug("Write 4016 %02X\n",val);
@@ -58,10 +58,10 @@ void writejoyold(unsigned short addr, unsigned char val)
 	}
 }
 
-unsigned short mulr, divc, divr;
+uint16_t mulr, divc, divr;
 unsigned char mula, mulb, divb;
 
-void writeio(unsigned short addr, unsigned char val)
+void writeio(uint16_t addr, unsigned char val)
 {
 	int c, d = 0, offset = 0, speed;
 	unsigned char temp;
@@ -361,7 +361,7 @@ void writeio(unsigned short addr, unsigned char val)
 	}
 }
 
-unsigned char readio(unsigned short addr)
+unsigned char readio(uint16_t addr)
 {
 	int temp = 0;
 	if (addr == 0x4016 || addr == 0x4017) {

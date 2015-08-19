@@ -9,14 +9,14 @@ int spcoutput;
 int spctotal, dsptotal;
 struct {
 	union {
-		unsigned short w;
+		uint16_t w;
 		struct {
 			unsigned char a, y;
 		} b;
 	} ya;
 	unsigned char x;
 	unsigned char s;
-	unsigned short pc;
+	uint16_t pc;
 	struct {
 		int n, v, p, b, h, i, z, c;
 	} p;
@@ -36,20 +36,20 @@ unsigned char spctocpu[4];
 
 int spctimer[3], spctimer2[3], spclimit[3];
 
-unsigned char readfromspc(unsigned short addr)
+unsigned char readfromspc(uint16_t addr)
 {
 	// snemdebug("Read SPC %04X %02X %06X\n",addr,spctocpu[addr&3],pbr|pc);
 	return spctocpu[addr & 3];
 }
 
-void writetospc(unsigned short addr, unsigned char val)
+void writetospc(uint16_t addr, unsigned char val)
 {
 	spcram[(addr & 3) + 0xF4] = val;
 	// snemdebug("Set SPC %02X %02X %06X\n",(addr&3)+0xF4,val,pbr|pc);
 }
 unsigned char dspaddr;
 unsigned char voiceon;
-void writespcregs(unsigned short a, unsigned char v)
+void writespcregs(uint16_t a, unsigned char v)
 {
 	switch (a) {
 	case 0xF1:
@@ -94,11 +94,11 @@ void writespcregs(unsigned short a, unsigned char v)
 	}
 }
 
-unsigned short getspcpc()
+uint16_t getspcpc()
 {
 	return spc.pc;
 }
-unsigned char readspcregs(unsigned short a)
+unsigned char readspcregs(uint16_t a)
 {
 	unsigned char v;
 	switch (a) {
@@ -197,12 +197,12 @@ void dumpspcregs()
 	setspczn(ac);                                                              \
 	spc.p.c = tempw <= 0xFF;
 
-unsigned short spc2, spc3;
+uint16_t spc2, spc3;
 void execspc()
 {
 	unsigned char opcode, temp, temp2;
-	unsigned short addr, addr2, tempw;
-	unsigned long templ;
+	uint16_t addr, addr2, tempw;
+	uint32_t templ;
 	int spccount;
 	// snemlog("ExecSPC %i\n",spccycles);
 	while (spccycles > 0) {

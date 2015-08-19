@@ -5,7 +5,7 @@
 #include "util.h"
 
 int pal;
-unsigned short srammask;
+uint16_t srammask;
 void initmem();
 unsigned char* sram;
 void allocmem()
@@ -26,7 +26,7 @@ void loadrom(char* fn)
 	char sramname[512];
 	FILE* f = fopen(fn, "rb");
 	int len;
-	unsigned short temp, temp2;
+	uint16_t temp, temp2;
 	spccycles = -10000;
 	if (!f) {
 		printf("File %s not found\n", fn);
@@ -218,7 +218,7 @@ void initmem()
 	}
 }
 
-unsigned char readmeml(unsigned long addr)
+unsigned char readmeml(uint32_t addr)
 {
 	addr &= ~0xFF000000;
 	if (((addr >> 16) & 0x7F) < 0x40) {
@@ -269,7 +269,7 @@ unsigned char readmeml(unsigned long addr)
 	exit(-1);
 }
 
-void writememl(unsigned long addr, unsigned char val)
+void writememl(uint32_t addr, unsigned char val)
 {
 	addr &= ~0xFF000000;
 	if (((addr >> 16) & 0x7F) < 0x40) {

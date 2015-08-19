@@ -25,7 +25,7 @@ struct {
 	int volumer[8], volumel[8];
 	int sourcenum[8];
 	int pos[8];
-	unsigned short voiceaddr[8];
+	uint16_t voiceaddr[8];
 	unsigned char dir;
 	unsigned char brrctrl[8];
 	int brrstat[8];
@@ -36,7 +36,7 @@ struct {
 	unsigned char gain[8], adsr1[8], adsr2[8];
 	int adsrstat[8];
 
-	unsigned short noise;
+	uint16_t noise;
 	int noisedelay, noiserate;
 	unsigned char non;
 
@@ -53,10 +53,10 @@ void drawvol(BITMAP* b)
 	// %i",dsp.volumer[0],dsp.volumer[1],dsp.volumer[2],dsp.volumer[3],dsp.volumer[4],dsp.volumer[5],dsp.volumer[6],dsp.volumer[7]);
 }
 
-void writedsp(unsigned short a, unsigned char v)
+void writedsp(uint16_t a, unsigned char v)
 {
 	int c;
-	unsigned long templ;
+	uint32_t templ;
 	if (a & 1) {
 		// if (curdspreg==0x62) { spcoutput=1; }
 		// if (curdspreg==0x4C) { spcoutput=0; }
@@ -221,7 +221,7 @@ void resetdsp()
 	dsp.noise = 0x4000;
 }
 
-unsigned char readdsp(unsigned short a)
+unsigned char readdsp(uint16_t a)
 {
 	if (a & 1) {
 		switch (curdspreg & 0x7F) {
@@ -251,11 +251,11 @@ unsigned char readdsp(unsigned short a)
 	return curdspreg;
 }
 
-signed short lastsamp[8][2];
+int16_t lastsamp[8][2];
 int range[8], filter[8];
-inline signed short decodebrr(int v, int c)
+inline int16_t decodebrr(int v, int c)
 {
-	signed short temp = v & 0xF;
+	int16_t temp = v & 0xF;
 	if (temp & 8) {
 		temp |= 0xFFF0;
 	}
@@ -300,10 +300,10 @@ inline signed short decodebrr(int v, int c)
 	return temp;
 }
 
-signed short getbrr(int c)
+int16_t getbrr(int c)
 {
 	int temp;
-	signed short sample;
+	int16_t sample;
 	if (!dsp.voiceon[c]) {
 		return 0;
 	}
@@ -321,7 +321,7 @@ signed short getbrr(int c)
 		sample = decodebrr(temp, c); //(temp<<(dsp.brrctrl[c]>>4))>>1;
 	} else {
 		temp = spcram[dsp.voiceaddr[c]++] & 0xF;
-		// if (temp&8) { (unsigned long)temp|=0xFFFFFFF0; }
+		// if (temp&8) { (uint32_t)temp|=0xFFFFFFF0; }
 		dsp.brrstat[c]++;
 		sample = decodebrr(temp, c);
 		// sample=(temp<<(dsp.brrctrl[c]>>4))>>1;
@@ -345,8 +345,8 @@ signed short getbrr(int c)
 	return sample;
 }
 
-signed short dspbuffer[20000];
-signed short dsprealbuffer[8][20000];
+int16_t dspbuffer[20000];
+int16_t dsprealbuffer[8][20000];
 int dsppos = 0;
 int dspwsel = 0, dsprsel = 0;
 AUDIOSTREAM* as;
@@ -361,7 +361,7 @@ void initdsp()
 int dspqlen = 0;
 void refillbuffer()
 {
-	unsigned short* p = NULL;
+	uint16_t* p = NULL;
 	int c;
 	if (!dspqlen) {
 		return;
@@ -397,8 +397,8 @@ void polldsp()
 {
 	int c;
 	int sample;
-	signed short s;
-	short totalsamplel = 0, totalsampler = 0;
+	int16_t s;
+	int16_t totalsamplel = 0, totalsampler = 0;
 	for (c = 0; c < 8; c++) {
 		// if (dsp.voiceon[0]) { snemdebug("Pitch %i
 		// %i\n",dsp.pitchcounter[c],dsp.pitch[c]); }
@@ -407,7 +407,7 @@ void polldsp()
 			sample = dspsamples[c];
 		} else {
 			while (dsp.pitchcounter[c] >= 0 && dsp.pitch[c]) {
-				s = (signed short)getbrr(c);
+				s = (int16_t)getbrr(c);
 				sample = (int)s;
 				dspsamples[c] = sample;
 				// if (sample && dsp.evol[c]) { snemdebug(":%i
