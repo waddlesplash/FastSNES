@@ -435,103 +435,39 @@ void dohdma(int line)
 				// dest %04X read from
 				// %02X %04X %04X stat
 				// %i\n",dmadest[c],dmabank[c],hdmaaddr[c],hdmaaddr2[c],hdmastat[c]); }
+
+#define dohdma_macro(NUMBER) \
+	if (hdmastat[c] & INDIRECT) \
+		hdmadat[c] = readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++)); \
+	else \
+		hdmadat[c] = readmem((dmabank[c] << 16) | (hdmaaddr[c]++)); \
+	writeppu(dmadest[c] + NUMBER, hdmadat[c])
+
 				switch (dmactrl[c] & 7) {
 				case 1: /* Two registers */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
+					dohdma_macro(0);
+					dohdma_macro(1);
 					break;
 				case 2: /* One register write twice */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
+					dohdma_macro(0);
 				case 0: /* One register write once */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
+					dohdma_macro(0);
 					// if (c==2) {
 					// snemdebug("Channel
 					// 2 now
 					// %02X%04X\n",dmabank[c],hdmaaddr[c]); }
 					break;
 				case 3: /* Two registers write twice */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
+					dohdma_macro(0);
+					dohdma_macro(0);
+					dohdma_macro(1);
+					dohdma_macro(1);
 					break;
 				case 4: /* Four registers */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 2, hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 3, hdmadat[c]);
+					dohdma_macro(0);
+					dohdma_macro(1);
+					dohdma_macro(2);
+					dohdma_macro(3);
 					break;
 				default:
 					printf("Bad HDMA transfer mode %i %02X %i\n",
@@ -542,103 +478,32 @@ void dohdma(int line)
 			} else if (hdmastat[c] & CONTINUOUS) {
 				switch (dmactrl[c] & 7) {
 				case 1: /* Two registers */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
+					dohdma_macro(0);
+					dohdma_macro(1);
 					break;
 				case 2: /* One register write twice */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
+					dohdma_macro(0);
 				case 0: /* One register write once */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
+					dohdma_macro(0);
 					break;
 				case 3: /* Two registers write twice */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
+					dohdma_macro(0);
+					dohdma_macro(0);
+					dohdma_macro(1);
+					dohdma_macro(1);
 					break;
 				case 4: /* Four registers */
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c], hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 1, hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 2, hdmadat[c]);
-					if (hdmastat[c] & INDIRECT)
-						hdmadat[c] =
-							readmem((dmaibank[c] << 16) | (hdmaaddr2[c]++));
-					else
-						hdmadat[c] =
-							readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-					writeppu(dmadest[c] + 3, hdmadat[c]);
+					dohdma_macro(0);
+					dohdma_macro(1);
+					dohdma_macro(2);
+					dohdma_macro(3);
 					break;
 				default:
 					printf("Bad HDMA2 transfer mode %i\n", dmactrl[c] & 7);
 					dumpregs();
 					exit(-1);
 				}
+#undef dohdma_macro
 			}
 		finishhdma:
 			hdmacount[c]--;
