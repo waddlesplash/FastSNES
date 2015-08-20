@@ -10,14 +10,16 @@ uint32_t pc2, pc3, pc4;
 uint32_t pc7, pc8, pc9, pc10, pc11, pc12, pc13, pc14, pc15;
 int framenum;
 int oldnmi = 0;
-int output = 0;
+int output = 1;
 int timetolive = 0;
 int times = 0;
+int ins = 0;
 
 int fps, frames, changefps;
 int spcclck, spctotal;
 double spcclck2, spcclck3;
 int infocus, romloaded;
+
 void oncesec()
 {
 	fps = frames;
@@ -200,7 +202,7 @@ void resetsnem()
 
 int windowdisable;
 
-#if !defined(WIN32) && !defined(_WIN32)
+#if !defined(WIN32_GUI)
 void wakeupmainthread()
 {
 	char windowtitle[256];
@@ -261,5 +263,5 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-//END_OF_MAIN();
-#endif // !defined(WIN32) && !defined(_WIN32)
+END_OF_MAIN()
+#endif // !defined(WIN32_GUI)

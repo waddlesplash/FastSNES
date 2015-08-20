@@ -31,9 +31,9 @@ struct {
 	int c, z, i, d, b, v, n, m, x, e;
 } p;
 
-int ins, output;
-int timetolive;
-int inwai;
+extern int ins, output;
+extern int timetolive;
+extern int inwai;
 /* Opcode table */
 typedef void (*opcode_func)();
 opcode_func opcodes[256][5];

@@ -1,4 +1,4 @@
-#if defined(WIN32) || defined(_WIN32)
+#if defined(WIN32_GUI)
 
 #include <windows.h>
 #include <stdio.h>
@@ -212,12 +212,12 @@ WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0); /* send a WM_QUIT to the message queue */
 		break;
-	case WM_SETFOCUS:
+	/*case WM_SETFOCUS:
 		infocus = 1;
 		break;
 	case WM_KILLFOCUS:
 		infocus = 0;
-		break;
+		break;*/
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
 		case IDM_FILE_RESET:
@@ -242,4 +242,4 @@ WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-#endif // defined(WIN32) || defined(_WIN32)
+#endif // defined(WIN32_GUI)
