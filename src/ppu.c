@@ -443,11 +443,13 @@ void dohdma(int line)
 		hdmadat[c] = readmem((dmabank[c] << 16) | (hdmaaddr[c]++)); \
 	writeppu(dmadest[c] + NUMBER, hdmadat[c])
 
+				// TODO: deduplify this code more?
 				switch (dmactrl[c] & 7) {
 				case 1: /* Two registers */
 					dohdma_macro(0);
 					dohdma_macro(1);
 					break;
+				case 6: /* One register write twice */
 				case 2: /* One register write twice */
 					dohdma_macro(0);
 				case 0: /* One register write once */
@@ -457,6 +459,7 @@ void dohdma(int line)
 					// 2 now
 					// %02X%04X\n",dmabank[c],hdmaaddr[c]); }
 					break;
+				case 7: /* Two registers write twice */
 				case 3: /* Two registers write twice */
 					dohdma_macro(0);
 					dohdma_macro(0);
@@ -468,6 +471,12 @@ void dohdma(int line)
 					dohdma_macro(1);
 					dohdma_macro(2);
 					dohdma_macro(3);
+					break;
+				case 5: /* Two registers write twice, alternate */
+					dohdma_macro(0);
+					dohdma_macro(1);
+					dohdma_macro(0);
+					dohdma_macro(1);
 					break;
 				default:
 					printf("Bad HDMA transfer mode %i %02X %i\n",
@@ -481,11 +490,13 @@ void dohdma(int line)
 					dohdma_macro(0);
 					dohdma_macro(1);
 					break;
+				case 6: /* One register write twice */
 				case 2: /* One register write twice */
 					dohdma_macro(0);
 				case 0: /* One register write once */
 					dohdma_macro(0);
 					break;
+				case 7: /* Two registers write twice */
 				case 3: /* Two registers write twice */
 					dohdma_macro(0);
 					dohdma_macro(0);
@@ -497,6 +508,12 @@ void dohdma(int line)
 					dohdma_macro(1);
 					dohdma_macro(2);
 					dohdma_macro(3);
+					break;
+				case 5: /* Two registers write twice, alternate */
+					dohdma_macro(0);
+					dohdma_macro(1);
+					dohdma_macro(0);
+					dohdma_macro(1);
 					break;
 				default:
 					printf("Bad HDMA2 transfer mode %i\n", dmactrl[c] & 7);
