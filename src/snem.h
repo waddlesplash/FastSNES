@@ -35,7 +35,8 @@ int ins, output;
 int timetolive;
 int inwai;
 /* Opcode table */
-void (*opcodes[256][5])();
+typedef void (*opcode_func)();
+opcode_func opcodes[256][5];
 
 /* CPU modes : 0 = X1M1
 			  1 = X1M0

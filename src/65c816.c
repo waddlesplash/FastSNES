@@ -4641,42 +4641,27 @@ void makeopcodetable()
 	opcodes[0x9A][2] = opcodes[0x9A][3] = txs16;
 
 	/* Flag Group */
-	opcodes[0x18][0] = opcodes[0x18][1] = opcodes[0x18][2] = opcodes[0x18][3] =
-		opcodes[0x18][4] = clc;
-	opcodes[0xD8][0] = opcodes[0xD8][1] = opcodes[0xD8][2] = opcodes[0xD8][3] =
-		opcodes[0xD8][4] = cld;
-	opcodes[0x58][0] = opcodes[0x58][1] = opcodes[0x58][2] = opcodes[0x58][3] =
-		opcodes[0x58][4] = cli;
-	opcodes[0xB8][0] = opcodes[0xB8][1] = opcodes[0xB8][2] = opcodes[0xB8][3] =
-		opcodes[0xB8][4] = clv;
-	opcodes[0x38][0] = opcodes[0x38][1] = opcodes[0x38][2] = opcodes[0x38][3] =
-		opcodes[0x38][4] = sec;
-	opcodes[0xF8][0] = opcodes[0xF8][1] = opcodes[0xF8][2] = opcodes[0xF8][3] =
-		opcodes[0xF8][4] = sed;
-	opcodes[0x78][0] = opcodes[0x78][1] = opcodes[0x78][2] = opcodes[0x78][3] =
-		opcodes[0x78][4] = sei;
-	opcodes[0xFB][0] = opcodes[0xFB][1] = opcodes[0xFB][2] = opcodes[0xFB][3] =
-		opcodes[0xFB][4] = xce;
-	opcodes[0xE2][0] = opcodes[0xE2][1] = opcodes[0xE2][2] = opcodes[0xE2][3] =
-		opcodes[0xE2][4] = sep;
-	opcodes[0xC2][0] = opcodes[0xC2][1] = opcodes[0xC2][2] = opcodes[0xC2][3] =
-		opcodes[0xC2][4] = rep;
+	opcodes[0x18][0] = opcodes[0x18][1] = opcodes[0x18][2] = opcodes[0x18][3] =	opcodes[0x18][4] = clc;
+	opcodes[0xD8][0] = opcodes[0xD8][1] = opcodes[0xD8][2] = opcodes[0xD8][3] =	opcodes[0xD8][4] = cld;
+	opcodes[0x58][0] = opcodes[0x58][1] = opcodes[0x58][2] = opcodes[0x58][3] =	opcodes[0x58][4] = cli;
+	opcodes[0xB8][0] = opcodes[0xB8][1] = opcodes[0xB8][2] = opcodes[0xB8][3] =	opcodes[0xB8][4] = clv;
+	opcodes[0x38][0] = opcodes[0x38][1] = opcodes[0x38][2] = opcodes[0x38][3] =	opcodes[0x38][4] = sec;
+	opcodes[0xF8][0] = opcodes[0xF8][1] = opcodes[0xF8][2] = opcodes[0xF8][3] =	opcodes[0xF8][4] = sed;
+	opcodes[0x78][0] = opcodes[0x78][1] = opcodes[0x78][2] = opcodes[0x78][3] =	opcodes[0x78][4] = sei;
+	opcodes[0xFB][0] = opcodes[0xFB][1] = opcodes[0xFB][2] = opcodes[0xFB][3] =	opcodes[0xFB][4] = xce;
+	opcodes[0xE2][0] = opcodes[0xE2][1] = opcodes[0xE2][2] = opcodes[0xE2][3] =	opcodes[0xE2][4] = sep;
+	opcodes[0xC2][0] = opcodes[0xC2][1] = opcodes[0xC2][2] = opcodes[0xC2][3] =	opcodes[0xC2][4] = rep;
 
 	/* Stack group */
-	opcodes[0x8B][0] = opcodes[0x8B][1] = opcodes[0x8B][2] = opcodes[0x8B][3] =
-		phb;
+	opcodes[0x8B][0] = opcodes[0x8B][1] = opcodes[0x8B][2] = opcodes[0x8B][3] =	phb;
 	opcodes[0x8B][4] = phbe;
-	opcodes[0x4B][0] = opcodes[0x4B][1] = opcodes[0x4B][2] = opcodes[0x4B][3] =
-		phk;
+	opcodes[0x4B][0] = opcodes[0x4B][1] = opcodes[0x4B][2] = opcodes[0x4B][3] =	phk;
 	opcodes[0x4B][4] = phke;
-	opcodes[0xAB][0] = opcodes[0xAB][1] = opcodes[0xAB][2] = opcodes[0xAB][3] =
-		plb;
+	opcodes[0xAB][0] = opcodes[0xAB][1] = opcodes[0xAB][2] = opcodes[0xAB][3] =	plb;
 	opcodes[0xAB][4] = plbe;
-	opcodes[0x08][0] = opcodes[0x08][1] = opcodes[0x08][2] = opcodes[0x08][3] =
-		php;
+	opcodes[0x08][0] = opcodes[0x08][1] = opcodes[0x08][2] = opcodes[0x08][3] =	php;
 	opcodes[0x08][4] = php;
-	opcodes[0x28][0] = opcodes[0x28][1] = opcodes[0x28][2] = opcodes[0x28][3] =
-		plp;
+	opcodes[0x28][0] = opcodes[0x28][1] = opcodes[0x28][2] = opcodes[0x28][3] =	plp;
 	opcodes[0x28][4] = plp;
 	opcodes[0x48][0] = opcodes[0x48][2] = opcodes[0x48][4] = pha8;
 	opcodes[0x48][1] = opcodes[0x48][3] = pha16;
@@ -4690,16 +4675,11 @@ void makeopcodetable()
 	opcodes[0xFA][2] = opcodes[0xFA][3] = plx16;
 	opcodes[0x7A][0] = opcodes[0x7A][1] = opcodes[0x7A][4] = ply8;
 	opcodes[0x7A][2] = opcodes[0x7A][3] = ply16;
-	opcodes[0xD4][0] = opcodes[0xD4][1] = opcodes[0xD4][2] = opcodes[0xD4][3] =
-		opcodes[0xD4][4] = pei;
-	opcodes[0xF4][0] = opcodes[0xF4][1] = opcodes[0xF4][2] = opcodes[0xF4][3] =
-		opcodes[0xF4][4] = pea;
-	opcodes[0x62][0] = opcodes[0x62][1] = opcodes[0x62][2] = opcodes[0x62][3] =
-		opcodes[0x62][4] = per;
-	opcodes[0x0B][0] = opcodes[0x0B][1] = opcodes[0x0B][2] = opcodes[0x0B][3] =
-		opcodes[0x0B][4] = phd;
-	opcodes[0x2B][0] = opcodes[0x2B][1] = opcodes[0x2B][2] = opcodes[0x2B][3] =
-		opcodes[0x2B][4] = pld;
+	opcodes[0xD4][0] = opcodes[0xD4][1] = opcodes[0xD4][2] = opcodes[0xD4][3] =	opcodes[0xD4][4] = pei;
+	opcodes[0xF4][0] = opcodes[0xF4][1] = opcodes[0xF4][2] = opcodes[0xF4][3] =	opcodes[0xF4][4] = pea;
+	opcodes[0x62][0] = opcodes[0x62][1] = opcodes[0x62][2] = opcodes[0x62][3] =	opcodes[0x62][4] = per;
+	opcodes[0x0B][0] = opcodes[0x0B][1] = opcodes[0x0B][2] = opcodes[0x0B][3] =	opcodes[0x0B][4] = phd;
+	opcodes[0x2B][0] = opcodes[0x2B][1] = opcodes[0x2B][2] = opcodes[0x2B][3] =	opcodes[0x2B][4] = pld;
 
 	/* CMP group */
 	opcodes[0xC9][0] = opcodes[0xC9][2] = opcodes[0xC9][4] = cmpImm8;
@@ -4748,54 +4728,33 @@ void makeopcodetable()
 	opcodes[0xCC][2] = opcodes[0xCC][3] = cpyAbs16;
 
 	/* Branch group */
-	opcodes[0x90][0] = opcodes[0x90][1] = opcodes[0x90][2] = opcodes[0x90][3] =
-		opcodes[0x90][4] = bcc;
-	opcodes[0xB0][0] = opcodes[0xB0][1] = opcodes[0xB0][2] = opcodes[0xB0][3] =
-		opcodes[0xB0][4] = bcs;
-	opcodes[0xF0][0] = opcodes[0xF0][1] = opcodes[0xF0][2] = opcodes[0xF0][3] =
-		opcodes[0xF0][4] = beq;
-	opcodes[0xD0][0] = opcodes[0xD0][1] = opcodes[0xD0][2] = opcodes[0xD0][3] =
-		opcodes[0xD0][4] = bne;
-	opcodes[0x80][0] = opcodes[0x80][1] = opcodes[0x80][2] = opcodes[0x80][3] =
-		opcodes[0x80][4] = bra;
-	opcodes[0x82][0] = opcodes[0x82][1] = opcodes[0x82][2] = opcodes[0x82][3] =
-		opcodes[0x82][4] = brl;
-	opcodes[0x10][0] = opcodes[0x10][1] = opcodes[0x10][2] = opcodes[0x10][3] =
-		opcodes[0x10][4] = bpl;
-	opcodes[0x30][0] = opcodes[0x30][1] = opcodes[0x30][2] = opcodes[0x30][3] =
-		opcodes[0x30][4] = bmi;
-	opcodes[0x50][0] = opcodes[0x50][1] = opcodes[0x50][2] = opcodes[0x50][3] =
-		opcodes[0x50][4] = bvc;
-	opcodes[0x70][0] = opcodes[0x70][1] = opcodes[0x70][2] = opcodes[0x70][3] =
-		opcodes[0x70][4] = bvs;
+	opcodes[0x90][0] = opcodes[0x90][1] = opcodes[0x90][2] = opcodes[0x90][3] =	opcodes[0x90][4] = bcc;
+	opcodes[0xB0][0] = opcodes[0xB0][1] = opcodes[0xB0][2] = opcodes[0xB0][3] =	opcodes[0xB0][4] = bcs;
+	opcodes[0xF0][0] = opcodes[0xF0][1] = opcodes[0xF0][2] = opcodes[0xF0][3] =	opcodes[0xF0][4] = beq;
+	opcodes[0xD0][0] = opcodes[0xD0][1] = opcodes[0xD0][2] = opcodes[0xD0][3] =	opcodes[0xD0][4] = bne;
+	opcodes[0x80][0] = opcodes[0x80][1] = opcodes[0x80][2] = opcodes[0x80][3] =	opcodes[0x80][4] = bra;
+	opcodes[0x82][0] = opcodes[0x82][1] = opcodes[0x82][2] = opcodes[0x82][3] =	opcodes[0x82][4] = brl;
+	opcodes[0x10][0] = opcodes[0x10][1] = opcodes[0x10][2] = opcodes[0x10][3] =	opcodes[0x10][4] = bpl;
+	opcodes[0x30][0] = opcodes[0x30][1] = opcodes[0x30][2] = opcodes[0x30][3] =	opcodes[0x30][4] = bmi;
+	opcodes[0x50][0] = opcodes[0x50][1] = opcodes[0x50][2] = opcodes[0x50][3] =	opcodes[0x50][4] = bvc;
+	opcodes[0x70][0] = opcodes[0x70][1] = opcodes[0x70][2] = opcodes[0x70][3] =	opcodes[0x70][4] = bvs;
 
 	/* Jump group */
-	opcodes[0x4C][0] = opcodes[0x4C][1] = opcodes[0x4C][2] = opcodes[0x4C][3] =
-		opcodes[0x4C][4] = jmp;
-	opcodes[0x5C][0] = opcodes[0x5C][1] = opcodes[0x5C][2] = opcodes[0x5C][3] =
-		opcodes[0x5C][4] = jmplong;
-	opcodes[0x6C][0] = opcodes[0x6C][1] = opcodes[0x6C][2] = opcodes[0x6C][3] =
-		opcodes[0x6C][4] = jmpind;
-	opcodes[0x7C][0] = opcodes[0x7C][1] = opcodes[0x7C][2] = opcodes[0x7C][3] =
-		opcodes[0x7C][4] = jmpindx;
-	opcodes[0xDC][0] = opcodes[0xDC][1] = opcodes[0xDC][2] = opcodes[0xDC][3] =
-		opcodes[0xDC][4] = jmlind;
-	opcodes[0x20][0] = opcodes[0x20][1] = opcodes[0x20][2] = opcodes[0x20][3] =
-		jsr;
+	opcodes[0x4C][0] = opcodes[0x4C][1] = opcodes[0x4C][2] = opcodes[0x4C][3] =	opcodes[0x4C][4] = jmp;
+	opcodes[0x5C][0] = opcodes[0x5C][1] = opcodes[0x5C][2] = opcodes[0x5C][3] =	opcodes[0x5C][4] = jmplong;
+	opcodes[0x6C][0] = opcodes[0x6C][1] = opcodes[0x6C][2] = opcodes[0x6C][3] =	opcodes[0x6C][4] = jmpind;
+	opcodes[0x7C][0] = opcodes[0x7C][1] = opcodes[0x7C][2] = opcodes[0x7C][3] =	opcodes[0x7C][4] = jmpindx;
+	opcodes[0xDC][0] = opcodes[0xDC][1] = opcodes[0xDC][2] = opcodes[0xDC][3] =	opcodes[0xDC][4] = jmlind;
+	opcodes[0x20][0] = opcodes[0x20][1] = opcodes[0x20][2] = opcodes[0x20][3] =	jsr;
 	opcodes[0x20][4] = jsre;
-	opcodes[0xFC][0] = opcodes[0xFC][1] = opcodes[0xFC][2] = opcodes[0xFC][3] =
-		jsrIndx;
+	opcodes[0xFC][0] = opcodes[0xFC][1] = opcodes[0xFC][2] = opcodes[0xFC][3] =	jsrIndx;
 	opcodes[0xFC][4] = jsrIndxe;
-	opcodes[0x60][0] = opcodes[0x60][1] = opcodes[0x60][2] = opcodes[0x60][3] =
-		rts;
+	opcodes[0x60][0] = opcodes[0x60][1] = opcodes[0x60][2] = opcodes[0x60][3] =	rts;
 	opcodes[0x60][4] = rtse;
-	opcodes[0x6B][0] = opcodes[0x6B][1] = opcodes[0x6B][2] = opcodes[0x6B][3] =
-		rtl;
+	opcodes[0x6B][0] = opcodes[0x6B][1] = opcodes[0x6B][2] = opcodes[0x6B][3] =	rtl;
 	opcodes[0x6B][4] = rtle;
-	opcodes[0x40][0] = opcodes[0x40][1] = opcodes[0x40][2] = opcodes[0x40][3] =
-		rti;
-	opcodes[0x22][0] = opcodes[0x22][1] = opcodes[0x22][2] = opcodes[0x22][3] =
-		jsl;
+	opcodes[0x40][0] = opcodes[0x40][1] = opcodes[0x40][2] = opcodes[0x40][3] =	rti;
+	opcodes[0x22][0] = opcodes[0x22][1] = opcodes[0x22][2] = opcodes[0x22][3] =	jsl;
 	opcodes[0x22][4] = jsle;
 
 	/* Shift group */
@@ -4856,26 +4815,16 @@ void makeopcodetable()
 	opcodes[0x3C][1] = opcodes[0x3C][3] = bitAbsx16;
 
 	/* Misc group */
-	opcodes[0x00][0] = opcodes[0x00][1] = opcodes[0x00][2] = opcodes[0x00][3] =
-		opcodes[0x00][4] = brk;
-	opcodes[0xEB][0] = opcodes[0xEB][1] = opcodes[0xEB][2] = opcodes[0xEB][3] =
-		opcodes[0xEB][4] = xba;
-	opcodes[0xEA][0] = opcodes[0xEA][1] = opcodes[0xEA][2] = opcodes[0xEA][3] =
-		opcodes[0xEA][4] = nop;
-	opcodes[0x5B][0] = opcodes[0x5B][1] = opcodes[0x5B][2] = opcodes[0x5B][3] =
-		opcodes[0x5B][4] = tcd;
-	opcodes[0x7B][0] = opcodes[0x7B][1] = opcodes[0x7B][2] = opcodes[0x7B][3] =
-		opcodes[0x7B][4] = tdc;
-	opcodes[0x1B][0] = opcodes[0x1B][1] = opcodes[0x1B][2] = opcodes[0x1B][3] =
-		opcodes[0x1B][4] = tcs;
-	opcodes[0x3B][0] = opcodes[0x3B][1] = opcodes[0x3B][2] = opcodes[0x3B][3] =
-		opcodes[0x3B][4] = tsc;
-	opcodes[0xCB][0] = opcodes[0xCB][1] = opcodes[0xCB][2] = opcodes[0xCB][3] =
-		opcodes[0xCB][4] = wai;
-	opcodes[0x44][0] = opcodes[0x44][1] = opcodes[0x44][2] = opcodes[0x44][3] =
-		opcodes[0x44][4] = mvp;
-	opcodes[0x54][0] = opcodes[0x54][1] = opcodes[0x54][2] = opcodes[0x54][3] =
-		opcodes[0x54][4] = mvn;
+	opcodes[0x00][0] = opcodes[0x00][1] = opcodes[0x00][2] = opcodes[0x00][3] =	opcodes[0x00][4] = brk;
+	opcodes[0xEB][0] = opcodes[0xEB][1] = opcodes[0xEB][2] = opcodes[0xEB][3] =	opcodes[0xEB][4] = xba;
+	opcodes[0xEA][0] = opcodes[0xEA][1] = opcodes[0xEA][2] = opcodes[0xEA][3] =	opcodes[0xEA][4] = nop;
+	opcodes[0x5B][0] = opcodes[0x5B][1] = opcodes[0x5B][2] = opcodes[0x5B][3] =	opcodes[0x5B][4] = tcd;
+	opcodes[0x7B][0] = opcodes[0x7B][1] = opcodes[0x7B][2] = opcodes[0x7B][3] =	opcodes[0x7B][4] = tdc;
+	opcodes[0x1B][0] = opcodes[0x1B][1] = opcodes[0x1B][2] = opcodes[0x1B][3] =	opcodes[0x1B][4] = tcs;
+	opcodes[0x3B][0] = opcodes[0x3B][1] = opcodes[0x3B][2] = opcodes[0x3B][3] =	opcodes[0x3B][4] = tsc;
+	opcodes[0xCB][0] = opcodes[0xCB][1] = opcodes[0xCB][2] = opcodes[0xCB][3] =	opcodes[0xCB][4] = wai;
+	opcodes[0x44][0] = opcodes[0x44][1] = opcodes[0x44][2] = opcodes[0x44][3] =	opcodes[0x44][4] = mvp;
+	opcodes[0x54][0] = opcodes[0x54][1] = opcodes[0x54][2] = opcodes[0x54][3] =	opcodes[0x54][4] = mvn;
 	opcodes[0x04][0] = opcodes[0x04][2] = opcodes[0x04][4] = tsbZp8;
 	opcodes[0x04][1] = opcodes[0x04][3] = tsbZp16;
 	opcodes[0x0C][0] = opcodes[0x0C][2] = opcodes[0x0C][4] = tsbAbs8;
@@ -4919,26 +4868,18 @@ void nmi65c816()
 		// //snemdebug("%02X -> %04X\n",pc>>8,s.w);
 		writemem(s.w, pc >> 8);
 		s.w--;
-		// //snemdebug("%02X -> %04X\n",pc&0xFF,s.w);
+		// snemdebug("%02X -> %04X\n",pc&0xFF,s.w);
 		writemem(s.w, pc & 0xFF);
 		s.w--;
-		if (p.c)
-			temp |= 1;
-		if (p.z)
-			temp |= 2;
-		if (p.i)
-			temp |= 4;
-		if (p.d)
-			temp |= 8;
-		if (p.x)
-			temp |= 0x10;
-		if (p.m)
-			temp |= 0x20;
-		if (p.v)
-			temp |= 0x40;
-		if (p.n)
-			temp |= 0x80;
-		// //snemdebug("%02X -> %04X\n",temp,s.w);
+		if (p.c) temp |= 1;
+		if (p.z) temp |= 2;
+		if (p.i) temp |= 4;
+		if (p.d) temp |= 8;
+		if (p.x) temp |= 0x10;
+		if (p.m) temp |= 0x20;
+		if (p.v) temp |= 0x40;
+		if (p.n) temp |= 0x80;
+		// snemdebug("%02X -> %04X\n",temp,s.w);
 		writemem(s.w, temp);
 		s.w--;
 		pc = readmemw(0xFFEA);
@@ -4969,28 +4910,17 @@ void irq65c816()
 		pc++;
 	inwai = 0;
 	if (!p.e) {
-		writemem(s.w, pbr >> 16);
-		s.w--;
-		writemem(s.w, pc >> 8);
-		s.w--;
-		writemem(s.w, pc & 0xFF);
-		s.w--;
-		if (p.c)
-			temp |= 1;
-		if (p.z)
-			temp |= 2;
-		if (p.i)
-			temp |= 4;
-		if (p.d)
-			temp |= 8;
-		if (p.x)
-			temp |= 0x10;
-		if (p.m)
-			temp |= 0x20;
-		if (p.v)
-			temp |= 0x40;
-		if (p.n)
-			temp |= 0x80;
+		writemem(s.w, pbr >> 16);	s.w--;
+		writemem(s.w, pc >> 8);		s.w--;
+		writemem(s.w, pc & 0xFF);	s.w--;
+		if (p.c) temp |= 1;
+		if (p.z) temp |= 2;
+		if (p.i) temp |= 4;
+		if (p.d) temp |= 8;
+		if (p.x) temp |= 0x10;
+		if (p.m) temp |= 0x20;
+		if (p.v) temp |= 0x40;
+		if (p.n) temp |= 0x80;
 		writemem(s.w, temp);
 		s.w--;
 		pc = readmemw(0xFFEE);
