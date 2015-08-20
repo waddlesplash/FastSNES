@@ -4,6 +4,8 @@
 #include "snem.h"
 #include "util.h"
 
+#define inline __forceinline
+
 int spctotal;
 FILE* sndfile;
 unsigned char* spcram;
@@ -292,7 +294,7 @@ inline int16_t decodebrr(int v, int c)
 	// tempf=((float)lastsamp[c][0]*((float)115/(float)64))-((float)lastsamp[c][1]*((float)13/(float)16));
 	// temp+=tempf; break;
 	default:
-		snemlog("Unimplemented filter type %i\n", filter);
+		printf("Unimplemented filter type %i\n", filter);
 		exit(-1);
 	}
 	lastsamp[c][1] = lastsamp[c][0];

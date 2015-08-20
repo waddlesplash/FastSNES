@@ -4312,7 +4312,7 @@ void dumpregs()
 void badopcode()
 {
 	// FILE *f=fopen("rom.dmp","wb");
-	snemlog("Bad opcode %02X\n", opcode);
+	printf("Bad opcode %02X\n", opcode);
 	pc--;
 	dumpregs();
 	// snemdebug("%02X
@@ -4947,7 +4947,7 @@ void nmi65c816()
 		p.d = 0;
 		// snemdebug("NMI\n");
 	} else {
-		snemlog("Emulation mode NMI\n");
+		printf("Emulation mode NMI\n");
 		dumpregs();
 		exit(-1);
 	}
@@ -4999,7 +4999,7 @@ void irq65c816()
 		p.d = 0;
 		// snemdebug("IRQ\n");
 	} else {
-		snemlog("Emulation mode IRQ\n");
+		printf("Emulation mode IRQ\n");
 		dumpregs();
 		exit(-1);
 	}

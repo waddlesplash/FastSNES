@@ -16,6 +16,7 @@
 #define uint unsigned int
 #define uint16 uint16_t
 #define uint32 uint32_t
+#define inline __forceinline
 
 unsigned char voiceon;
 void writeppu(uint16_t addr, unsigned char val);
@@ -533,7 +534,7 @@ void dohdma(int line)
 					writeppu(dmadest[c] + 3, hdmadat[c]);
 					break;
 				default:
-					snemlog("Bad HDMA transfer mode %i %02X %i\n",
+					printf("Bad HDMA transfer mode %i %02X %i\n",
 							dmactrl[c] & 7, dmadest[c], hdmastat[c]);
 					dumpregs();
 					exit(-1);
@@ -634,7 +635,7 @@ void dohdma(int line)
 					writeppu(dmadest[c] + 3, hdmadat[c]);
 					break;
 				default:
-					snemlog("Bad HDMA2 transfer mode %i\n", dmactrl[c] & 7);
+					printf("Bad HDMA2 transfer mode %i\n", dmactrl[c] & 7);
 					dumpregs();
 					exit(-1);
 				}
@@ -2278,7 +2279,7 @@ void writeppu(uint16_t addr, unsigned char val)
 		// snemdebug("vinc %i remap %i\n",ppu.vinc,(val>>2)&3);
 		/* if (val&0xC)
 		{
-		snemdebug("Bad VRAM write mode %i\n",val&15);
+		printf("Bad VRAM write mode %i\n",val&15);
 		dumpregs();
 		exit(-1);
 } */
@@ -2624,7 +2625,7 @@ unsigned char doskipper()
 	case 9:
 		return 0;
 	}
-	snemlog("Shouldn't have got here %i %i\n", temp, spcskip);
+	printf("Shouldn't have got here %i %i\n", temp, spcskip);
 	exit(-1);
 }
 
@@ -2794,7 +2795,7 @@ unsigned char readppu(uint16_t addr)
 
 	default:
 		return 0;
-		snemlog("Read PPU %04X\n", addr);
+		printf("Read PPU %04X\n", addr);
 		dumpregs();
 		exit(-1);
 	}

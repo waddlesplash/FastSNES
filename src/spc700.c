@@ -2029,7 +2029,7 @@ void execspc()
 
 		default:
 			spc.pc--;
-			snemlog("Bad SPC opcode %02X at %04X\n", opcode, spc.pc);
+			printf("Bad SPC opcode %02X at %04X\n", opcode, spc.pc);
 			dumpspcregs();
 			exit(-1);
 		}

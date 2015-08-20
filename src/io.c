@@ -189,7 +189,7 @@ void writeio(uint16_t addr, unsigned char val)
 						break;
 
 					default:
-						snemlog("Bad DMA mode %i\n", dmactrl[d] & 7);
+						printf("Bad DMA mode %i\n", dmactrl[d] & 7);
 						dumpregs();
 						exit(-1);
 					}
@@ -224,7 +224,7 @@ void writeio(uint16_t addr, unsigned char val)
 		snemdebug("Set ROM speed to %i cycles\n", speed);
 		/*                if (val)
 						{
-								snemdebug("High ROM speed\n");
+								printf("High ROM speed\n");
 								exit(-1);
 						} */
 		break;
