@@ -4753,7 +4753,7 @@ void makeopcodetable()
 	opcodes[0x60][4] = rtse;
 	opcodes[0x6B][0] = opcodes[0x6B][1] = opcodes[0x6B][2] = opcodes[0x6B][3] =	rtl;
 	opcodes[0x6B][4] = rtle;
-	opcodes[0x40][0] = opcodes[0x40][1] = opcodes[0x40][2] = opcodes[0x40][3] =	rti;
+	opcodes[0x40][0] = opcodes[0x40][1] = opcodes[0x40][2] = opcodes[0x40][3] = opcodes[0x40][4] = rti;
 	opcodes[0x22][0] = opcodes[0x22][1] = opcodes[0x22][2] = opcodes[0x22][3] =	jsl;
 	opcodes[0x22][4] = jsle;
 
