@@ -2,6 +2,8 @@
 
 #include <windows.h>
 #include <stdio.h>
+
+#include "snem.h"
 #include "resources.h"
 
 int pal;
