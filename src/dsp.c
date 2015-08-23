@@ -78,7 +78,7 @@ void writedsp(uint16_t a, uint8_t v)
 		case 0x50:
 		case 0x60:
 		case 0x70:
-			dsp.volumel[curdspreg >> 4] = (int)(signed char)v;
+			dsp.volumel[curdspreg >> 4] = (int)(int8_t)v;
 			break;
 		case 0x01:
 		case 0x11:
@@ -88,7 +88,7 @@ void writedsp(uint16_t a, uint8_t v)
 		case 0x51:
 		case 0x61:
 		case 0x71:
-			dsp.volumer[curdspreg >> 4] = (int)(signed char)v;
+			dsp.volumer[curdspreg >> 4] = (int)(int8_t)v;
 			break;
 		case 0x02:
 		case 0x12:

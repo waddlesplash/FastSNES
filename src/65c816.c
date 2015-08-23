@@ -3237,7 +3237,7 @@ void cpyAbs16()
 /* Branch group */
 void bcc()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	if (!p.c) {
 		pc += temp;
@@ -3247,7 +3247,7 @@ void bcc()
 }
 void bcs()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	if (p.c) {
 		pc += temp;
@@ -3257,7 +3257,7 @@ void bcs()
 }
 void beq()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	if (setzf > 0)
 		p.z = 0;
@@ -3272,7 +3272,7 @@ void beq()
 }
 void bne()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	// if (pc==0x8D44) { snemdebug("BNE %i %i ",setzf,p.z); }
 	if (setzf > 0)
@@ -3293,7 +3293,7 @@ void bne()
 }
 void bpl()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	if (!p.n) {
 		pc += temp;
@@ -3303,7 +3303,7 @@ void bpl()
 }
 void bmi()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	if (p.n) {
 		pc += temp;
@@ -3313,7 +3313,7 @@ void bmi()
 }
 void bvc()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	if (!p.v) {
 		pc += temp;
@@ -3323,7 +3323,7 @@ void bvc()
 }
 void bvs()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	if (p.v) {
 		pc += temp;
@@ -3334,7 +3334,7 @@ void bvs()
 
 void bra()
 {
-	signed char temp = (signed char)readmem(pbr | pc);
+	int8_t temp = (int8_t)readmem(pbr | pc);
 	pc++;
 	pc += temp;
 	cycles -= 6;
