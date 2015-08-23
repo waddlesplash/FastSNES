@@ -30,10 +30,10 @@ inline uint16_t cgaddh(uint32_t x, uint32_t y)
 {
 	return (x + y - ((x ^ y) & 0x0821)) >> 1;
 }
-inline unsigned int cgsub(uint32_t x, uint32_t y)
+inline uint_t cgsub(uint32_t x, uint32_t y)
 {
-	unsigned int sub = x - y;
-	unsigned int borrows = (~(sub + ((~(x ^ y)) & 0x10820))) & 0x10820;
+	uint_t sub = x - y;
+	uint_t borrows = (~(sub + ((~(x ^ y)) & 0x10820))) & 0x10820;
 	sub += borrows;
 	return sub & ~(borrows - (borrows >> 5));
 }
