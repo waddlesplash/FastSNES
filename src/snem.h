@@ -46,8 +46,8 @@ struct {
 	int c, z, i, d, b, v, n, m, x, e;
 } p;
 
-extern int ins, output;
-extern int timetolive;
+extern int ins;
+//extern int timetolive;
 extern int inwai;
 
 void nmi65c816();

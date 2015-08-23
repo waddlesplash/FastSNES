@@ -1994,7 +1994,7 @@ void writeppu(uint16_t addr, unsigned char val)
 	// snemdebug("Write PPU %04X %02X %04X\n",addr,val,x.w);
 	switch (addr & 0xFF) {
 	case 0x00: /* Screen enable */
-		snemlog("Screen enable %02X %06X %i\n", val, pbr | pc, lines);
+		//snemlog("Screen enable %02X %06X %i\n", val, pbr | pc, lines);
 		// if (val==0x80) { output=1; timetolive=5000; }
 		ppu.screna = val;
 		break;

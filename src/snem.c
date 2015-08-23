@@ -11,8 +11,8 @@ uint32_t pc2, pc3, pc4;
 uint32_t pc7, pc8, pc9, pc10, pc11, pc12, pc13, pc14, pc15;
 int framenum;
 int oldnmi = 0;
-int output = 1;
-int timetolive = 0;
+//int output = 1;
+//int timetolive = 0;
 int times = 0;
 int ins = 0;
 
@@ -145,18 +145,16 @@ void execframe()
 			else if (irq && (!p.i || inwai))
 				irq65c816();
 			oldnmi = nmi;
-			if (output) {
-				snemdebug("%06lu %02lu A=%04X X=%04X Y=%04X S=%04X %02X %i %i %04X "
-					   "%i %02X %i %i\n",
-					   pc | pbr, dbr >> 16, a.w, x.w, y.w, s.w, opcode, p.m,
-					   cpumode, dp, lines, lines, xirq, yirq);
-			}
-			if (timetolive) {
+			/*snemdebug("%06lu %02lu A=%04X X=%04X Y=%04X S=%04X %02X %i %i %04X "
+			   "%i %02X %i %i\n",
+			   pc | pbr, dbr >> 16, a.w, x.w, y.w, s.w, opcode, p.m,
+			   cpumode, dp, lines, lines, xirq, yirq);*/
+			/*if (timetolive) {
 				timetolive--;
 				if (!timetolive) {
 					output = 0;
 				}
-			}
+			}*/
 			// if (pc==0x9DCD) { snemdebug("99BA %04X %04X
 			// %04X %i\n",a.w,x.w,y.w,ins); }
 			// if (pc==0xAA7C) { snemdebug("AA7C %04X %04X

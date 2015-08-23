@@ -221,12 +221,11 @@ void writeio(uint16_t addr, unsigned char val)
 			accessspeed[(c << 3) | 4] = accessspeed[(c << 3) | 5] = speed;
 			accessspeed[(c << 3) | 6] = accessspeed[(c << 3) | 7] = speed;
 		}
-		snemdebug("Set ROM speed to %i cycles\n", speed);
-		/*                if (val)
-						{
-								printf("High ROM speed\n");
-								exit(-1);
-						} */
+		//snemdebug("Set ROM speed to %i cycles\n", speed);
+		/*if (val) {
+			printf("High ROM speed\n");
+			exit(-1);
+		}*/
 		break;
 	/*
 					if (!val) return;
