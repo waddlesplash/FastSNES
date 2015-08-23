@@ -394,18 +394,15 @@ void dohdma(int line)
 		if (!line) {
 			hdmaaddr[c] = dmasrc[c];
 			hdmacount[c] = 0;
-			// if (c==2) {
-			// snemdebug("Reset HDMA %i loading from
-			// %02X%04X
-			// %i\n",c,dmabank[c],hdmaaddr[c],hdmacount[c]); }
+			//if (c == 2)
+			//	snemdebug("Reset HDMA %i loading from %02X%04X %i\n",
+			//		c, dmabank[c], hdmaaddr[c], hdmacount[c]);
 		}
 		if (hdmaena & (1 << c) && hdmacount[c] != -1) {
 			if (hdmacount[c] <= 0) {
 				hdmacount[c] = readmem((dmabank[c] << 16) | (hdmaaddr[c]++));
-				// snemdebug("HDMA %i count
-				// now %04X at %02X%04X
-				// %02X
-				// %04X\n",c,hdmacount[c],dmabank[c],hdmaaddr[c],dmactrl[c],hdmadat[c]);
+				// snemdebug("HDMA %i count now %04X at %02X%04X %02X %04X\n",
+				//		c, hdmacount[c], dmabank[c], hdmaaddr[c], dmactrl[c], hdmadat[c]);
 				if (!hdmacount[c])
 					goto finishhdma;
 				hdmastat[c] = 0;
@@ -414,25 +411,19 @@ void dohdma(int line)
 						hdmacount[c] &= 0x7F;
 					}
 					hdmastat[c] |= CONTINUOUS;
-					// snemdebug("Continuous
-					// for %i
-					// lines\n",hdmacount[c]);
+					// snemdebug("Continuous for %i lines\n", hdmacount[c]);
 				}
 				if (dmactrl[c] & 0x40) {
 					hdmastat[c] |= INDIRECT;
 					hdmaaddr2[c] = readmemw((dmabank[c] << 16) | hdmaaddr[c]);
-					// snemdebug("Indirect
-					// :
-					// %02X%04X\n",dmaibank[c],hdmaaddr2[c]);
+					// snemdebug("Indirect: %02X%04X\n", dmaibank[c], hdmaaddr2[c]);
 					hdmaaddr[c] += 2;
 				}
-				// snemdebug("Channel %i now
-				// %02X%04X\n",c,dmabank[c],hdmaaddr[c]);
-				// if (c==5) {
-				// snemdebug("Channel 4 :
-				// dest %04X read from
-				// %02X %04X %04X stat
-				// %i\n",dmadest[c],dmabank[c],hdmaaddr[c],hdmaaddr2[c],hdmastat[c]); }
+				// snemdebug("Channel %i now %02X%04X\n", c, dmabank[c], hdmaaddr[c]);
+				//if (c == 5)
+				//	snemdebug("Channel 4 : dest %04X read from %02X %04X %04X stat %i\n",
+				//		dmadest[c], dmabank[c], hdmaaddr[c] ,hdmaaddr2[c], hdmastat[c]);
+			}
 
 #define dohdma_macro(NUMBER) \
 	if (hdmastat[c] & INDIRECT) \
@@ -440,86 +431,48 @@ void dohdma(int line)
 	else \
 		hdmadat[c] = readmem((dmabank[c] << 16) | (hdmaaddr[c]++)); \
 	writeppu(dmadest[c] + NUMBER, hdmadat[c])
-
-				// TODO: deduplify this code more?
-				switch (dmactrl[c] & 7) {
-				case 1: /* Two registers */
-					dohdma_macro(0);
-					dohdma_macro(1);
-					break;
-				case 6: /* One register write twice */
-				case 2: /* One register write twice */
-					dohdma_macro(0);
-				case 0: /* One register write once */
-					dohdma_macro(0);
-					// if (c==2) {
-					// snemdebug("Channel
-					// 2 now
-					// %02X%04X\n",dmabank[c],hdmaaddr[c]); }
-					break;
-				case 7: /* Two registers write twice */
-				case 3: /* Two registers write twice */
-					dohdma_macro(0);
-					dohdma_macro(0);
-					dohdma_macro(1);
-					dohdma_macro(1);
-					break;
-				case 4: /* Four registers */
-					dohdma_macro(0);
-					dohdma_macro(1);
-					dohdma_macro(2);
-					dohdma_macro(3);
-					break;
-				case 5: /* Two registers write twice, alternate */
-					dohdma_macro(0);
-					dohdma_macro(1);
-					dohdma_macro(0);
-					dohdma_macro(1);
-					break;
-				default:
-					printf("Bad HDMA transfer mode %i %02X %i\n",
-							dmactrl[c] & 7, dmadest[c], hdmastat[c]);
-					dumpregs();
-					exit(-1);
-				}
-			} else if (hdmastat[c] & CONTINUOUS) {
-				switch (dmactrl[c] & 7) {
-				case 1: /* Two registers */
-					dohdma_macro(0);
-					dohdma_macro(1);
-					break;
-				case 6: /* One register write twice */
-				case 2: /* One register write twice */
-					dohdma_macro(0);
-				case 0: /* One register write once */
-					dohdma_macro(0);
-					break;
-				case 7: /* Two registers write twice */
-				case 3: /* Two registers write twice */
-					dohdma_macro(0);
-					dohdma_macro(0);
-					dohdma_macro(1);
-					dohdma_macro(1);
-					break;
-				case 4: /* Four registers */
-					dohdma_macro(0);
-					dohdma_macro(1);
-					dohdma_macro(2);
-					dohdma_macro(3);
-					break;
-				case 5: /* Two registers write twice, alternate */
-					dohdma_macro(0);
-					dohdma_macro(1);
-					dohdma_macro(0);
-					dohdma_macro(1);
-					break;
-				default:
+			switch (dmactrl[c] & 7) {
+			case 1: /* Two registers */
+				dohdma_macro(0);
+				dohdma_macro(1);
+				break;
+			case 6: /* One register write twice */
+			case 2: /* One register write twice */
+				dohdma_macro(0);
+			case 0: /* One register write once */
+				dohdma_macro(0);
+				// if (c == 2) snemdebug("Channel 2 now %02X%04X\n", dmabank[c], hdmaaddr[c]);
+				break;
+			case 7: /* Two registers write twice */
+			case 3: /* Two registers write twice */
+				dohdma_macro(0);
+				dohdma_macro(0);
+				dohdma_macro(1);
+				dohdma_macro(1);
+				break;
+			case 4: /* Four registers */
+				dohdma_macro(0);
+				dohdma_macro(1);
+				dohdma_macro(2);
+				dohdma_macro(3);
+				break;
+			case 5: /* Two registers write twice, alternate */
+				dohdma_macro(0);
+				dohdma_macro(1);
+				dohdma_macro(0);
+				dohdma_macro(1);
+				break;
+			default:
+				if (hdmastat[c] & CONTINUOUS)
 					printf("Bad HDMA2 transfer mode %i\n", dmactrl[c] & 7);
-					dumpregs();
-					exit(-1);
-				}
-#undef dohdma_macro
+				else
+					printf("Bad HDMA transfer mode %i %02X %i\n",
+						dmactrl[c] & 7, dmadest[c], hdmastat[c]);
+				dumpregs();
+				exit(-1);
 			}
+#undef dohdma_macro
+
 		finishhdma:
 			hdmacount[c]--;
 		}
