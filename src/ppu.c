@@ -89,7 +89,7 @@ struct {
 	int prirotation;
 } ppu;
 
-BITMAP* b, *mainscr, *subscr, *otherscr, *sysb;
+BITMAP* b = NULL, *mainscr = NULL, *subscr = NULL, *otherscr = NULL, *sysb = NULL;
 uint32_t bitlookup[2][4][4], masklookup[2][4];
 uint16_t bitlookuph[2][4][4], masklookuph[2][4];
 uint16_t pallookup[16][256];
@@ -2639,7 +2639,7 @@ uint16_t getvramaddr()
 	return ppu.vramaddr << 1;
 }
 
-BITMAP* dasbuffer;
+BITMAP* dasbuffer = NULL;
 void drawchar(int tile, int x, int y, int col)
 {
 	unsigned char dat, dat1, dat2, dat3, dat4;
@@ -2733,6 +2733,7 @@ void dumpchar()
 	}
 	clear(screen);
 	destroy_bitmap(dasbuffer);
+	dasbuffer = NULL;
 	// snemdebug("%01X\n",ppu.sdr&0xF);
 }
 
@@ -2779,4 +2780,5 @@ void dumpbg2()
 	}
 	clear(screen);
 	destroy_bitmap(dasbuffer);
+	dasbuffer = NULL;
 }
