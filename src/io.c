@@ -517,8 +517,8 @@ unsigned char readio(uint16_t addr)
 
 	default:
 		return 0;
-		// snemdebug("Read IO %04X\n",addr);
-		// dumpregs();
-		// exit(-1);
+		//printf("Bad read IO %04X\n",addr);
+		//dumpregs();
+		//exit(-1);
 	}
 }

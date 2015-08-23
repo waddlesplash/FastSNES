@@ -262,7 +262,7 @@ int main(int argc, char* argv[])
 	}
 	//dumpregs();
 	//dumpspcregs();
-	// dumpvram();
+	//dumpvram();
 	//dumphdma();
 	return 0;
 }

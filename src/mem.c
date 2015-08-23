@@ -232,9 +232,9 @@ unsigned char readmeml(uint32_t addr)
 			if ((addr & 0xFFFE) == 0x4016)
 				return readjoyold(addr);
 			return 0;
-			printf("Bad Read %06X\n", addr);
-			dumpregs();
-			exit(-1);
+			//printf("Bad Read %06X\n", addr);
+			//dumpregs();
+			//exit(-1);
 		case 0x6000:
 		case 0x7000:
 			// snemdebug("Read SRAM %04X %02X
@@ -243,9 +243,9 @@ unsigned char readmeml(uint32_t addr)
 				return sram[addr & srammask];
 		default:
 			return 0xFF;
-			printf("Bad read %06X\n", addr);
-			dumpregs();
-			exit(-1);
+			//printf("Bad read %06X\n", addr);
+			//dumpregs();
+			//exit(-1);
 		}
 	}
 	if ((addr >> 16) >= 0xD0 && (addr >> 16) <= 0xFE)
@@ -265,9 +265,9 @@ unsigned char readmeml(uint32_t addr)
 	if ((addr >> 16) == 0x60)
 		return 0;
 	return 0;
-	printf("Bad read %06X\n", addr);
-	dumpregs();
-	exit(-1);
+	//printf("Bad read %06X\n", addr);
+	//dumpregs();
+	//exit(-1);
 }
 
 void writememl(uint32_t addr, unsigned char val)
