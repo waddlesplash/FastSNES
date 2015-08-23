@@ -39,11 +39,10 @@ void loadrom(char* fn)
 	snemdebug("%i %lu\n", len, ftell(f));
 	rom = (unsigned char*)malloc(4096 * 1024);
 	// fread(rom,512,1,f);
-	/*        for (c=0;c<0x40000;c+=0x8000)
-			{
-					fread(&rom[c+0x40000],32768,1,f);
-					fread(&rom[c],32768,1,f);
-			} */
+	/* for (c=0;c<0x40000;c+=0x8000) {
+		fread(&rom[c+0x40000],32768,1,f);
+		fread(&rom[c],32768,1,f);
+	} */
 	while (!feof(f) && c < 0x400000) {
 		// snemdebug("Read %06X\n",c);
 		fread(&rom[c], 65536, 1, f);
