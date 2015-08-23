@@ -86,6 +86,11 @@ void loadrom(char* fn)
 	snemdebug("Reset vector : %02X%02X\n", readmem(0xFFFD), readmem(0xFFFC));
 	snemdebug("Memory map : %s\n", (lorom) ? "LoROM" : "HiROM");
 	if (srammask) {
+		if ((srammask + 1) > 8192) {
+			// Realloc sram.
+			free(sram);
+			sram = (uint8_t*)malloc(srammask + 1);
+		}
 		sramname[0] = 0;
 		replace_extension(sramname, fn, "srm", 511);
 		snemdebug("Load SRAM from %s %s\n", sramname, fn);
