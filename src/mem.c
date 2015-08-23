@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <allegro.h>
 
 #include "snem.h"
 #include "util.h"

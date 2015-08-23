@@ -2,10 +2,16 @@
 
 #include <stdint.h>
 
+/* General */
+void wakeupsoundthread();
+
 /* SPC700 */
 double spccycles;
 double spctotal2;
 double spctotal3;
+
+void initspc();
+void resetspc();
 void execspc();
 static inline void clockspc(int cyc)
 {
@@ -13,8 +19,17 @@ static inline void clockspc(int cyc)
 	if (spccycles > 0)
 		execspc();
 }
+unsigned char readfromspc(uint16_t addr);
+void writetospc(uint16_t addr, unsigned char val);
 
-/* 65c816 */
+/* DSP */
+void initdsp();
+void resetdsp();
+void writedsp(uint16_t a, unsigned char v);
+unsigned char readdsp(uint16_t a);
+void polldsp();
+
+/* 65C816 */
 /* Registers */
 typedef union {
 	uint16_t w;
@@ -34,9 +49,16 @@ struct {
 extern int ins, output;
 extern int timetolive;
 extern int inwai;
+
+void nmi65c816();
+void irq65c816();
+void reset65c816();
+void dumpregs();
+
 /* Opcode table */
 typedef void (*opcode_func)();
 opcode_func opcodes[256][5];
+void makeopcodetable();
 
 /* CPU modes : 0 = X1M1
 			  1 = X1M0
@@ -58,6 +80,8 @@ unsigned char memread[2048], memwrite[2048];
 unsigned char accessspeed[2048];
 
 int lorom;
+void allocmem();
+void loadrom(char* fn);
 unsigned char readmeml(uint32_t a);
 void writememl(uint32_t a, unsigned char v);
 
@@ -146,10 +170,10 @@ static inline void writemem(uint32_t ad, unsigned char v)
 }
 
 //#define readmem(a) readmeml(a)
-//#define readmem(a)
+//#define readmem(a) \
 //(memread[((a)>>24)&255][((a)>>13)&7])?memlookup[((a)>>24)&255][((a)>>13)&7][(a)&0x1FFF]:readmeml(a)
 #define readmemw(a) (readmem(a)) | ((readmem((a) + 1)) << 8)
-//#define writemem(a,v) if (memread[((a)>>24)&255][((a)>>13)&7])
+//#define writemem(a,v) if (memread[((a)>>24)&255][((a)>>13)&7]) \
 //memlookup[((a)>>24)&255][((a)>>13)&7][(a)&0x1FFF]=v; else writememl(a,v)
 #define writememw(a, v)                                                        \
 	writemem(a, (v)&0xFF);                                                     \
@@ -172,9 +196,28 @@ int skipz, setzf;
 
 int pal;
 
+void initppu();
+void resetppu();
+unsigned char readppu(uint16_t addr);
+void writeppu(uint16_t addr, unsigned char val);
+void drawline(int line);
+
+void dumpchar();
+void dumpbg2();
+void dumpvram();
+
 /* DMA registers */
 uint16_t dmadest[8], dmasrc[8], dmalen[8];
 uint32_t hdmaaddr[8], hdmaaddr2[8];
 unsigned char dmabank[8], dmaibank[8], dmactrl[8], hdmastat[8], hdmadat[8];
 int hdmacount[8];
 unsigned char hdmaena;
+
+/* I/O */
+void readjoy();
+
+unsigned char readjoyold(uint16_t addr);
+void writejoyold(uint16_t addr, unsigned char val);
+
+unsigned char readio(uint16_t addr);
+void writeio(uint16_t addr, unsigned char val);

@@ -6,6 +6,7 @@
 
 int intthisline;
 
+// TODO a lot of these should probably be 'extern'
 uint32_t pc2, pc3, pc4;
 uint32_t pc7, pc8, pc9, pc10, pc11, pc12, pc13, pc14, pc15;
 int framenum;
@@ -19,6 +20,9 @@ int fps, frames, changefps;
 int spcclck, spctotal;
 double spcclck2, spcclck3;
 int infocus, romloaded;
+
+// Predefinitions of functions that are declared later here
+void wakeupmainthread();
 
 void oncesec()
 {
