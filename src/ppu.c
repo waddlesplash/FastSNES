@@ -16,8 +16,8 @@
 #define uint_t unsigned int
 #define inline __forceinline
 
-unsigned char voiceon;
-void writeppu(uint16_t addr, unsigned char val);
+uint8_t voiceon;
+void writeppu(uint16_t addr, uint8_t val);
 
 inline uint16_t cgadd(uint32_t x, uint32_t y)
 {
@@ -51,15 +51,15 @@ uint32_t window[10][164];
 int twowrite = 0;
 int windowschanged;
 typedef struct {
-	unsigned char r, g, b;
+	uint8_t r, g, b;
 } rgb_color;
 struct {
-	unsigned char screna;
-	unsigned char portctrl;
+	uint8_t screna;
+	uint8_t portctrl;
 	uint16_t vramaddr;
 	uint16_t bg[4], chr[4];
 	int mode;
-	unsigned char main, sub;
+	uint8_t main, sub;
 	uint16_t palbuffer;
 	uint16_t pal[256];
 	int palindex;
@@ -67,7 +67,7 @@ struct {
 	int ylatch;
 	uint32_t matrixr;
 	uint16_t m7a, m7b, m7c, m7d, m7x, m7y;
-	unsigned char m7sel;
+	uint8_t m7sel;
 	int size[4];
 	int vinc;
 	int sprsize;
@@ -76,12 +76,12 @@ struct {
 	int firstread;
 	int tilesize;
 	uint32_t wramaddr;
-	unsigned char windena1, windena2, windena3;
+	uint8_t windena1, windena2, windena3;
 	int w1left, w1right, w2left, w2right;
-	unsigned char windlogic, windlogic2;
-	unsigned char wmaskmain, wmasksub;
+	uint8_t windlogic, windlogic2;
+	uint8_t wmaskmain, wmasksub;
 	uint16_t spraddrs;
-	unsigned char cgadsub, cgwsel;
+	uint8_t cgadsub, cgwsel;
 	rgb_color fixedc;
 	uint16_t fixedcol;
 	int mosaic;
@@ -94,7 +94,7 @@ uint32_t bitlookup[2][4][4], masklookup[2][4];
 uint16_t bitlookuph[2][4][4], masklookuph[2][4];
 uint16_t pallookup[16][256];
 uint32_t collookup[16];
-unsigned char sprram[544];
+uint8_t sprram[544];
 
 void initppu()
 {
@@ -106,7 +106,7 @@ void initppu()
 	mainscr = create_bitmap(640, 225);
 	subscr = create_bitmap(640, 225);
 	sysb = create_system_bitmap(256, 224);
-	vramb = (unsigned char*)malloc(0x10000);
+	vramb = (uint8_t*)malloc(0x10000);
 	memset(vramb, 0, 0x10000);
 	vram = (uint16_t*)vramb;
 	for (c = 0; c < 4; c++) {
@@ -614,11 +614,11 @@ void drawline(int line)
 	uint32_t* wp;
 	int col;
 	int l;
-	unsigned char layers = (ppu.main | ppu.sub); //&~ppumask;
+	uint8_t layers = (ppu.main | ppu.sub); //&~ppumask;
 	int xsize, ysize;
 	uint16_t* xlk;
-	unsigned char temp;
-	unsigned char wmask;
+	uint8_t temp;
+	uint8_t wmask;
 	lastline = line;
 	if (windowschanged) {
 		recalcwindows();
@@ -676,11 +676,11 @@ void drawline(int line)
 								// x&=511;
 								// p=(uint32_t *)(b->line[line]+( ((64-((x^63)&63))+(x&~63))<<1) );
 								if (wmask & 0x10)
-									wp = (uint32_t*)(((unsigned char*)
+									wp = (uint32_t*)(((uint8_t*)
 															   window[9]) +
 														  (x << 1));
 								else
-									wp = (uint32_t*)(((unsigned char*)
+									wp = (uint32_t*)(((uint8_t*)
 															   window[7]) +
 														  (x << 1));
 								p = (uint32_t*)(b->line[line] + (x << 1));
@@ -867,11 +867,11 @@ void drawline(int line)
 					p = (uint32_t*)(b->line[line] +
 										 ((64 - (ppu.xscroll[c] & 7)) << 1));
 					if (wmask & (1 << c))
-						wp = (uint32_t*)((unsigned char*)window[c] +
+						wp = (uint32_t*)((uint8_t*)window[c] +
 											  ((64 - (ppu.xscroll[c] & 7))
 											   << 1));
 					else
-						wp = (uint32_t*)((unsigned char*)window[7] +
+						wp = (uint32_t*)((uint8_t*)window[7] +
 											  ((64 - (ppu.xscroll[c] & 7))
 											   << 1));
 					l = (line + ppu.yscroll[c]) & 1023;
@@ -1987,7 +1987,7 @@ void dumphdma()
 	}
 }
 
-void writeppu(uint16_t addr, unsigned char val)
+void writeppu(uint16_t addr, uint8_t val)
 {
 	int r, g, b, c;
 	uint16_t tempaddr;
@@ -2400,7 +2400,7 @@ void writeppu(uint16_t addr, unsigned char val)
 
 int spcskip = 4;
 
-unsigned char doskipper()
+uint8_t doskipper()
 {
 	int temp = spcskip;
 	// snemdebug("Do skipper!\n");
@@ -2462,9 +2462,9 @@ unsigned char doskipper()
 	exit(-1);
 }
 
-unsigned char readppu(uint16_t addr)
+uint8_t readppu(uint16_t addr)
 {
-	unsigned char temp;
+	uint8_t temp;
 	switch (addr & 0xFF) {
 	case 0x34:
 		// snemdebug("Read 2134\n");
@@ -2642,7 +2642,7 @@ uint16_t getvramaddr()
 BITMAP* dasbuffer = NULL;
 void drawchar(int tile, int x, int y, int col)
 {
-	unsigned char dat, dat1, dat2, dat3, dat4;
+	uint8_t dat, dat1, dat2, dat3, dat4;
 	uint16_t addr = tile << 5;
 	int yy, xx;
 	if (!x)
@@ -2743,7 +2743,7 @@ void dumpbg2()
 	int c, d;
 	uint16_t addr = 0xB000 >> 1;
 	int tile, x, y;
-	unsigned char dat1, dat2;
+	uint8_t dat1, dat2;
 	while (key[KEY_F2])
 		yield_timeslice();
 	set_color_depth(8);

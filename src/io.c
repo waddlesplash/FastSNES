@@ -33,7 +33,7 @@ void readjoy()
 	// snemdebug("Read joy\n");
 }
 
-unsigned char readjoyold(uint16_t addr)
+uint8_t readjoyold(uint16_t addr)
 {
 	int temp;
 	if (addr == 0x4016) {
@@ -47,7 +47,7 @@ unsigned char readjoyold(uint16_t addr)
 	return 0xFF;
 }
 
-void writejoyold(uint16_t addr, unsigned char val)
+void writejoyold(uint16_t addr, uint8_t val)
 {
 	if (addr == 0x4016) {
 		// snemdebug("Write 4016 %02X\n",val);
@@ -59,12 +59,12 @@ void writejoyold(uint16_t addr, unsigned char val)
 }
 
 uint16_t mulr, divc, divr;
-unsigned char mula, mulb, divb;
+uint8_t mula, mulb, divb;
 
-void writeio(uint16_t addr, unsigned char val)
+void writeio(uint16_t addr, uint8_t val)
 {
 	int c, d = 0, offset = 0, speed;
-	unsigned char temp;
+	uint8_t temp;
 	//int delay = 0;
 	// if ((addr&0x100) && ((addr&0x70)==0x50)) {
 	// snemdebug("DMA 5 write %04X %02X\n",addr,val); }
@@ -360,7 +360,7 @@ void writeio(uint16_t addr, unsigned char val)
 	}
 }
 
-unsigned char readio(uint16_t addr)
+uint8_t readio(uint16_t addr)
 {
 	int temp = 0;
 	if (addr == 0x4016 || addr == 0x4017) {

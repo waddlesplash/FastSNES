@@ -8,13 +8,13 @@
 int pal;
 uint16_t srammask;
 void initmem();
-unsigned char* sram;
+uint8_t* sram;
 void allocmem()
 {
 	// FILE *f=fopen("finalf~1.srm","rb");
-	ram = (unsigned char*)malloc(128 * 1024);
+	ram = (uint8_t*)malloc(128 * 1024);
 	memset(ram, 0x55, 128 * 1024);
-	sram = (unsigned char*)malloc(8192);
+	sram = (uint8_t*)malloc(8192);
 	memset(sram, 0, 8192);
 	// fread(sram,8192,1,f);
 	// fclose(f);
@@ -37,7 +37,7 @@ void loadrom(char* fn)
 	len = ftell(f) + 1;
 	fseek(f, len & 512, SEEK_SET);
 	snemdebug("%i %lu\n", len, ftell(f));
-	rom = (unsigned char*)malloc(4096 * 1024);
+	rom = (uint8_t*)malloc(4096 * 1024);
 	// fread(rom,512,1,f);
 	/* for (c=0;c<0x40000;c+=0x8000) {
 		fread(&rom[c+0x40000],32768,1,f);
@@ -218,7 +218,7 @@ void initmem()
 	}
 }
 
-unsigned char readmeml(uint32_t addr)
+uint8_t readmeml(uint32_t addr)
 {
 	addr &= ~0xFF000000;
 	if (((addr >> 16) & 0x7F) < 0x40) {
@@ -269,7 +269,7 @@ unsigned char readmeml(uint32_t addr)
 	//exit(-1);
 }
 
-void writememl(uint32_t addr, unsigned char val)
+void writememl(uint32_t addr, uint8_t val)
 {
 	addr &= ~0xFF000000;
 	if (((addr >> 16) & 0x7F) < 0x40) {

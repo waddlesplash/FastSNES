@@ -359,7 +359,7 @@ void dey16()
 /* INC group */
 void incZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -382,7 +382,7 @@ void incZp16()
 
 void incZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -405,7 +405,7 @@ void incZpx16()
 
 void incAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -428,7 +428,7 @@ void incAbs16()
 
 void incAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -452,7 +452,7 @@ void incAbsx16()
 /* DEC group */
 void decZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -476,7 +476,7 @@ void decZp16()
 
 void decZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -499,7 +499,7 @@ void decZpx16()
 
 void decAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -522,7 +522,7 @@ void decAbs16()
 
 void decAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -592,7 +592,7 @@ void xce()
 
 void sep()
 {
-	unsigned char temp = readmem(pbr | pc);
+	uint8_t temp = readmem(pbr | pc);
 	pc++;
 	if (temp & 1)
 		p.c = 1;
@@ -617,7 +617,7 @@ void sep()
 
 void rep()
 {
-	unsigned char temp = readmem(pbr | pc);
+	uint8_t temp = readmem(pbr | pc);
 	pc++;
 	if (temp & 1)
 		p.c = 0;
@@ -1308,7 +1308,7 @@ void stzAbsx16()
 void adcImm8()
 {
 	uint16_t tempw;
-	unsigned char temp = readmem(pbr | pc);
+	uint8_t temp = readmem(pbr | pc);
 	pc++;
 	if (p.d) {
 		ADCBCD8();
@@ -1319,7 +1319,7 @@ void adcImm8()
 void adcZp8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1331,7 +1331,7 @@ void adcZp8()
 void adcZpx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1343,7 +1343,7 @@ void adcZpx8()
 void adcSp8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = stack();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1355,7 +1355,7 @@ void adcSp8()
 void adcAbs8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1367,7 +1367,7 @@ void adcAbs8()
 void adcAbsx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1379,7 +1379,7 @@ void adcAbsx8()
 void adcAbsy8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutey();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1391,7 +1391,7 @@ void adcAbsy8()
 void adcLong8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutelong();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1403,7 +1403,7 @@ void adcLong8()
 void adcLongx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutelongx();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1415,7 +1415,7 @@ void adcLongx8()
 void adcIndirect8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirect();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1427,7 +1427,7 @@ void adcIndirect8()
 void adcIndirectx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectx();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1439,7 +1439,7 @@ void adcIndirectx8()
 void adcIndirecty8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirecty();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1451,7 +1451,7 @@ void adcIndirecty8()
 void adcsIndirecty8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = sindirecty();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1463,7 +1463,7 @@ void adcsIndirecty8()
 void adcIndirectLong8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectl();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1475,7 +1475,7 @@ void adcIndirectLong8()
 void adcIndirectLongy8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectly();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1670,7 +1670,7 @@ void adcIndirectLongy16()
 void sbcImm8()
 {
 	uint16_t tempw;
-	unsigned char temp = readmem(pbr | pc);
+	uint8_t temp = readmem(pbr | pc);
 	pc++;
 	if (p.d) {
 		SBCBCD8();
@@ -1681,7 +1681,7 @@ void sbcImm8()
 void sbcZp8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1693,7 +1693,7 @@ void sbcZp8()
 void sbcZpx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1705,7 +1705,7 @@ void sbcZpx8()
 void sbcSp8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = stack();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1717,7 +1717,7 @@ void sbcSp8()
 void sbcAbs8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1729,7 +1729,7 @@ void sbcAbs8()
 void sbcAbsx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1741,7 +1741,7 @@ void sbcAbsx8()
 void sbcAbsy8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutey();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1753,7 +1753,7 @@ void sbcAbsy8()
 void sbcLong8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutelong();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1765,7 +1765,7 @@ void sbcLong8()
 void sbcLongx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutelongx();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1777,7 +1777,7 @@ void sbcLongx8()
 void sbcIndirect8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirect();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1789,7 +1789,7 @@ void sbcIndirect8()
 void sbcIndirectx8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectx();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1801,7 +1801,7 @@ void sbcIndirectx8()
 void sbcIndirecty8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirecty();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1813,7 +1813,7 @@ void sbcIndirecty8()
 void sbcIndirectLong8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectl();
 	temp = readmem(addr);
 	if (p.d) {
@@ -1825,7 +1825,7 @@ void sbcIndirectLong8()
 void sbcIndirectLongy8()
 {
 	uint16_t tempw;
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectly();
 	temp = readmem(addr);
 	if (p.d) {
@@ -2520,7 +2520,7 @@ void oraIndirectLongy16()
 /* BIT group */
 void bitImm8()
 {
-	unsigned char temp = readmem(pbr | pc);
+	uint8_t temp = readmem(pbr | pc);
 	pc++;
 	p.z = !(temp & a.b.l);
 	// setzf=0;
@@ -2540,7 +2540,7 @@ void bitImm16()
 
 void bitZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	p.z = !(temp & a.b.l);
@@ -2559,7 +2559,7 @@ void bitZp16()
 
 void bitZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	p.z = !(temp & a.b.l);
@@ -2578,7 +2578,7 @@ void bitZpx16()
 
 void bitAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	p.z = !(temp & a.b.l);
@@ -2597,7 +2597,7 @@ void bitAbs16()
 
 void bitAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	p.z = !(temp & a.b.l);
@@ -2617,7 +2617,7 @@ void bitAbsx16()
 /* CMP group */
 void cmpImm8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	temp = readmem(pbr | pc);
 	pc++;
 	setzn8(a.b.l - temp);
@@ -2625,7 +2625,7 @@ void cmpImm8()
 }
 void cmpZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2633,7 +2633,7 @@ void cmpZp8()
 }
 void cmpZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2641,7 +2641,7 @@ void cmpZpx8()
 }
 void cmpSp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = stack();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2649,7 +2649,7 @@ void cmpSp8()
 }
 void cmpAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2657,7 +2657,7 @@ void cmpAbs8()
 }
 void cmpAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2665,7 +2665,7 @@ void cmpAbsx8()
 }
 void cmpAbsy8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutey();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2673,7 +2673,7 @@ void cmpAbsy8()
 }
 void cmpLong8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutelong();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2681,7 +2681,7 @@ void cmpLong8()
 }
 void cmpLongx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutelongx();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2689,7 +2689,7 @@ void cmpLongx8()
 }
 void cmpIndirect8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirect();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2697,7 +2697,7 @@ void cmpIndirect8()
 }
 void cmpIndirectx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectx();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2705,7 +2705,7 @@ void cmpIndirectx8()
 }
 void cmpIndirecty8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirecty();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2713,7 +2713,7 @@ void cmpIndirecty8()
 }
 void cmpIndirectLong8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectl();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -2721,7 +2721,7 @@ void cmpIndirectLong8()
 }
 void cmpIndirectLongy8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = indirectly();
 	temp = readmem(addr);
 	setzn8(a.b.l - temp);
@@ -3063,7 +3063,7 @@ void plbe()
 
 void plp()
 {
-	unsigned char temp = readmem(s.w + 1);
+	uint8_t temp = readmem(s.w + 1);
 	s.w++;
 	p.c = temp & 1;
 	p.z = temp & 2;
@@ -3080,7 +3080,7 @@ void plp()
 }
 void plpe()
 {
-	unsigned char temp;
+	uint8_t temp;
 	s.b.l++;
 	temp = readmem(s.w);
 	p.c = temp & 1;
@@ -3095,7 +3095,7 @@ void plpe()
 
 void php()
 {
-	unsigned char temp = (p.c) ? 1 : 0;
+	uint8_t temp = (p.c) ? 1 : 0;
 	if (p.z)
 		temp |= 2;
 	if (p.i)
@@ -3117,7 +3117,7 @@ void php()
 }
 void phpe()
 {
-	unsigned char temp = (p.c) ? 1 : 0;
+	uint8_t temp = (p.c) ? 1 : 0;
 	if (p.z)
 		temp |= 2;
 	if (p.i)
@@ -3137,7 +3137,7 @@ void phpe()
 /* CPX group */
 void cpxImm8()
 {
-	unsigned char temp = readmem(pbr | pc);
+	uint8_t temp = readmem(pbr | pc);
 	pc++;
 	setzn8(x.b.l - temp);
 	p.c = (x.b.l >= temp);
@@ -3152,7 +3152,7 @@ void cpxImm16()
 
 void cpxZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	setzn8(x.b.l - temp);
@@ -3169,7 +3169,7 @@ void cpxZp16()
 
 void cpxAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	setzn8(x.b.l - temp);
@@ -3187,7 +3187,7 @@ void cpxAbs16()
 /* CPY group */
 void cpyImm8()
 {
-	unsigned char temp = readmem(pbr | pc);
+	uint8_t temp = readmem(pbr | pc);
 	pc++;
 	setzn8(y.b.l - temp);
 	p.c = (y.b.l >= temp);
@@ -3202,7 +3202,7 @@ void cpyImm16()
 
 void cpyZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	setzn8(y.b.l - temp);
@@ -3219,7 +3219,7 @@ void cpyZp16()
 
 void cpyAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	setzn8(y.b.l - temp);
@@ -3433,7 +3433,7 @@ void jsrIndxe()
 
 void jsl()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = readmemw(pbr | pc);
 	pc += 2;
 	temp = readmem(pbr | pc);
@@ -3450,7 +3450,7 @@ void jsl()
 
 void jsle()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = readmemw(pbr | pc);
 	pc += 2;
 	temp = readmem(pbr | pc);
@@ -3508,7 +3508,7 @@ void rtse()
 
 void rti()
 {
-	unsigned char temp;
+	uint8_t temp;
 	cycles -= 6;
 	s.w++;
 	clockspc(6);
@@ -3552,7 +3552,7 @@ void asla16()
 
 void aslZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3577,7 +3577,7 @@ void aslZp16()
 
 void aslZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3602,7 +3602,7 @@ void aslZpx16()
 
 void aslAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3627,7 +3627,7 @@ void aslAbs16()
 
 void aslAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3667,7 +3667,7 @@ void lsra16()
 
 void lsrZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3692,7 +3692,7 @@ void lsrZp16()
 
 void lsrZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropagex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3717,7 +3717,7 @@ void lsrZpx16()
 
 void lsrAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3742,7 +3742,7 @@ void lsrAbs16()
 
 void lsrAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolutex();
 	temp = readmem(addr);
 	cycles -= 6;
@@ -3788,7 +3788,7 @@ void rola16()
 
 void rolZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = zeropage();
 	temp = readmem(addr);
@@ -3821,7 +3821,7 @@ void rolZp16()
 
 void rolZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = zeropagex();
 	temp = readmem(addr);
@@ -3854,7 +3854,7 @@ void rolZpx16()
 
 void rolAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = absolute();
 	temp = readmem(addr);
@@ -3887,7 +3887,7 @@ void rolAbs16()
 
 void rolAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = absolutex();
 	temp = readmem(addr);
@@ -3941,7 +3941,7 @@ void rora16()
 
 void rorZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = zeropage();
 	temp = readmem(addr);
@@ -3974,7 +3974,7 @@ void rorZp16()
 
 void rorZpx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = zeropagex();
 	temp = readmem(addr);
@@ -4007,7 +4007,7 @@ void rorZpx16()
 
 void rorAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = absolute();
 	temp = readmem(addr);
@@ -4040,7 +4040,7 @@ void rorAbs16()
 
 void rorAbsx8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	int tempc;
 	addr = absolutex();
 	temp = readmem(addr);
@@ -4113,7 +4113,7 @@ void tsc()
 
 void trbZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	p.z = !(a.b.l & temp);
@@ -4136,7 +4136,7 @@ void trbZp16()
 
 void trbAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	p.z = !(a.b.l & temp);
@@ -4159,7 +4159,7 @@ void trbAbs16()
 
 void tsbZp8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = zeropage();
 	temp = readmem(addr);
 	p.z = !(a.b.l & temp);
@@ -4182,7 +4182,7 @@ void tsbZp16()
 
 void tsbAbs8()
 {
-	unsigned char temp;
+	uint8_t temp;
 	addr = absolute();
 	temp = readmem(addr);
 	p.z = !(a.b.l & temp);
@@ -4213,7 +4213,7 @@ void wai()
 
 void mvp()
 {
-	unsigned char temp;
+	uint8_t temp;
 	dbr = (readmem(pbr | pc)) << 16;
 	pc++;
 	addr = (readmem(pbr | pc)) << 16;
@@ -4231,7 +4231,7 @@ void mvp()
 
 void mvn()
 {
-	unsigned char temp;
+	uint8_t temp;
 	dbr = (readmem(pbr | pc)) << 16;
 	pc++;
 	addr = (readmem(pbr | pc)) << 16;
@@ -4249,7 +4249,7 @@ void mvn()
 
 void brk()
 {
-	unsigned char temp = 0;
+	uint8_t temp = 0;
 	writemem(s.w, pbr >> 16);
 	s.w--;
 	writemem(s.w, pc >> 8);
@@ -4853,7 +4853,7 @@ void updatecpumode()
 
 void nmi65c816()
 {
-	unsigned char temp = 0;
+	uint8_t temp = 0;
 	// snemdebug("NMI %i %i %i\n",p.i,inwai,irqenable);
 	readmem(pbr | pc);
 	cycles -= 6;
@@ -4896,7 +4896,7 @@ void nmi65c816()
 
 void irq65c816()
 {
-	unsigned char temp = 0;
+	uint8_t temp = 0;
 	// snemdebug("IRQ %i %i %i\n",p.i,inwai,irqenable);
 	readmem(pbr | pc);
 	cycles -= 6;

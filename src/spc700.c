@@ -11,19 +11,19 @@ struct {
 	union {
 		uint16_t w;
 		struct {
-			unsigned char a, y;
+			uint8_t a, y;
 		} b;
 	} ya;
-	unsigned char x;
-	unsigned char s;
+	uint8_t x;
+	uint8_t s;
 	uint16_t pc;
 	struct {
 		int n, v, p, b, h, i, z, c;
 	} p;
 } spc;
 
-unsigned char* spcram;
-unsigned char spcrom[64] = {
+uint8_t* spcram;
+uint8_t spcrom[64] = {
 	0xCD, 0xEF, 0xBD, 0xE8, 0x00, 0xC6, 0x1D, 0xD0, 0xFC, 0x8F, 0xAA,
 	0xF4, 0x8F, 0xBB, 0xF5, 0x78, 0xCC, 0xF4, 0xD0, 0xFB, 0x2F, 0x19,
 	0xEB, 0xF4, 0xD0, 0xFC, 0x7E, 0xF4, 0xD0, 0x0B, 0xE4, 0xF5, 0xCB,
@@ -31,25 +31,25 @@ unsigned char spcrom[64] = {
 	0xF4, 0x10, 0xEB, 0xBA, 0xF6, 0xDA, 0x00, 0xBA, 0xF4, 0xC4, 0xF4,
 	0xDD, 0x5D, 0xD0, 0xDB, 0x1F, 0x00, 0x00, 0xC0, 0xFF};
 
-unsigned char* spcreadhigh;
-unsigned char spctocpu[4];
+uint8_t* spcreadhigh;
+uint8_t spctocpu[4];
 
 int spctimer[3], spctimer2[3], spclimit[3];
 
-unsigned char readfromspc(uint16_t addr)
+uint8_t readfromspc(uint16_t addr)
 {
 	// snemdebug("Read SPC %04X %02X %06X\n",addr,spctocpu[addr&3],pbr|pc);
 	return spctocpu[addr & 3];
 }
 
-void writetospc(uint16_t addr, unsigned char val)
+void writetospc(uint16_t addr, uint8_t val)
 {
 	spcram[(addr & 3) + 0xF4] = val;
 	// snemdebug("Set SPC %02X %02X %06X\n",(addr&3)+0xF4,val,pbr|pc);
 }
-unsigned char dspaddr;
-unsigned char voiceon;
-void writespcregs(uint16_t a, unsigned char v)
+uint8_t dspaddr;
+uint8_t voiceon;
+void writespcregs(uint16_t a, uint8_t v)
 {
 	switch (a) {
 	case 0xF1:
@@ -98,9 +98,9 @@ uint16_t getspcpc()
 {
 	return spc.pc;
 }
-unsigned char readspcregs(uint16_t a)
+uint8_t readspcregs(uint16_t a)
 {
-	unsigned char v;
+	uint8_t v;
 	switch (a) {
 	case 0xF2:
 	case 0xF3:
@@ -200,7 +200,7 @@ void dumpspcregs()
 uint16_t spc2, spc3;
 void execspc()
 {
-	unsigned char opcode, temp, temp2;
+	uint8_t opcode, temp, temp2;
 	uint16_t addr, addr2, tempw;
 	uint32_t templ;
 	int spccount;

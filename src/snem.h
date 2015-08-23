@@ -19,14 +19,14 @@ static inline void clockspc(int cyc)
 	if (spccycles > 0)
 		execspc();
 }
-unsigned char readfromspc(uint16_t addr);
-void writetospc(uint16_t addr, unsigned char val);
+uint8_t readfromspc(uint16_t addr);
+void writetospc(uint16_t addr, uint8_t val);
 
 /* DSP */
 void initdsp();
 void resetdsp();
-void writedsp(uint16_t a, unsigned char v);
-unsigned char readdsp(uint16_t a);
+void writedsp(uint16_t a, uint8_t v);
+uint8_t readdsp(uint16_t a);
 void polldsp();
 
 /* 65C816 */
@@ -34,7 +34,7 @@ void polldsp();
 typedef union {
 	uint16_t w;
 	struct {
-		unsigned char l, h;
+		uint8_t l, h;
 	} b;
 } reg;
 
@@ -68,24 +68,24 @@ void makeopcodetable();
 int cpumode;
 
 /* Current opcode */
-unsigned char opcode;
+uint8_t opcode;
 /* Global cycles count */
 int cycles;
 
 /* Memory */
-unsigned char* ram;
-unsigned char* rom;
-unsigned char* memlookup[2048];
-unsigned char memread[2048], memwrite[2048];
-unsigned char accessspeed[2048];
+uint8_t* ram;
+uint8_t* rom;
+uint8_t* memlookup[2048];
+uint8_t memread[2048], memwrite[2048];
+uint8_t accessspeed[2048];
 
 int lorom;
 void allocmem();
 void loadrom(char* fn);
-unsigned char readmeml(uint32_t a);
-void writememl(uint32_t a, unsigned char v);
+uint8_t readmeml(uint32_t a);
+void writememl(uint32_t a, uint8_t v);
 
-static inline unsigned char readmem(uint32_t a)
+static inline uint8_t readmem(uint32_t a)
 {
 	// if (a==0xC05) { snemlog("Read %06X %06X
 	// %02X\n",a,pbr|pc,ram[0xC05]); }
@@ -110,7 +110,7 @@ static inline unsigned char readmem(uint32_t a)
 	return readmeml(a);
 }
 
-static inline void writemem(uint32_t ad, unsigned char v)
+static inline void writemem(uint32_t ad, uint8_t v)
 {
 	// if (ad==0xC05) { snemlog("WRiTE %04X %02X %06X\n",ad,v,pbr|pc);
 	// if ((ad>>16)==0x7E) { snemdebug("WRiTE %04X %02X %06X\n",ad,v,pbr|pc); }
@@ -185,7 +185,7 @@ static inline void writemem(uint32_t ad, unsigned char v)
 /* Video */
 int nmi, vbl, joyscan;
 int nmienable;
-unsigned char* vramb;
+uint8_t* vramb;
 uint16_t* vram;
 int ppumask;
 
@@ -198,8 +198,8 @@ int pal;
 
 void initppu();
 void resetppu();
-unsigned char readppu(uint16_t addr);
-void writeppu(uint16_t addr, unsigned char val);
+uint8_t readppu(uint16_t addr);
+void writeppu(uint16_t addr, uint8_t val);
 void drawline(int line);
 
 void dumpchar();
@@ -209,15 +209,15 @@ void dumpvram();
 /* DMA registers */
 uint16_t dmadest[8], dmasrc[8], dmalen[8];
 uint32_t hdmaaddr[8], hdmaaddr2[8];
-unsigned char dmabank[8], dmaibank[8], dmactrl[8], hdmastat[8], hdmadat[8];
+uint8_t dmabank[8], dmaibank[8], dmactrl[8], hdmastat[8], hdmadat[8];
 int hdmacount[8];
-unsigned char hdmaena;
+uint8_t hdmaena;
 
 /* I/O */
 void readjoy();
 
-unsigned char readjoyold(uint16_t addr);
-void writejoyold(uint16_t addr, unsigned char val);
+uint8_t readjoyold(uint16_t addr);
+void writejoyold(uint16_t addr, uint8_t val);
 
-unsigned char readio(uint16_t addr);
-void writeio(uint16_t addr, unsigned char val);
+uint8_t readio(uint16_t addr);
+void writeio(uint16_t addr, uint8_t val);

@@ -8,8 +8,8 @@
 
 int spctotal;
 FILE* sndfile;
-unsigned char* spcram;
-unsigned char dspregs[256];
+uint8_t* spcram;
+uint8_t dspregs[256];
 int curdspreg;
 
 int ratetable[] = {1 << 30, 2048, 1536, 1280, 1024, 768, 640, 512,
@@ -28,22 +28,22 @@ struct {
 	int sourcenum[8];
 	int pos[8];
 	uint16_t voiceaddr[8];
-	unsigned char dir;
-	unsigned char brrctrl[8];
+	uint8_t dir;
+	uint8_t brrctrl[8];
 	int brrstat[8];
 	int voiceon[8];
 	int voiceend[8];
 
 	int evol[8], edelay[8], etype[8];
-	unsigned char gain[8], adsr1[8], adsr2[8];
+	uint8_t gain[8], adsr1[8], adsr2[8];
 	int adsrstat[8];
 
 	uint16_t noise;
 	int noisedelay, noiserate;
-	unsigned char non;
+	uint8_t non;
 
-	unsigned char envx[8], outx[8];
-	unsigned char endx;
+	uint8_t envx[8], outx[8];
+	uint8_t endx;
 } dsp;
 int spcoutput;
 
@@ -55,7 +55,7 @@ void drawvol(BITMAP* b)
 	// %i",dsp.volumer[0],dsp.volumer[1],dsp.volumer[2],dsp.volumer[3],dsp.volumer[4],dsp.volumer[5],dsp.volumer[6],dsp.volumer[7]);
 }
 
-void writedsp(uint16_t a, unsigned char v)
+void writedsp(uint16_t a, uint8_t v)
 {
 	int c;
 	uint32_t templ;
@@ -223,7 +223,7 @@ void resetdsp()
 	dsp.noise = 0x4000;
 }
 
-unsigned char readdsp(uint16_t a)
+uint8_t readdsp(uint16_t a)
 {
 	if (a & 1) {
 		switch (curdspreg & 0x7F) {
