@@ -13,22 +13,20 @@
 #include "snem.h"
 #include "util.h"
 
-#define uint unsigned int
-#define uint16 uint16_t
-#define uint32 uint32_t
+#define uint_t unsigned int
 #define inline __forceinline
 
 unsigned char voiceon;
 void writeppu(uint16_t addr, unsigned char val);
 
-inline uint16 cgadd(uint32 x, uint32 y)
+inline uint16_t cgadd(uint32_t x, uint32_t y)
 {
-	uint sum = x + y;
-	uint carries = (sum - ((x ^ y) & 0x0821)) & 0x10820;
+	uint_t sum = x + y;
+	uint_t carries = (sum - ((x ^ y) & 0x0821)) & 0x10820;
 	return (sum - carries) | (carries - (carries >> 5));
 }
 
-inline uint16 cgaddh(uint32 x, uint32 y)
+inline uint16_t cgaddh(uint32_t x, uint32_t y)
 {
 	return (x + y - ((x ^ y) & 0x0821)) >> 1;
 }
@@ -39,10 +37,10 @@ inline unsigned int cgsub(uint32_t x, uint32_t y)
 	sub += borrows;
 	return sub & ~(borrows - (borrows >> 5));
 }
-inline uint16 cgsubh(uint32 x, uint32 y)
+inline uint16_t cgsubh(uint32_t x, uint32_t y)
 {
-	uint sub = x - y;
-	uint borrows = (~(sub + ((~(x ^ y)) & 0x10820))) & 0x10820;
+	uint_t sub = x - y;
+	uint_t borrows = (~(sub + ((~(x ^ y)) & 0x10820))) & 0x10820;
 	sub += borrows;
 	return ((sub & ~(borrows - (borrows >> 5))) & 0xf79e) >> 1;
 }
